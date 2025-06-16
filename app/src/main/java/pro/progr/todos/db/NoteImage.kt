@@ -1,4 +1,4 @@
-package pro.progr.doflow.db
+package pro.progr.todos.db
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

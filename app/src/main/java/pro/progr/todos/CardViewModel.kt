@@ -1,4 +1,4 @@
-package pro.progr.doflow
+package pro.progr.todos
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -18,8 +18,8 @@ import pro.progr.brightcards.model.CardTag
 import pro.progr.brightcards.model.StringAnnotation
 import pro.progr.brightcards.vm.CardViewModel
 import pro.progr.diamondsandberries.db.Schedule
-import pro.progr.doflow.db.NoteTag
-import pro.progr.doflow.db.SublistChain
+import pro.progr.todos.db.NoteTag
+import pro.progr.todos.db.SublistChain
 
 class CardViewModel private constructor(
     private val repository: CardRepository,

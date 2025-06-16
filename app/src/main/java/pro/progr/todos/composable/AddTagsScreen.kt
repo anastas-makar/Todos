@@ -1,4 +1,4 @@
-package pro.progr.doflow.composable
+package pro.progr.todos.composable
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -34,8 +34,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import pro.progr.doflow.CardViewModel
-import pro.progr.doflow.TagsViewModel
+import pro.progr.todos.CardViewModel
+import pro.progr.todos.TagsViewModel
 
 //TagsModalDrawer
 

@@ -1,4 +1,4 @@
-package pro.progr.doflow.composable
+package pro.progr.todos.composable
 
 import SinceTillElement
 import androidx.compose.foundation.layout.Arrangement
@@ -25,9 +25,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import pro.progr.doflow.NoteCalendarViewModel
-import pro.progr.doflow.composable.datetext.DateField
-import pro.progr.doflow.composable.datetext.FieldVm
+import pro.progr.todos.NoteCalendarViewModel
+import pro.progr.todos.composable.datetext.DateField
+import pro.progr.todos.composable.datetext.FieldVm
 import pro.progr.flow.R
 
 @OptIn(ExperimentalLayoutApi::class)

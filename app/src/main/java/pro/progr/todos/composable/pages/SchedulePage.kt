@@ -1,4 +1,4 @@
-package pro.progr.doflow.composable.pages
+package pro.progr.todos.composable.pages
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -8,9 +8,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import pro.progr.doflow.NoteCalendarViewModel
-import pro.progr.doflow.composable.*
-import pro.progr.doflow.datefilters.FilterType
+import pro.progr.todos.NoteCalendarViewModel
+import pro.progr.todos.composable.*
+import pro.progr.todos.datefilters.FilterType
 
 @Composable
 fun SchedulePage(viewModel: NoteCalendarViewModel,

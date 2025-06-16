@@ -1,4 +1,4 @@
-package pro.progr.doflow.composable
+package pro.progr.todos.composable
 
 import SinceTillElement
 import android.util.Log
@@ -34,8 +34,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import pro.progr.doflow.NoteCalendarViewModel
-import pro.progr.doflow.datefilters.FilterType
+import pro.progr.todos.NoteCalendarViewModel
+import pro.progr.todos.datefilters.FilterType
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable

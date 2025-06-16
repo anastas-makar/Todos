@@ -1,13 +1,13 @@
-package pro.progr.doflow.dagger2
+package pro.progr.todos.dagger2
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import pro.progr.brightcards.model.CardContent
 import pro.progr.brightcards.vm.ListedCardViewModel
-import pro.progr.doflow.ListedCardRepository
-import pro.progr.doflow.db.Note
-import pro.progr.doflow.db.NoteAndHistoryDao
-import pro.progr.doflow.db.NoteWithData
+import pro.progr.todos.ListedCardRepository
+import pro.progr.todos.db.Note
+import pro.progr.todos.db.NoteAndHistoryDao
+import pro.progr.todos.db.NoteWithData
 import javax.inject.Inject
 
 class ListedCardViewModelFactory @Inject constructor(private val noteAndHistoryDao: NoteAndHistoryDao) : ViewModelProvider.Factory {

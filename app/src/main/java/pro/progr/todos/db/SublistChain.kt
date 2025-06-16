@@ -1,4 +1,4 @@
-package pro.progr.doflow.db
+package pro.progr.todos.db
 
 const val FIRST_LEVEL_CHAIN = "1"
 const val DELIMETER = ":"

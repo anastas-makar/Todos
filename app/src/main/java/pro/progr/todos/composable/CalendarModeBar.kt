@@ -1,4 +1,4 @@
-package pro.progr.doflow.composable
+package pro.progr.todos.composable
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
@@ -22,9 +22,9 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
-import pro.progr.doflow.CardsListViewModel
-import pro.progr.doflow.R
-import pro.progr.doflow.TagsViewModel
+import pro.progr.todos.CardsListViewModel
+import pro.progr.todos.R
+import pro.progr.todos.TagsViewModel
 import pro.progr.lists.ListSelector
 import pro.progr.lists.ListsViewModel
 

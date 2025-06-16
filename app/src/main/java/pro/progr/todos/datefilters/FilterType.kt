@@ -1,4 +1,4 @@
-package pro.progr.doflow.datefilters
+package pro.progr.todos.datefilters
 
 enum class FilterType (val datesFilter: DatesFilter) {
     DATE(CalendarDatesFilter()),

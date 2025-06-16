@@ -1,4 +1,4 @@
-package pro.progr.doflow.composable
+package pro.progr.todos.composable
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -9,7 +9,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import pro.progr.doflow.NoteCalendarViewModel
+import pro.progr.todos.NoteCalendarViewModel
 import pro.progr.flow.composable.GridCalendar
 
 @Composable

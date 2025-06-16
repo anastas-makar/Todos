@@ -1,4 +1,4 @@
-package pro.progr.doflow
+package pro.progr.todos
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -13,11 +13,11 @@ import kotlinx.coroutines.launch
 import pro.progr.brightcards.model.CardContent
 import pro.progr.brightcards.model.TodoStatus
 import pro.progr.brightcards.vm.ListedCardViewModel
-import pro.progr.doflow.datefilters.FilterType
-import pro.progr.doflow.db.NoteTag
-import pro.progr.doflow.db.NoteWithData
-import pro.progr.doflow.db.NotesRepository
-import pro.progr.doflow.db.SublistChain
+import pro.progr.todos.datefilters.FilterType
+import pro.progr.todos.db.NoteTag
+import pro.progr.todos.db.NoteWithData
+import pro.progr.todos.db.NotesRepository
+import pro.progr.todos.db.SublistChain
 import java.time.LocalDate
 import javax.inject.Inject
 

@@ -1,4 +1,4 @@
-package pro.progr.doflow
+package pro.progr.todos
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -8,9 +8,9 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import pro.progr.brightcards.model.TodoStatus
 import pro.progr.diamondsandberries.db.Schedule
-import pro.progr.doflow.datefilters.FilterType
-import pro.progr.doflow.db.ArrayPOJO
-import pro.progr.doflow.db.Note
+import pro.progr.todos.datefilters.FilterType
+import pro.progr.todos.db.ArrayPOJO
+import pro.progr.todos.db.Note
 import pro.progr.flow.vm.CalendarViewModel
 import java.time.LocalDate
 import javax.inject.Inject

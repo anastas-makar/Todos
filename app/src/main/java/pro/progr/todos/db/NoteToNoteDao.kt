@@ -1,4 +1,4 @@
-package pro.progr.doflow.db
+package pro.progr.todos.db
 
 import androidx.room.Dao
 import androidx.room.Insert

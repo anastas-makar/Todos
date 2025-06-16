@@ -10,9 +10,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.sp
-import pro.progr.doflow.NoteCalendarViewModel
-import pro.progr.doflow.composable.datetext.DateField
-import pro.progr.doflow.composable.datetext.FieldVm
+import pro.progr.todos.NoteCalendarViewModel
+import pro.progr.todos.composable.datetext.DateField
+import pro.progr.todos.composable.datetext.FieldVm
 import java.time.LocalDate
 
 @Composable

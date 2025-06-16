@@ -1,11 +1,11 @@
-package pro.progr.doflow.dagger2
+package pro.progr.todos.dagger2
 
 import dagger.Module
 import dagger.Provides
-import pro.progr.doflow.CardRepository
-import pro.progr.doflow.DatesGridRepository
-import pro.progr.doflow.ListRepository
-import pro.progr.doflow.db.NoteAndHistoryDao
+import pro.progr.todos.CardRepository
+import pro.progr.todos.DatesGridRepository
+import pro.progr.todos.ListRepository
+import pro.progr.todos.db.NoteAndHistoryDao
 @Module
 class ViewModelModule {
     @Provides

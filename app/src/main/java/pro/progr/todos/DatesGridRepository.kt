@@ -1,9 +1,9 @@
-package pro.progr.doflow
+package pro.progr.todos
 
 import kotlinx.coroutines.flow.Flow
-import pro.progr.doflow.db.Note
-import pro.progr.doflow.db.NoteAndHistoryDao
-import pro.progr.doflow.db.NotesDao
+import pro.progr.todos.db.Note
+import pro.progr.todos.db.NoteAndHistoryDao
+import pro.progr.todos.db.NotesDao
 import pro.progr.flow.model.DatesRepository
 import java.time.LocalDate
 import javax.inject.Inject

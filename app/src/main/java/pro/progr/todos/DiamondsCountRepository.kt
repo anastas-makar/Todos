@@ -1,9 +1,9 @@
-package pro.progr.doflow
+package pro.progr.todos
 
 import kotlinx.coroutines.flow.Flow
 import pro.progr.diamondapi.PurchaseInterface
-import pro.progr.doflow.db.DiamondsCount
-import pro.progr.doflow.db.DiamondsCountDao
+import pro.progr.todos.db.DiamondsCount
+import pro.progr.todos.db.DiamondsCountDao
 import java.time.LocalDate
 import javax.inject.Inject
 

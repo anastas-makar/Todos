@@ -1,4 +1,4 @@
-package pro.progr.doflow.composable
+package pro.progr.todos.composable
 
 import androidx.compose.ui.graphics.Color
 import java.time.LocalDate

@@ -1,9 +1,9 @@
 package pro.progr.notecastle.model
 
-import pro.progr.doflow.datefilters.FilterType
-import pro.progr.doflow.db.NoteTag
-import pro.progr.doflow.db.NotesQuery
-import pro.progr.doflow.db.SublistChain
+import pro.progr.todos.datefilters.FilterType
+import pro.progr.todos.db.NoteTag
+import pro.progr.todos.db.NotesQuery
+import pro.progr.todos.db.SublistChain
 
 
 class NotesQueryBuilder() {

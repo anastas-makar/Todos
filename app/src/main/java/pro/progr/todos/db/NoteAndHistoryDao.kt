@@ -1,11 +1,11 @@
-package pro.progr.doflow.db
+package pro.progr.todos.db
 
 import androidx.room.*
 import pro.progr.brightcards.colors.ColorStyle
 import pro.progr.brightcards.model.TodoStatus
 import pro.progr.diamondsandberries.db.Schedule
 import pro.progr.diamondsandberries.db.ScheduleConverter
-import pro.progr.doflow.NoteConverter
+import pro.progr.todos.NoteConverter
 import java.time.LocalDate
 
 @Dao

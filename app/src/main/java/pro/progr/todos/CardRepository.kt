@@ -1,4 +1,4 @@
-package pro.progr.doflow
+package pro.progr.todos
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -9,14 +9,14 @@ import pro.progr.brightcards.model.CardContent
 import pro.progr.brightcards.model.CardRepository
 import pro.progr.brightcards.model.TodoStatus
 import pro.progr.diamondsandberries.db.Schedule
-import pro.progr.doflow.db.ArrayPOJO
-import pro.progr.doflow.db.NoteAndHistoryDao
-import pro.progr.doflow.db.NoteInHistory
-import pro.progr.doflow.db.NoteTag
-import pro.progr.doflow.db.NoteWithData
-import pro.progr.doflow.db.NoteWithDataDao
-import pro.progr.doflow.db.SublistChain
-import pro.progr.doflow.db.TagsDao
+import pro.progr.todos.db.ArrayPOJO
+import pro.progr.todos.db.NoteAndHistoryDao
+import pro.progr.todos.db.NoteInHistory
+import pro.progr.todos.db.NoteTag
+import pro.progr.todos.db.NoteWithData
+import pro.progr.todos.db.NoteWithDataDao
+import pro.progr.todos.db.SublistChain
+import pro.progr.todos.db.TagsDao
 import java.time.LocalDate
 import javax.inject.Inject
 

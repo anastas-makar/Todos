@@ -1,12 +1,12 @@
-package pro.progr.doflow.dagger2
+package pro.progr.todos.dagger2
 
 import android.content.Context
 import androidx.room.Room
 import dagger.Module
 import dagger.Provides
-import pro.progr.doflow.db.*
+import pro.progr.todos.db.*
 import javax.inject.Singleton
-import pro.progr.doflow.db.MIGRATION_1_2
+import pro.progr.todos.db.MIGRATION_1_2
 
 @Module
 class DatabaseModule {

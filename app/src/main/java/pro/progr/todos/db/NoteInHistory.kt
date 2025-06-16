@@ -1,11 +1,11 @@
-package pro.progr.doflow.db
+package pro.progr.todos.db
 
 import androidx.room.*
 import pro.progr.brightcards.colors.ColorStyle
 import pro.progr.brightcards.model.TodoStatus
 import pro.progr.diamondsandberries.db.Schedule
 import pro.progr.diamondsandberries.db.ScheduleConverter
-import pro.progr.doflow.datefilters.FilterType
+import pro.progr.todos.datefilters.FilterType
 
 @Entity(
     tableName = "notes_in_history",

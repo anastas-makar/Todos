@@ -1,6 +1,6 @@
-package pro.progr.doflow.db
+package pro.progr.todos.db
 
-import pro.progr.doflow.datefilters.FilterType
+import pro.progr.todos.datefilters.FilterType
 import javax.inject.Inject
 
 class NotesQuery(

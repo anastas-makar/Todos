@@ -1,4 +1,4 @@
-package pro.progr.doflow
+package pro.progr.todos
 
 import pro.progr.brightcards.MenuItem
 import pro.progr.brightcards.model.CardContent
@@ -6,10 +6,10 @@ import pro.progr.brightcards.model.CardTag
 import pro.progr.brightcards.model.StringAnnotation
 import pro.progr.brightcards.model.TodoStatus
 import pro.progr.diamondsandberries.db.Schedule
-import pro.progr.doflow.datefilters.FilterType
-import pro.progr.doflow.db.Note
-import pro.progr.doflow.db.NoteInHistory
-import pro.progr.doflow.db.NoteWithData
+import pro.progr.todos.datefilters.FilterType
+import pro.progr.todos.db.Note
+import pro.progr.todos.db.NoteInHistory
+import pro.progr.todos.db.NoteWithData
 import java.time.LocalDate
 import java.util.*
 import kotlin.collections.LinkedHashMap

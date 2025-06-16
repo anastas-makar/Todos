@@ -1,4 +1,4 @@
-package pro.progr.doflow.db
+package pro.progr.todos.db
 
 import androidx.room.*
 import pro.progr.brightcards.colors.ColorStyle
@@ -7,7 +7,7 @@ import pro.progr.diamondsandberries.db.FilterTypeConverter
 import pro.progr.diamondsandberries.db.PatternDatesConverter
 import pro.progr.diamondsandberries.db.Schedule
 import pro.progr.diamondsandberries.db.ScheduleConverter
-import pro.progr.doflow.datefilters.FilterType
+import pro.progr.todos.datefilters.FilterType
 
 @Entity(
     tableName = "notes"

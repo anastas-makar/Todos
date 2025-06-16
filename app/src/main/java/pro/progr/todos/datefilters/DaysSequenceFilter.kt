@@ -1,4 +1,4 @@
-package pro.progr.doflow.datefilters
+package pro.progr.todos.datefilters
 
 import pro.progr.diamondsandberries.db.Schedule
 import java.time.LocalDate

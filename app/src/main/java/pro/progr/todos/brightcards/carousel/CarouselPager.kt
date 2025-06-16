@@ -13,7 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import pro.progr.doflow.R
+import pro.progr.todos.R
 import pro.progr.brightcards.vm.PaletteViewModel
 
 @Composable

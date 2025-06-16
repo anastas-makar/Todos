@@ -1,4 +1,4 @@
-package pro.progr.doflow.composable.calendar
+package pro.progr.todos.composable.calendar
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
@@ -19,13 +19,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import pro.progr.doflow.R
+import pro.progr.todos.R
 import pro.progr.brightcards.composable.BrightCard
 import pro.progr.brightcards.vm.ListedCardViewModel
-import pro.progr.doflow.CardsListViewModel
-import pro.progr.doflow.DiamondViewModel
-import pro.progr.doflow.composable.ResolveDestinations
-import pro.progr.doflow.db.NoteTag
+import pro.progr.todos.CardsListViewModel
+import pro.progr.todos.DiamondViewModel
+import pro.progr.todos.composable.ResolveDestinations
+import pro.progr.todos.db.NoteTag
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale

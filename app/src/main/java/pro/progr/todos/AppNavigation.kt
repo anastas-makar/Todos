@@ -1,4 +1,4 @@
-package pro.progr.doflow
+package pro.progr.todos
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -24,43 +24,38 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import pro.progr.brightcards.colors.ColorsProvider
 import pro.progr.brightcards.composable.colorpicker.CardEditorWithColorPicker
 import pro.progr.brightcards.model.CardContent
 import pro.progr.brightcards.vm.PaletteViewModel
 import pro.progr.diamondsandberries.db.Schedule
-import pro.progr.doflow.composable.AddTagsScreen
-import pro.progr.doflow.composable.AppDrawer
-import pro.progr.doflow.composable.BottomSearch
-import pro.progr.doflow.composable.CalendarModeBar
-import pro.progr.doflow.composable.CardsList
-import pro.progr.doflow.composable.EditNoteBar
-import pro.progr.doflow.composable.EditNoteInHistoryBar
-import pro.progr.doflow.composable.ListModeBar
-import pro.progr.doflow.composable.MyFloatingActionButton
-import pro.progr.doflow.composable.NoteBar
-import pro.progr.doflow.composable.SmallActionsViewModel
-import pro.progr.doflow.composable.TagsScreen
-import pro.progr.doflow.composable.calendar.DayInHistory
-import pro.progr.doflow.composable.calendar.Future
-import pro.progr.doflow.composable.calendar.Today
-import pro.progr.doflow.composable.pages.SchedulePage
-import pro.progr.doflow.dagger2.CardViewModelFactory
-import pro.progr.doflow.dagger2.DaggerViewModelFactory
-import pro.progr.doflow.dagger2.ListsViewModelFactory
-import pro.progr.doflow.dagger2.NoteCalendarViewModelFactory
-import pro.progr.doflow.datefilters.FilterType
-import pro.progr.fallingdiamonds.composable.SundukScreen
 import pro.progr.flow.composable.CalendarWithFloatingElement
 import pro.progr.flow.vm.FloatingElementViewModel
 import pro.progr.lists.ListedContentFrame
 import pro.progr.lists.ListsViewModel
-import pro.progr.owlgame.presentation.navigation.OwlNavigation
+import pro.progr.todos.composable.AddTagsScreen
+import pro.progr.todos.composable.BottomSearch
+import pro.progr.todos.composable.CalendarModeBar
+import pro.progr.todos.composable.CardsList
+import pro.progr.todos.composable.EditNoteBar
+import pro.progr.todos.composable.EditNoteInHistoryBar
+import pro.progr.todos.composable.ListModeBar
+import pro.progr.todos.composable.MyFloatingActionButton
+import pro.progr.todos.composable.NoteBar
+import pro.progr.todos.composable.SmallActionsViewModel
+import pro.progr.todos.composable.TagsScreen
+import pro.progr.todos.composable.calendar.DayInHistory
+import pro.progr.todos.composable.calendar.Future
+import pro.progr.todos.composable.calendar.Today
+import pro.progr.todos.composable.pages.SchedulePage
+import pro.progr.todos.dagger2.CardViewModelFactory
+import pro.progr.todos.dagger2.DaggerViewModelFactory
+import pro.progr.todos.dagger2.ListsViewModelFactory
+import pro.progr.todos.dagger2.NoteCalendarViewModelFactory
+import pro.progr.todos.datefilters.FilterType
 import java.time.LocalDate
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -102,7 +97,7 @@ fun AppNavigation(
             val diamondViewModel: DiamondViewModel = viewModel(factory = daggerViewModelFactory)
             val tagsViewModel: TagsViewModel = viewModel(factory = daggerViewModelFactory)
 
-            AppDrawer(drawerState, diamondViewModel, navController) {
+            //AppDrawer(drawerState, diamondViewModel, navController) {
                 LaunchedEffect(Unit) {
                     drawerState.close()
                 }
@@ -178,7 +173,7 @@ fun AppNavigation(
                     )
 
                 }
-            }
+            //}
         }
 
         composable("editCard/{cardId}") { backStackEntry ->
@@ -403,7 +398,7 @@ fun AppNavigation(
 
             val tagsViewModel: TagsViewModel = viewModel(factory = daggerViewModelFactory)
 
-            AppDrawer(drawerState, diamondViewModel, navController) {
+            //AppDrawer(drawerState, diamondViewModel, navController) {
                 LaunchedEffect(Unit) {
                     drawerState.close()
                 }
@@ -458,7 +453,7 @@ fun AppNavigation(
                     )
 
                 }
-            }
+                    //}
         }
 
         composable("taskSchedule/{cardId}") { backStackEntry ->
@@ -467,13 +462,6 @@ fun AppNavigation(
             val viewModel: NoteCalendarViewModel = viewModel(factory = noteCalendarViewModelFactory)
 
             SchedulePage(viewModel, navController)
-        }
-
-        composable("sunduk") { backStackEntry ->
-            val vm : DiamondViewModel = viewModel(factory = daggerViewModelFactory)
-            SundukScreen(
-                { navController.popBackStack() },
-                vm)
         }
 
         composable("editNoteInHistory/{cardId}/date/{date}") { backStackEntry ->
@@ -521,34 +509,6 @@ fun AppNavigation(
 
             }
 
-
-        }
-
-        //Навигация в модуле "Спаси сову"
-        composable("owl_navigation") {
-            OwlNavigation (diamondDao = diamondsCountRepository,
-                backToMain = { navController.popBackStack()})
-        }
-
-        //Навигация в модуле "Спаси сову"
-        composable("owl_navigation/pouch") {
-            OwlNavigation(startDestination = "pouch", diamondDao = diamondsCountRepository,
-                backToMain = { navController.popBackStack() })
-        }
-
-        //Навигация в модуле "Спаси сову"
-        composable(
-            route = "animal?id={id}",
-            arguments = listOf(navArgument("id") {
-                type = NavType.StringType
-                nullable = true
-                defaultValue = null
-            })
-        ) { backStackEntry ->
-            val id = backStackEntry.arguments?.getString("id")
-
-            OwlNavigation(startDestination = "animal_searching/$id", diamondDao = diamondsCountRepository,
-                backToMain = { navController.navigate("calendar") })
 
         }
 

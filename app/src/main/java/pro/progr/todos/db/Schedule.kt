@@ -1,6 +1,6 @@
 package pro.progr.diamondsandberries.db
 
-import pro.progr.doflow.datefilters.FilterType
+import pro.progr.todos.datefilters.FilterType
 
 @Deprecated(message = "В классе Note отдельные поля")
 class Schedule(

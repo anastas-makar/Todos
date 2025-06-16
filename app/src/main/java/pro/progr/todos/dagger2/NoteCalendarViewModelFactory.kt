@@ -1,9 +1,9 @@
-package pro.progr.doflow.dagger2
+package pro.progr.todos.dagger2
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import pro.progr.doflow.DatesGridRepository
-import pro.progr.doflow.NoteCalendarViewModel
+import pro.progr.todos.DatesGridRepository
+import pro.progr.todos.NoteCalendarViewModel
 import javax.inject.Inject
 
 class NoteCalendarViewModelFactory @Inject constructor(

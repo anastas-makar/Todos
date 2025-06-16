@@ -1,4 +1,4 @@
-package pro.progr.doflow.composable
+package pro.progr.todos.composable
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,8 +21,8 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import pro.progr.doflow.CardsListViewModel
-import pro.progr.doflow.TagsViewModel
+import pro.progr.todos.CardsListViewModel
+import pro.progr.todos.TagsViewModel
 
 //TagsModalDrawer
 

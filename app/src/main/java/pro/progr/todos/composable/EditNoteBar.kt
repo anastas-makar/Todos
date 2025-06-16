@@ -1,4 +1,4 @@
-package pro.progr.doflow.composable
+package pro.progr.todos.composable
 
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -10,7 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import pro.progr.doflow.CardViewModel
+import pro.progr.todos.CardViewModel
 
 @Composable
 fun EditNoteBar(navController : NavHostController, viewModel: CardViewModel) {

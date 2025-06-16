@@ -1,8 +1,8 @@
-package pro.progr.doflow
+package pro.progr.todos
 
 import kotlinx.coroutines.flow.Flow
-import pro.progr.doflow.db.NoteTag
-import pro.progr.doflow.db.TagsDao
+import pro.progr.todos.db.NoteTag
+import pro.progr.todos.db.TagsDao
 import javax.inject.Inject
 
 class TagsRepository @Inject constructor(val tagsDao: TagsDao) {

@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import pro.progr.doflow.R
+import pro.progr.todos.R
 import pro.progr.brightcards.vm.ListedCardViewModel
 
 @Composable

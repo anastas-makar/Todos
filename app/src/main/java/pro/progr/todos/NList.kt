@@ -1,6 +1,6 @@
-package pro.progr.doflow
+package pro.progr.todos
 
-import pro.progr.doflow.db.SublistChain
+import pro.progr.todos.db.SublistChain
 import pro.progr.lists.NestedList
 
 class NList(var lname : String = "todo", val sublistChain: SublistChain, val id : Int) : NestedList {

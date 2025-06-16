@@ -1,4 +1,4 @@
-package pro.progr.doflow.composable.datetext
+package pro.progr.todos.composable.datetext
 
 import android.util.Log
 import androidx.compose.foundation.layout.padding

@@ -1,4 +1,4 @@
-package pro.progr.doflow.composable.calendar
+package pro.progr.todos.composable.calendar
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -17,8 +17,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import pro.progr.doflow.CardsListViewModel
-import pro.progr.doflow.composable.CardsForDay
+import pro.progr.todos.CardsListViewModel
+import pro.progr.todos.composable.CardsForDay
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale

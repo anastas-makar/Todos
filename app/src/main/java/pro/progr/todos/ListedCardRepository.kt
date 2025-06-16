@@ -1,13 +1,13 @@
-package pro.progr.doflow
+package pro.progr.todos
 
 import pro.progr.brightcards.model.CardContent
 import pro.progr.brightcards.model.ListedCardRepositoryInterface
 import pro.progr.brightcards.model.TodoStatus
 import pro.progr.diamondsandberries.db.Schedule
-import pro.progr.doflow.datefilters.FilterType
-import pro.progr.doflow.db.NoteAndHistoryDao
-import pro.progr.doflow.db.NoteInHistory
-import pro.progr.doflow.db.NoteWithData
+import pro.progr.todos.datefilters.FilterType
+import pro.progr.todos.db.NoteAndHistoryDao
+import pro.progr.todos.db.NoteInHistory
+import pro.progr.todos.db.NoteWithData
 import java.time.LocalDate
 
 class ListedCardRepository(private val noteAndHistoryDao: NoteAndHistoryDao, private val note: NoteWithData) : ListedCardRepositoryInterface {

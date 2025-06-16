@@ -1,4 +1,4 @@
-package pro.progr.doflow.dagger2
+package pro.progr.todos.dagger2
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -6,9 +6,9 @@ import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import pro.progr.doflow.CardsListViewModel
-import pro.progr.doflow.DiamondViewModel
-import pro.progr.doflow.TagsViewModel
+import pro.progr.todos.CardsListViewModel
+import pro.progr.todos.DiamondViewModel
+import pro.progr.todos.TagsViewModel
 
 @Module
 abstract class ViewModelFactoryModule {

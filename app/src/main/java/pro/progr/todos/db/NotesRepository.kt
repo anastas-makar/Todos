@@ -1,4 +1,4 @@
-package pro.progr.doflow.db
+package pro.progr.todos.db
 
 import androidx.sqlite.db.SimpleSQLiteQuery
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -9,8 +9,8 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import pro.progr.brightcards.model.CardContent
-import pro.progr.doflow.NoteConverter
-import pro.progr.doflow.NoteInHistoryConverter
+import pro.progr.todos.NoteConverter
+import pro.progr.todos.NoteInHistoryConverter
 import pro.progr.notecastle.model.NotesQueryBuilder
 import java.time.LocalDate
 import javax.inject.Inject

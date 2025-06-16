@@ -1,4 +1,4 @@
-package pro.progr.doflow.composable.datetext
+package pro.progr.todos.composable.datetext
 
 import androidx.compose.runtime.mutableStateOf
 import java.time.LocalDate

@@ -1,11 +1,10 @@
-package pro.progr.doflow.dagger2
+package pro.progr.todos.dagger2
 
+import android.app.Application
 import android.content.Context
 import dagger.BindsInstance
 import dagger.Component
-import pro.progr.doflow.CardRepository
-import pro.progr.doflow.DoFlow
-import pro.progr.doflow.FlowActivity
+import pro.progr.todos.CardRepository
 import javax.inject.Singleton
 
 @Singleton
@@ -13,9 +12,8 @@ import javax.inject.Singleton
     ViewModelModule::class,
     ViewModelFactoryModule::class])
 interface DoFlowComponent {
-    fun inject(doFlow: DoFlow)
+    fun inject(application: Application)
     fun inject(cardRepository: CardRepository)
-    fun inject(flowActivity: FlowActivity)
     fun cardViewModelFactory(): CardViewModelFactory
 
     @Component.Factory

@@ -1,6 +1,6 @@
-package pro.progr.doflow
+package pro.progr.todos
 
-import pro.progr.doflow.db.NotesList
+import pro.progr.todos.db.NotesList
 
 class ListsConverter {
     companion object {

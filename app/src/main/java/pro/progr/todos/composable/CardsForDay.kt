@@ -1,12 +1,12 @@
-package pro.progr.doflow.composable
+package pro.progr.todos.composable
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.*
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import pro.progr.brightcards.composable.BrightCard
-import pro.progr.doflow.CardsListViewModel
-import pro.progr.doflow.db.NoteTag
+import pro.progr.todos.CardsListViewModel
+import pro.progr.todos.db.NoteTag
 import java.time.LocalDate
 
 @OptIn(ExperimentalCoroutinesApi::class)

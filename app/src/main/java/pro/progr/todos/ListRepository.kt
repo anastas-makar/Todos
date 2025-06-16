@@ -1,4 +1,4 @@
-package pro.progr.doflow
+package pro.progr.todos
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -7,9 +7,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import pro.progr.doflow.db.NoteListsDao
-import pro.progr.doflow.db.NotesDao
-import pro.progr.doflow.db.SublistChain
+import pro.progr.todos.db.NoteListsDao
+import pro.progr.todos.db.NotesDao
+import pro.progr.todos.db.SublistChain
 import pro.progr.lists.ListsRepository
 import pro.progr.lists.NestedList
 import javax.inject.Inject
