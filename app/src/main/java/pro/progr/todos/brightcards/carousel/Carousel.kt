@@ -1,4 +1,4 @@
-package pro.progr.brightcards.carousel
+package pro.progr.todos.brightcards.carousel
 
 class Carousel<E>(val list: List<E>) {
 

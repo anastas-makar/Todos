@@ -2,8 +2,8 @@ package pro.progr.todos.dagger2
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import pro.progr.brightcards.colors.ColorStyle
-import pro.progr.brightcards.colors.GouachePalette
+import pro.progr.todos.brightcards.colors.ColorStyle
+import pro.progr.todos.brightcards.colors.GouachePalette
 import pro.progr.todos.CardRepository
 import pro.progr.todos.CardViewModel
 import pro.progr.todos.EditCardInHistoryViewModel

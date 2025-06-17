@@ -10,9 +10,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import pro.progr.brightcards.model.CardContent
-import pro.progr.brightcards.model.TodoStatus
-import pro.progr.brightcards.vm.ListedCardViewModel
+import pro.progr.todos.brightcards.model.CardContent
+import pro.progr.todos.brightcards.model.TodoStatus
+import pro.progr.todos.brightcards.vm.ListedCardViewModel
 import pro.progr.todos.datefilters.FilterType
 import pro.progr.todos.db.NoteTag
 import pro.progr.todos.db.NoteWithData

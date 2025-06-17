@@ -1,4 +1,4 @@
-package pro.progr.brightcards.composable.colorpicker
+package pro.progr.todos.brightcards.composable.colorpicker
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -16,11 +16,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import pro.progr.brightcards.carousel.CarouselPager
-import pro.progr.brightcards.colors.ColorsProvider
-import pro.progr.brightcards.composable.ColorItem
-import pro.progr.brightcards.vm.CardViewModel
-import pro.progr.brightcards.vm.PaletteViewModel
+import pro.progr.todos.brightcards.carousel.CarouselPager
+import pro.progr.todos.brightcards.colors.ColorsProvider
+import pro.progr.todos.brightcards.composable.ColorItem
+import pro.progr.todos.brightcards.vm.CardViewModel
+import pro.progr.todos.brightcards.vm.PaletteViewModel
 
 @Composable
 fun ColorPicker(cardViewModel: CardViewModel, paletteViewModel: PaletteViewModel) {

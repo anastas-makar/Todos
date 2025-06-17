@@ -12,7 +12,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import pro.progr.brightcards.composable.BrightCard
+import pro.progr.todos.brightcards.composable.BrightCard
 import pro.progr.todos.CardsListViewModel
 import pro.progr.todos.db.NoteTag
 import java.time.LocalDate

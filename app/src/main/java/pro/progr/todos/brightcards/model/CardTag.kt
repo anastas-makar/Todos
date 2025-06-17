@@ -1,4 +1,4 @@
-package pro.progr.brightcards.model
+package pro.progr.todos.brightcards.model
 
 data class CardTag(
     val id: Long,

@@ -1,8 +1,8 @@
 package pro.progr.todos
 
-import pro.progr.brightcards.model.CardContent
-import pro.progr.brightcards.model.ListedCardRepositoryInterface
-import pro.progr.brightcards.model.TodoStatus
+import pro.progr.todos.brightcards.model.CardContent
+import pro.progr.todos.brightcards.model.ListedCardRepositoryInterface
+import pro.progr.todos.brightcards.model.TodoStatus
 import pro.progr.diamondsandberries.db.Schedule
 import pro.progr.todos.datefilters.FilterType
 import pro.progr.todos.db.NoteAndHistoryDao

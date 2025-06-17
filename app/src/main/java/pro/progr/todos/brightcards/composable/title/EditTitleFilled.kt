@@ -1,4 +1,4 @@
-package pro.progr.brightcards.composable.title
+package pro.progr.todos.brightcards.composable.title
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.ColumnScope
@@ -15,7 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import pro.progr.brightcards.vm.CardViewModel
+import pro.progr.todos.brightcards.vm.CardViewModel
 
 @Composable
 fun ColumnScope.EditTitleFilled(cardViewModel: CardViewModel) {

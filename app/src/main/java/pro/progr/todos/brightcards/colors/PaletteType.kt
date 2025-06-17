@@ -1,4 +1,4 @@
-package pro.progr.brightcards.colors
+package pro.progr.todos.brightcards.colors
 
 enum class PaletteType(val paletteName: String) {
     /*WATERCOLOR("Watercolor"), PENCILS("Pencils"),*/ GOUACHE("Gouache"), PASTEL("Pastel");

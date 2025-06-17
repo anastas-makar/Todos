@@ -1,9 +1,9 @@
 package pro.progr.todos
 
 import android.content.SharedPreferences
-import pro.progr.brightcards.colors.ColorsPage
-import pro.progr.brightcards.colors.PaletteType
-import pro.progr.brightcards.model.PaletteRepository
+import pro.progr.todos.brightcards.colors.ColorsPage
+import pro.progr.todos.brightcards.colors.PaletteType
+import pro.progr.todos.brightcards.model.PaletteRepository
 
 class PaletteRepository(private val sharedPreferences: SharedPreferences) : PaletteRepository {
 

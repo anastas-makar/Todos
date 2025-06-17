@@ -1,8 +1,8 @@
 package pro.progr.todos.db
 
 import androidx.room.*
-import pro.progr.brightcards.colors.ColorStyle
-import pro.progr.brightcards.model.TodoStatus
+import pro.progr.todos.brightcards.colors.ColorStyle
+import pro.progr.todos.brightcards.model.TodoStatus
 import pro.progr.diamondsandberries.db.FilterTypeConverter
 import pro.progr.diamondsandberries.db.PatternDatesConverter
 import pro.progr.diamondsandberries.db.Schedule

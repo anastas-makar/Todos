@@ -5,9 +5,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import pro.progr.brightcards.model.CardContent
-import pro.progr.brightcards.model.CardRepository
-import pro.progr.brightcards.model.TodoStatus
+import pro.progr.todos.brightcards.model.CardContent
+import pro.progr.todos.brightcards.model.CardRepository
+import pro.progr.todos.brightcards.model.TodoStatus
 import pro.progr.diamondsandberries.db.Schedule
 import pro.progr.todos.db.ArrayPOJO
 import pro.progr.todos.db.NoteAndHistoryDao

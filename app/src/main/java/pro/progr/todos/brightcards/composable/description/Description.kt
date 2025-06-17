@@ -1,8 +1,8 @@
-package pro.progr.brightcards.composable.description
+package pro.progr.todos.brightcards.composable.description
 
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.runtime.Composable
-import pro.progr.brightcards.vm.ListedCardViewModel
+import pro.progr.todos.brightcards.vm.ListedCardViewModel
 
 @Composable
 fun ColumnScope.Description(viewModel: ListedCardViewModel) {

@@ -1,9 +1,9 @@
-package pro.progr.brightcards.vm
+package pro.progr.todos.brightcards.vm
 
 import androidx.compose.runtime.MutableState
 import kotlinx.coroutines.Job
-import pro.progr.brightcards.model.CardContent
-import pro.progr.brightcards.model.StringAnnotation
+import pro.progr.todos.brightcards.model.CardContent
+import pro.progr.todos.brightcards.model.StringAnnotation
 
 interface CardViewModel {
     fun getCardId() : String?

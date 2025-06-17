@@ -1,4 +1,4 @@
-package pro.progr.brightcards.composable.visual
+package pro.progr.todos.brightcards.composable.visual
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -19,8 +19,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import pro.progr.todos.R
-import pro.progr.brightcards.model.TodoStatus
-import pro.progr.brightcards.vm.CardViewModel
+import pro.progr.todos.brightcards.model.TodoStatus
+import pro.progr.todos.brightcards.vm.CardViewModel
 
 @Composable
 fun SquareButton(

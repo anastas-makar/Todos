@@ -1,4 +1,4 @@
-package pro.progr.brightcards.composable.description
+package pro.progr.todos.brightcards.composable.description
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -13,9 +13,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import pro.progr.brightcards.composable.DiamondSelector
-import pro.progr.brightcards.model.StringAnnotation
-import pro.progr.brightcards.vm.CardViewModel
+import pro.progr.todos.brightcards.composable.DiamondSelector
+import pro.progr.todos.brightcards.model.StringAnnotation
+import pro.progr.todos.brightcards.vm.CardViewModel
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable

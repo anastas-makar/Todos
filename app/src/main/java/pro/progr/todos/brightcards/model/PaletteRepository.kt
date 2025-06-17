@@ -1,6 +1,6 @@
-package pro.progr.brightcards.model
+package pro.progr.todos.brightcards.model
 
-import pro.progr.brightcards.colors.ColorsPage
+import pro.progr.todos.brightcards.colors.ColorsPage
 
 interface PaletteRepository {
 

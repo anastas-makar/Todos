@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
-import pro.progr.brightcards.model.CardContent
+import pro.progr.todos.brightcards.model.CardContent
 import pro.progr.todos.NoteConverter
 import pro.progr.todos.NoteInHistoryConverter
 import pro.progr.notecastle.model.NotesQueryBuilder

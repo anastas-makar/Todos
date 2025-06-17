@@ -1,4 +1,4 @@
-package pro.progr.brightcards.composable.description
+package pro.progr.todos.brightcards.composable.description
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -11,7 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import pro.progr.brightcards.vm.ListedCardViewModel
+import pro.progr.todos.brightcards.vm.ListedCardViewModel
 
 @Composable
 fun ColumnScope.TransparentText(viewModel: ListedCardViewModel) {

@@ -2,8 +2,8 @@ package pro.progr.todos.composable
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
-import pro.progr.brightcards.vm.Destinations
-import pro.progr.brightcards.vm.ListedCardViewModel
+import pro.progr.todos.brightcards.vm.Destinations
+import pro.progr.todos.brightcards.vm.ListedCardViewModel
 import java.time.LocalDate
 
 @Composable

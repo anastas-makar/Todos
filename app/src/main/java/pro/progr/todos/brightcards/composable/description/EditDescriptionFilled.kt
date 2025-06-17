@@ -1,4 +1,4 @@
-package pro.progr.brightcards.composable.description
+package pro.progr.todos.brightcards.composable.description
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -13,7 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import pro.progr.brightcards.vm.CardViewModel
+import pro.progr.todos.brightcards.vm.CardViewModel
 
 @Composable
 fun ColumnScope.EditDescriptionFilled(cardViewModel: CardViewModel) {

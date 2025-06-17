@@ -1,4 +1,4 @@
-package pro.progr.brightcards.vm
+package pro.progr.todos.brightcards.vm
 
 enum class Destinations {
     NONE,

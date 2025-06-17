@@ -1,4 +1,4 @@
-package pro.progr.brightcards.composable
+package pro.progr.todos.brightcards.composable
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.DropdownMenu
@@ -12,9 +12,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import pro.progr.todos.R
-import pro.progr.brightcards.composable.visual.SquareButton
-import pro.progr.brightcards.model.TodoStatus
-import pro.progr.brightcards.vm.CardViewModel
+import pro.progr.todos.brightcards.composable.visual.SquareButton
+import pro.progr.todos.brightcards.model.TodoStatus
+import pro.progr.todos.brightcards.vm.CardViewModel
 
 @Composable
 fun DiamondSelector(cardViewModel: CardViewModel) {

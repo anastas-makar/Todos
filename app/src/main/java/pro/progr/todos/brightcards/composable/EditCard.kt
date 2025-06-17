@@ -1,4 +1,4 @@
-package pro.progr.brightcards.composable
+package pro.progr.todos.brightcards.composable
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -12,11 +12,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import pro.progr.brightcards.composable.description.EditDescriptionFilled
-import pro.progr.brightcards.composable.description.EditDescriptionTransparent
-import pro.progr.brightcards.composable.title.EditTitleFilled
-import pro.progr.brightcards.composable.title.EditTitleTransparent
-import pro.progr.brightcards.vm.CardViewModel
+import pro.progr.todos.brightcards.composable.description.EditDescriptionFilled
+import pro.progr.todos.brightcards.composable.description.EditDescriptionTransparent
+import pro.progr.todos.brightcards.composable.title.EditTitleFilled
+import pro.progr.todos.brightcards.composable.title.EditTitleTransparent
+import pro.progr.todos.brightcards.vm.CardViewModel
 
 @Composable
 fun EditCard(cardViewModel: CardViewModel) {

@@ -1,4 +1,4 @@
-package pro.progr.brightcards.carousel
+package pro.progr.todos.brightcards.carousel
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.wrapContentWidth
@@ -6,15 +6,15 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.KeyboardArrowLeft
-import androidx.compose.material.icons.outlined.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowLeft
+import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowRight
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import pro.progr.todos.R
-import pro.progr.brightcards.vm.PaletteViewModel
+import pro.progr.todos.brightcards.vm.PaletteViewModel
 
 @Composable
 fun CarouselPager(paletteViewModel : PaletteViewModel) {
@@ -25,7 +25,7 @@ fun CarouselPager(paletteViewModel : PaletteViewModel) {
             onClick = { paletteViewModel.prevPage() }
         ) {
             Icon(
-                Icons.Outlined.KeyboardArrowLeft,
+                Icons.AutoMirrored.Outlined.KeyboardArrowLeft,
                 contentDescription = stringResource(id = R.string.left)
             )
         }
@@ -40,7 +40,7 @@ fun CarouselPager(paletteViewModel : PaletteViewModel) {
             onClick = { paletteViewModel.nextPage() }
         ) {
             Icon(
-                Icons.Outlined.KeyboardArrowRight,
+                Icons.AutoMirrored.Outlined.KeyboardArrowRight,
                 contentDescription = stringResource(id = R.string.right)
             )
         }

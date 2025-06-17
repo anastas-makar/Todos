@@ -1,4 +1,4 @@
-package pro.progr.brightcards.composable.description
+package pro.progr.todos.brightcards.composable.description
 
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable

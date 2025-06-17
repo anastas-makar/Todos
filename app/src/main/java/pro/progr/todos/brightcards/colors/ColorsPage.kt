@@ -1,6 +1,6 @@
-package pro.progr.brightcards.colors
+package pro.progr.todos.brightcards.colors
 
-import pro.progr.brightcards.carousel.Page
+import pro.progr.todos.brightcards.carousel.Page
 
 class ColorsPage(val paletteType: PaletteType) : Page {
     override fun getPageName(): String {

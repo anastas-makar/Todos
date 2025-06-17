@@ -1,9 +1,9 @@
 package pro.progr.todos.db
 
 import androidx.room.TypeConverter
-import pro.progr.brightcards.colors.ColorStyle
-import pro.progr.brightcards.colors.GouachePalette
-import pro.progr.brightcards.colors.PastelPalette
+import pro.progr.todos.brightcards.colors.ColorStyle
+import pro.progr.todos.brightcards.colors.GouachePalette
+import pro.progr.todos.brightcards.colors.PastelPalette
 
 class ColorStyleConverter {
 

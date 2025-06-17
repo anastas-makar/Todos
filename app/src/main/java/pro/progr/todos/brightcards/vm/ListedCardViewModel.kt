@@ -1,14 +1,14 @@
-package pro.progr.brightcards.vm
+package pro.progr.todos.brightcards.vm
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import pro.progr.brightcards.model.CardContent
-import pro.progr.brightcards.model.CardTag
-import pro.progr.brightcards.model.ListedCardRepositoryInterface
-import pro.progr.brightcards.model.TodoStatus
+import pro.progr.todos.brightcards.model.CardContent
+import pro.progr.todos.brightcards.model.CardTag
+import pro.progr.todos.brightcards.model.ListedCardRepositoryInterface
+import pro.progr.todos.brightcards.model.TodoStatus
 import java.time.LocalDate
 
 class ListedCardViewModel(cardContent: CardContent, val repository: ListedCardRepositoryInterface) : ViewModel() {

@@ -1,14 +1,14 @@
-package pro.progr.brightcards.vm
+package pro.progr.todos.brightcards.vm
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import pro.progr.brightcards.carousel.Carousel
-import pro.progr.brightcards.colors.ColorsPage
-import pro.progr.brightcards.colors.PaletteType
-import pro.progr.brightcards.model.PaletteRepository
+import pro.progr.todos.brightcards.carousel.Carousel
+import pro.progr.todos.brightcards.colors.ColorsPage
+import pro.progr.todos.brightcards.colors.PaletteType
+import pro.progr.todos.brightcards.model.PaletteRepository
 
 class PaletteViewModel(val repository: PaletteRepository): ViewModel() {
 

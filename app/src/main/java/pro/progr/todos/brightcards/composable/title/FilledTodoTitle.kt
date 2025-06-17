@@ -1,4 +1,4 @@
-package pro.progr.brightcards.composable.title
+package pro.progr.todos.brightcards.composable.title
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -27,7 +27,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import pro.progr.todos.R
-import pro.progr.brightcards.vm.ListedCardViewModel
+import pro.progr.todos.brightcards.vm.ListedCardViewModel
 
 @Composable
 fun FilledTodoTitle(viewModel: ListedCardViewModel) {

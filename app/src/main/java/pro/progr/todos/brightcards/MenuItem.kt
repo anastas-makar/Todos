@@ -1,4 +1,4 @@
-package pro.progr.brightcards
+package pro.progr.todos.brightcards
 
 data class MenuItem (
     val text: String,

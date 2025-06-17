@@ -1,8 +1,8 @@
-package pro.progr.brightcards.model
+package pro.progr.todos.brightcards.model
 
-import pro.progr.brightcards.MenuItem
-import pro.progr.brightcards.colors.ColorStyle
-import pro.progr.brightcards.colors.GouachePalette
+import pro.progr.todos.brightcards.MenuItem
+import pro.progr.todos.brightcards.colors.ColorStyle
+import pro.progr.todos.brightcards.colors.GouachePalette
 
 data class CardContent(
     var id: String? = null,

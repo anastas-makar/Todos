@@ -20,8 +20,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import pro.progr.todos.R
-import pro.progr.brightcards.composable.BrightCard
-import pro.progr.brightcards.vm.ListedCardViewModel
+import pro.progr.todos.brightcards.composable.BrightCard
+import pro.progr.todos.brightcards.vm.ListedCardViewModel
 import pro.progr.todos.CardsListViewModel
 import pro.progr.todos.DiamondViewModel
 import pro.progr.todos.composable.ResolveDestinations

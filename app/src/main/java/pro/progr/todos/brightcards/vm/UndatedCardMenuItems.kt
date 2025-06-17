@@ -1,7 +1,7 @@
-package pro.progr.brightcards.vm
+package pro.progr.todos.brightcards.vm
 
-import pro.progr.brightcards.MenuItem
-import pro.progr.brightcards.model.TodoStatus
+import pro.progr.todos.brightcards.MenuItem
+import pro.progr.todos.brightcards.model.TodoStatus
 
 class UndatedCardMenuItems(val todo : TodoStatus,
                            val updateDestination : (destination : Destinations) -> Unit) : ArrayList<MenuItem>() {

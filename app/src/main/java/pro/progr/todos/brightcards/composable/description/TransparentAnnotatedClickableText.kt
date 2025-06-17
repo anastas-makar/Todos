@@ -1,4 +1,4 @@
-package pro.progr.brightcards.composable.description
+package pro.progr.todos.brightcards.composable.description
 
 import android.util.Log
 import androidx.compose.foundation.layout.ColumnScope

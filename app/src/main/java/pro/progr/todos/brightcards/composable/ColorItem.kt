@@ -1,4 +1,4 @@
-package pro.progr.brightcards.composable
+package pro.progr.todos.brightcards.composable
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -11,7 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import pro.progr.brightcards.colors.ColorStyle
+import pro.progr.todos.brightcards.colors.ColorStyle
 
 @Composable
 fun ColorItem(color: ColorStyle, selectedColor: ColorStyle, onColorSelected: (ColorStyle) -> Unit) {

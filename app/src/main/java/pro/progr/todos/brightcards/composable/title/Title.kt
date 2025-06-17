@@ -1,8 +1,8 @@
-package pro.progr.brightcards.composable.title
+package pro.progr.todos.brightcards.composable.title
 
 import androidx.compose.runtime.Composable
-import pro.progr.brightcards.model.TodoStatus
-import pro.progr.brightcards.vm.ListedCardViewModel
+import pro.progr.todos.brightcards.model.TodoStatus
+import pro.progr.todos.brightcards.vm.ListedCardViewModel
 
 @Composable
 fun Title(viewModel: ListedCardViewModel) {

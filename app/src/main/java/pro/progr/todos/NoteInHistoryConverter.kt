@@ -1,9 +1,9 @@
 package pro.progr.todos
 
-import pro.progr.brightcards.MenuItem
-import pro.progr.brightcards.model.CardContent
-import pro.progr.brightcards.model.CardTag
-import pro.progr.brightcards.model.StringAnnotation
+import pro.progr.todos.brightcards.MenuItem
+import pro.progr.todos.brightcards.model.CardContent
+import pro.progr.todos.brightcards.model.CardTag
+import pro.progr.todos.brightcards.model.StringAnnotation
 import pro.progr.todos.db.NoteInHistory
 import pro.progr.todos.db.NoteInHistoryWithData
 import pro.progr.todos.db.NoteTag

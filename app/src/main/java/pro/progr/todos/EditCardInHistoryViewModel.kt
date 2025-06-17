@@ -10,10 +10,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import pro.progr.brightcards.colors.ColorStyle
-import pro.progr.brightcards.model.CardContent
-import pro.progr.brightcards.model.StringAnnotation
-import pro.progr.brightcards.vm.CardViewModel
+import pro.progr.todos.brightcards.colors.ColorStyle
+import pro.progr.todos.brightcards.model.CardContent
+import pro.progr.todos.brightcards.model.StringAnnotation
+import pro.progr.todos.brightcards.vm.CardViewModel
 import java.time.LocalDate
 
 class EditCardInHistoryViewModel private constructor(

@@ -1,4 +1,4 @@
-package pro.progr.brightcards.colors
+package pro.progr.todos.brightcards.colors
 
 enum class PastelPalette(val rgb: Long) : ColorStyle {
     PINK(0xffFFCDD2),

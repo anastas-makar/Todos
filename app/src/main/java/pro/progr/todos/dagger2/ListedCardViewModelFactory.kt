@@ -2,8 +2,8 @@ package pro.progr.todos.dagger2
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import pro.progr.brightcards.model.CardContent
-import pro.progr.brightcards.vm.ListedCardViewModel
+import pro.progr.todos.brightcards.model.CardContent
+import pro.progr.todos.brightcards.vm.ListedCardViewModel
 import pro.progr.todos.ListedCardRepository
 import pro.progr.todos.db.Note
 import pro.progr.todos.db.NoteAndHistoryDao

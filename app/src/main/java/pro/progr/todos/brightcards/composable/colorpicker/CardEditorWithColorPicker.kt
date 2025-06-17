@@ -1,4 +1,4 @@
-package pro.progr.brightcards.composable.colorpicker
+package pro.progr.todos.brightcards.composable.colorpicker
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -21,10 +21,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import pro.progr.brightcards.composable.EditCard
-import pro.progr.brightcards.composable.visual.ColorPickerButton
-import pro.progr.brightcards.vm.CardViewModel
-import pro.progr.brightcards.vm.PaletteViewModel
+import pro.progr.todos.brightcards.composable.EditCard
+import pro.progr.todos.brightcards.composable.visual.ColorPickerButton
+import pro.progr.todos.brightcards.vm.CardViewModel
+import pro.progr.todos.brightcards.vm.PaletteViewModel
 
 @ExperimentalMaterialApi
 @Composable

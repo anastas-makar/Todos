@@ -1,4 +1,4 @@
-package pro.progr.brightcards.composable
+package pro.progr.todos.brightcards.composable
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -12,9 +12,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import pro.progr.brightcards.composable.description.Description
-import pro.progr.brightcards.composable.title.Title
-import pro.progr.brightcards.vm.ListedCardViewModel
+import pro.progr.todos.brightcards.composable.description.Description
+import pro.progr.todos.brightcards.composable.title.Title
+import pro.progr.todos.brightcards.vm.ListedCardViewModel
 
 @Composable
 fun BrightCard(viewModel: ListedCardViewModel, onclick: () -> Unit = {}) {

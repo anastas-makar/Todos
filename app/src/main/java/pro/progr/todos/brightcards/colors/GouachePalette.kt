@@ -1,4 +1,4 @@
-package pro.progr.brightcards.colors
+package pro.progr.todos.brightcards.colors
 
 enum class GouachePalette(val rgb: Long) : ColorStyle {
     LIME_PIE(0xff2f4f2f),

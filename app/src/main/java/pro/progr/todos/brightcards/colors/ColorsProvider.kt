@@ -1,4 +1,4 @@
-package pro.progr.brightcards.colors
+package pro.progr.todos.brightcards.colors
 
 
 class ColorsProvider {
