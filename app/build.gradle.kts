@@ -95,3 +95,20 @@ dependencies {
     implementation("pro.progr:flow:0.1.0-alpha")
     implementation("pro.progr:diamond-api:1.0.0-alpha")
 }
+
+publishing {
+    publications {
+        create<MavenPublication>("release") {
+            artifact("$buildDir/outputs/aar/app-release.aar")
+
+            groupId = "pro.progr"
+            artifactId = "todos"
+            version = "0.0.1-alpha"
+        }
+    }
+    repositories {
+        maven {
+            url = uri("file://${buildDir}/repo")
+        }
+    }
+}
