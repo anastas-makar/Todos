@@ -4,8 +4,9 @@ import android.content.SharedPreferences
 import pro.progr.todos.brightcards.colors.ColorsPage
 import pro.progr.todos.brightcards.colors.PaletteType
 import pro.progr.todos.brightcards.model.PaletteRepository
+import javax.inject.Inject
 
-class PaletteRepository(private val sharedPreferences: SharedPreferences) : PaletteRepository {
+class PaletteRepository @Inject constructor(private val sharedPreferences: SharedPreferences) : PaletteRepository {
 
     companion object {
         const val SHARED_PREFS_NAME = "palette_prefs"

@@ -9,8 +9,9 @@ import pro.progr.todos.brightcards.carousel.Carousel
 import pro.progr.todos.brightcards.colors.ColorsPage
 import pro.progr.todos.brightcards.colors.PaletteType
 import pro.progr.todos.brightcards.model.PaletteRepository
+import javax.inject.Inject
 
-class PaletteViewModel(val repository: PaletteRepository): ViewModel() {
+class PaletteViewModel @Inject constructor(val repository: PaletteRepository): ViewModel() {
 
     private val carousel : Carousel<ColorsPage>
     val currentPage : MutableState<ColorsPage>

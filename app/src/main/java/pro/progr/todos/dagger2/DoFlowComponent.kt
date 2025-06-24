@@ -10,7 +10,8 @@ import javax.inject.Singleton
 @Singleton
 @Component(modules = [DatabaseModule::class,
     ViewModelModule::class,
-    ViewModelFactoryModule::class])
+    ViewModelFactoryModule::class,
+    DatabaseModule::class])
 interface DoFlowComponent {
     fun inject(application: Application)
     fun inject(cardRepository: CardRepository)
