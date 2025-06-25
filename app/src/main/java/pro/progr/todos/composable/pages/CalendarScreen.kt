@@ -13,6 +13,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import pro.progr.todos.brightcards.model.CardContent
 import pro.progr.todos.CardsListViewModel
 import pro.progr.todos.DiamondViewModel
@@ -31,7 +32,7 @@ import pro.progr.lists.ListedContentFrame
 import pro.progr.lists.ListsViewModel
 import java.time.LocalDate
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalCoroutinesApi::class)
 @Composable
 fun CalendarScreen(
     appDrawer : @Composable (drawerState: DrawerState,

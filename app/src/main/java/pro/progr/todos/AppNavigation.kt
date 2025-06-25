@@ -1,5 +1,6 @@
 package pro.progr.todos
 
+import android.app.Application
 import androidx.compose.material.DrawerState
 import androidx.compose.material.DrawerValue
 import androidx.compose.material.ExperimentalMaterialApi
@@ -12,11 +13,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import pro.progr.lists.ListsViewModel
 import pro.progr.todos.composable.pages.CalendarScreen
+import pro.progr.todos.dagger2.AppModule
+import pro.progr.todos.dagger2.DaggerTodosComponent
 
-@OptIn(ExperimentalMaterialApi::class)
 @kotlinx.coroutines.ExperimentalCoroutinesApi
 @Composable
 fun AppNavigation(
@@ -29,7 +30,10 @@ fun AppNavigation(
     drawerState: DrawerState
 ) {
 
-    val paletteViewModelState = remember { mutableStateOf(paletteViewModel) }
+    val component = DaggerTodosComponent.builder()
+        .application(appContext as Application)
+        .appModule(AppModule(appContext as Application))
+        .build()
 
     val commonListsViewModel: ListsViewModel = viewModel(factory = listsViewModelFactory)
 
