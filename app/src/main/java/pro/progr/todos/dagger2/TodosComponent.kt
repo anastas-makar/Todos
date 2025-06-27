@@ -15,6 +15,12 @@ import javax.inject.Singleton
 interface TodosComponent {
     fun cardViewModelFactory(): CardViewModelFactory
 
+    fun listsViewModelFactory(): ListsViewModelFactory
+
+    fun daggerViewModelFactory(): DaggerViewModelFactory
+
+    fun listedCardViewModelFactory(): ListedCardViewModelFactory
+
     @Component.Builder
     interface Builder {
         @BindsInstance
