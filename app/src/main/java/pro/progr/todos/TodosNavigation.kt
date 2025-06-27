@@ -2,13 +2,8 @@ package pro.progr.todos
 
 import android.app.Application
 import androidx.compose.material.DrawerState
-import androidx.compose.material.DrawerValue
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.rememberDrawerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModelProvider
@@ -25,9 +20,9 @@ import pro.progr.todos.dagger2.DaggerTodosComponent
 
 @kotlinx.coroutines.ExperimentalCoroutinesApi
 @Composable
-fun AppNavigation(
+fun TodosNavigation(
     appDrawer : @Composable (drawerState: DrawerState,
-                             viewModel: DiamondViewModel,
+                             diamondViewModel: DiamondViewModel,
                              navController: NavHostController,
                              content : @Composable () -> Unit) -> Unit,
     diamondViewModel: DiamondViewModel,
@@ -60,8 +55,8 @@ fun AppNavigation(
         ViewModelProvider(viewModelStoreOwner, listedCardViewModelFactory).get(note.toString() + date?.toString(), ListedCardViewModel::class.java)
     }
 
-    NavHost(navController = navController, startDestination = "todos") {
-        composable("todos") {
+    NavHost(navController = navController, startDestination = "calendar") {
+        composable("calendar") {
 
             val tagsViewModel: TagsViewModel = viewModel(factory = daggerViewModelFactory)
 
