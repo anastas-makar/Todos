@@ -12,6 +12,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import pro.progr.lists.ListsViewModel
 import pro.progr.todos.brightcards.vm.ListedCardViewModel
 import pro.progr.todos.composable.pages.CalendarScreen
@@ -23,10 +24,10 @@ import pro.progr.todos.dagger2.DaggerTodosComponent
 fun TodosNavigation(
     appDrawer : @Composable (drawerState: DrawerState,
                              diamondViewModel: DiamondViewModel,
-                             navController: NavHostController,
+                             externalNavController: NavHostController,
                              content : @Composable () -> Unit) -> Unit,
     diamondViewModel: DiamondViewModel,
-    navController: NavHostController,
+    externalNavController: NavHostController,
     drawerState: DrawerState
 ) {
 
@@ -55,6 +56,8 @@ fun TodosNavigation(
         ViewModelProvider(viewModelStoreOwner, listedCardViewModelFactory).get(note.toString() + date?.toString(), ListedCardViewModel::class.java)
     }
 
+    val navController = rememberNavController()
+
     NavHost(navController = navController, startDestination = "calendar") {
         composable("calendar") {
 
@@ -63,6 +66,7 @@ fun TodosNavigation(
             CalendarScreen(
                 appDrawer = appDrawer,
                 diamondViewModel = diamondViewModel,
+                externalNavController = externalNavController,
                 navController = navController,
                 drawerState = drawerState,
                 cardsListViewModel = cardsListViewModel,

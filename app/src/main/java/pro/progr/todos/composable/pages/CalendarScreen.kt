@@ -37,9 +37,10 @@ import java.time.LocalDate
 fun CalendarScreen(
     appDrawer : @Composable (drawerState: DrawerState,
         viewModel: DiamondViewModel,
-        navController: NavHostController,
+        externalNavController: NavHostController,
         content : @Composable () -> Unit) -> Unit,
     diamondViewModel: DiamondViewModel,
+    externalNavController: NavHostController,
     navController: NavHostController,
     drawerState: DrawerState,
     cardsListViewModel: CardsListViewModel,
@@ -52,7 +53,7 @@ fun CalendarScreen(
         drawerState.close()
     }
 
-    appDrawer(drawerState, diamondViewModel, navController) {
+    appDrawer(drawerState, diamondViewModel, externalNavController) {
 
         if (commonListsViewModel.selectedListState.value != null) {
             cardsListViewModel.useList((commonListsViewModel.selectedListState.value as NList).sublistChain)
