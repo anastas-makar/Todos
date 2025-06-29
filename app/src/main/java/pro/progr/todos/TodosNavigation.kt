@@ -29,7 +29,8 @@ fun TodosNavigation(
                              diamondViewModel: GetDiamondsCountInterface,
                              externalNavController: NavHostController,
                              content : @Composable () -> Unit) -> Unit,
-    externalNavController: NavHostController
+    externalNavController: NavHostController,
+    diamondViewModel : DiamondViewModel
 ) {
 
     val appContext = LocalContext.current.applicationContext
@@ -45,7 +46,6 @@ fun TodosNavigation(
 
     val commonListsViewModel: ListsViewModel = viewModel(factory = component.listsViewModelFactory())
     val cardsListViewModel : CardsListViewModel = viewModel(factory = daggerViewModelFactory)
-    val diamondViewModel : DiamondViewModel = viewModel(factory = daggerViewModelFactory)
 
     val historyState = cardsListViewModel.getHistoryFlow().collectAsState(null)
 
