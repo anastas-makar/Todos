@@ -2,6 +2,8 @@ package pro.progr.todos
 
 import android.app.Application
 import androidx.compose.material.DrawerState
+import androidx.compose.material.DrawerValue
+import androidx.compose.material.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
@@ -13,6 +15,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import pro.progr.diamondapi.GetDiamondsCountInterface
 import pro.progr.lists.ListsViewModel
 import pro.progr.todos.brightcards.vm.ListedCardViewModel
 import pro.progr.todos.composable.pages.CalendarScreen
@@ -23,15 +26,14 @@ import pro.progr.todos.dagger2.DaggerTodosComponent
 @Composable
 fun TodosNavigation(
     appDrawer : @Composable (drawerState: DrawerState,
-                             diamondViewModel: DiamondViewModel,
+                             diamondViewModel: GetDiamondsCountInterface,
                              externalNavController: NavHostController,
                              content : @Composable () -> Unit) -> Unit,
-    diamondViewModel: DiamondViewModel,
-    externalNavController: NavHostController,
-    drawerState: DrawerState
+    externalNavController: NavHostController
 ) {
 
     val appContext = LocalContext.current.applicationContext
+    val drawerState = rememberDrawerState(DrawerValue.Closed)
 
     val component = remember { DaggerTodosComponent.builder()
         .application(appContext as Application)
@@ -43,6 +45,7 @@ fun TodosNavigation(
 
     val commonListsViewModel: ListsViewModel = viewModel(factory = component.listsViewModelFactory())
     val cardsListViewModel : CardsListViewModel = viewModel(factory = daggerViewModelFactory)
+    val diamondViewModel : DiamondViewModel = viewModel(factory = daggerViewModelFactory)
 
     val historyState = cardsListViewModel.getHistoryFlow().collectAsState(null)
 
