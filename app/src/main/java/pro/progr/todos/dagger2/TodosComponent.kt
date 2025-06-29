@@ -3,6 +3,7 @@ package pro.progr.todos.dagger2
 import android.app.Application
 import dagger.BindsInstance
 import dagger.Component
+import pro.progr.todos.DiamondsCountRepository
 import javax.inject.Singleton
 
 @Singleton
@@ -13,6 +14,8 @@ import javax.inject.Singleton
     PaletteModule::class,
     AppModule::class])
 interface TodosComponent {
+    fun diamondsCountRepository(): DiamondsCountRepository
+    
     fun cardViewModelFactory(): CardViewModelFactory
 
     fun listsViewModelFactory(): ListsViewModelFactory
