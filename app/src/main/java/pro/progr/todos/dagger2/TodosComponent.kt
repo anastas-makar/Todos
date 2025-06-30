@@ -23,6 +23,10 @@ interface TodosComponent {
 
     fun listedCardViewModelFactory(): ListedCardViewModelFactory
 
+    fun noteCalendarViewModelFactory(): NoteCalendarViewModelFactory
+
+    fun paletteViewModelFactory(): PaletteViewModelFactory
+
     @Component.Builder
     interface Builder {
         @BindsInstance
