@@ -26,6 +26,7 @@ import pro.progr.lists.ListedContentFrame
 import pro.progr.lists.ListsViewModel
 import pro.progr.todos.CardsListViewModel
 import pro.progr.todos.DiamondViewModel
+import pro.progr.todos.NList
 import pro.progr.todos.TagsViewModel
 import pro.progr.todos.composable.BottomSearch
 import pro.progr.todos.composable.CardsList
@@ -49,10 +50,14 @@ fun ListScreen(
     tagsViewModel: TagsViewModel) {
 
     LaunchedEffect(Unit) {
-        cardsListViewModel.flushNotesSearch()
+        cardsListViewModel.flushNotesList()
         cardsListViewModel.deleteEmptyNotes()
         drawerState.close()
     }
+    if (commonListsViewModel.selectedListState.value != null) {
+        cardsListViewModel.useList((commonListsViewModel.selectedListState.value as NList).sublistChain)
+    }
+
 
     appDrawer(drawerState, diamondViewModel, navController) {
 

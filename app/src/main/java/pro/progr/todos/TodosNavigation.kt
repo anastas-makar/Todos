@@ -5,7 +5,6 @@ import androidx.compose.material.DrawerState
 import androidx.compose.material.DrawerValue
 import androidx.compose.material.rememberDrawerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -98,19 +97,6 @@ fun TodosNavigation(
 
         }
         composable("list") {
-
-            LaunchedEffect(Unit) {
-                cardsListViewModel.flushNotesList()
-                cardsListViewModel.deleteEmptyNotes()
-            }
-            if (commonListsViewModel.selectedListState.value != null) {
-                cardsListViewModel.useList((commonListsViewModel.selectedListState.value as NList).sublistChain)
-            }
-            // Состояние для Drawer
-            val drawerState = rememberDrawerState(DrawerValue.Closed)
-
-            val diamondViewModel: DiamondViewModel = viewModel(factory = daggerViewModelFactory)
-
             val tagsViewModel: TagsViewModel = viewModel(factory = daggerViewModelFactory)
 
             ListScreen(

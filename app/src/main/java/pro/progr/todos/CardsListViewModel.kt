@@ -169,6 +169,7 @@ class CardsListViewModel @Inject constructor(
         )
     }
 
+    //это поиск для календаря
     fun flushNotesSearch() {
         if (!notesRepository.getQueryBuilder().isEmpty()) {
             notesRepository.updateQuery(notesRepository.getQueryBuilder()
@@ -180,6 +181,7 @@ class CardsListViewModel @Inject constructor(
         }
     }
 
+    //Это поиск для списка
     fun flushNotesList() {
         notesRepository.updateQuery(
             notesRepository.getQueryBuilder()
