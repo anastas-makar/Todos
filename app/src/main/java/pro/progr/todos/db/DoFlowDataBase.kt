@@ -31,7 +31,6 @@ abstract class DoFlowDataBase : RoomDatabase() {
     abstract fun noteListsDao(): NoteListsDao
     abstract fun noteWithDataDao(): NoteWithDataDao
     abstract fun tagsDao(): TagsDao
-    abstract fun noteToTagDao(): NoteToTagDao
     abstract fun noteAndHistoryDao(): NoteAndHistoryDao
     abstract fun notesInHistoryDao(): NotesInHistoryDao
     abstract fun diamondsCountDao(): DiamondsCountDao

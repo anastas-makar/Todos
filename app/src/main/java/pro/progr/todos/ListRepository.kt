@@ -12,6 +12,7 @@ import pro.progr.todos.db.NotesDao
 import pro.progr.todos.db.SublistChain
 import pro.progr.lists.ListsRepository
 import pro.progr.lists.NestedList
+import java.util.UUID
 import javax.inject.Inject
 
 class ListRepository @Inject constructor(
@@ -30,7 +31,7 @@ class ListRepository @Inject constructor(
             noteListsDao.getAllNoteLists().collectLatest { notesList ->
 
                 if (notesList.isEmpty()) {
-                    noteListsDao.insertFirst("Все записи", 1)
+                    noteListsDao.insertFirst("Все записи", 1, UUID.randomUUID().toString())
                 } else {
                     listsFlow.value = notesList.map { noteList ->
                         ListsConverter.toNList(noteList)
@@ -46,11 +47,15 @@ class ListRepository @Inject constructor(
     override fun selectList(list: NestedList) {
     }
 
-    override fun addSublistToList(list: NestedList) : Long {
+    override fun addSublistToList(list: NestedList) : String {
 
         val nList = (list as NList)
 
-        return noteListsDao.insertNextIntoSublist("", nList.sublistChain)
+        val id = UUID.randomUUID().toString()
+
+        noteListsDao.insertNextIntoSublist("", nList.sublistChain, id)
+
+        return id
     }
 
     override fun deleteList(list: NestedList) {

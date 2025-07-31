@@ -82,7 +82,9 @@ class CardRepository @Inject constructor(
     }
 
     override suspend fun saveCard(cardContent: CardContent) : CardContent {
-        return getCard(notesWithDataDao.insert(NoteConverter.toNote(cardContent)).toString())
+        val note = NoteConverter.toNote(cardContent)
+        notesWithDataDao.insert(note)
+        return getCard(note.id)
     }
 
     override suspend fun updateCard(cardContent: CardContent) {

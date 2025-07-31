@@ -9,14 +9,16 @@ interface NoteListsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(notesList: NotesList) : Long
 
-    @Query("INSERT INTO note_lists(title, is_current, sublist_chain) SElECT :listName, 0, " +
-            ":parentChain || ':' || (MAX(REPLACE(sublist_chain, :parentChain || ':', \"\")) + 1) FROM note_lists WHERE sublist_chain LIKE :parentChain || '%'" +
+    @Query("INSERT INTO note_lists(title, is_current, sublist_chain, id) SElECT :listName, 0, " +
+            ":parentChain || ':' || (MAX(REPLACE(sublist_chain, :parentChain || ':', \"\")) + 1), :id " +
+            " FROM note_lists WHERE sublist_chain LIKE :parentChain || '%'" +
             " AND NOT sublist_chain LIKE :parentChain || '%:'")
     fun insertNextIntoSublist(listName : String,
-                              @TypeConverters(SublistChainConverter::class) parentChain : SublistChain) : Long
+                              @TypeConverters(SublistChainConverter::class) parentChain : SublistChain,
+                              id: String)
 
-    @Query("INSERT INTO note_lists(title, is_current, sublist_chain) VALUES (:listName, :current, 1)")
-    fun insertFirst(listName: String, current : Int)
+    @Query("INSERT INTO note_lists(title, is_current, sublist_chain, id) VALUES (:listName, :current, 1, :id)")
+    fun insertFirst(listName: String, current : Int, id:String)
 /*
     Использовать метод insertNextIntoSublist
     @Insert(onConflict = OnConflictStrategy.REPLACE)

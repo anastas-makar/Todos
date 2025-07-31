@@ -7,7 +7,7 @@ interface ListsRepository {
 
     fun selectList(list: NestedList)
 
-    fun addSublistToList(list: NestedList) : Long
+    fun addSublistToList(list: NestedList) : String
 
     fun deleteList(list: NestedList)
 

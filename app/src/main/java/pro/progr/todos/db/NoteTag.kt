@@ -15,7 +15,7 @@ data class NoteTag(
 
 
     override fun hashCode(): Int {
-        return id.toInt()
+        return id.hashCode()
     }
 
     override fun equals(other: Any?): Boolean {

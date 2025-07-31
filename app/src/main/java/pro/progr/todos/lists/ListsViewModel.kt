@@ -36,7 +36,7 @@ class ListsViewModel(private val repository: ListsRepository) : ViewModel() {
 
     fun addSublistToList(list: NestedList) {
         viewModelScope.launch(Dispatchers.Default) {
-            val resultId = repository.addSublistToList(list).toString()
+            val resultId = repository.addSublistToList(list)
             withContext(Dispatchers.Main) {
                 editedListIdState.value = resultId
             }

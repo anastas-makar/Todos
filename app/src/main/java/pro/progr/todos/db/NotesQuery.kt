@@ -42,7 +42,7 @@ class NotesQuery(
                     (if (description.isNotEmpty()) "title || description LIKE :description AND " else "") +
                          " sublist_chain LIKE :sublistChain " +
                     (if (tags.isEmpty()) "" else " AND id IN (SELECT note_id FROM note_to_tag WHERE tag_id IN (" +
-                            tags.joinToString(separator = ",", transform = { it.id.toString() }) +")) " )+
+                            tags.joinToString(separator = ",", transform = { "\'${it.id}\'" }) +")) " )+
                     (if (noteIdToExcludeWithLinks == null)  ""
                         else " AND id NOT IN (SELECT note_from FROM note_to_note WHERE note_to = ${noteIdToExcludeWithLinks}) " +
                             "AND id <> ${noteIdToExcludeWithLinks} " ) +
@@ -57,7 +57,7 @@ class NotesQuery(
                     (if (description.isNotEmpty()) "title || description LIKE :description AND " else "") +
                     " sublist_chain LIKE :sublistChain " +
                     (if (tags.isEmpty()) "" else " AND noteId IN (SELECT note_id FROM note_to_tag WHERE tag_id IN (" +
-                            tags.joinToString(separator = ",", transform = { it.id.toString() }) +")) " ) +
+                            tags.joinToString(separator = ",", transform = { "\'${it.id}\'" }) +")) " ) +
                     " ORDER BY id DESC"
         }
 
