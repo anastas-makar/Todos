@@ -56,7 +56,7 @@ class ListedCardViewModel(cardContent: CardContent, val repository: ListedCardRe
         card.value.id?.let {noteId ->
             viewModelScope.launch(Dispatchers.Default) {
 
-                repository.removeForDay(date, noteId = noteId.toLong())
+                repository.removeForDay(date, noteId = noteId)
             }
         }
     }

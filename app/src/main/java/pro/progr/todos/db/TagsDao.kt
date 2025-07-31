@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface TagsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(tag: NoteTag) : Long
+    fun insert(tag: NoteTag) 
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(tags: List<NoteTag>) : List<Long>

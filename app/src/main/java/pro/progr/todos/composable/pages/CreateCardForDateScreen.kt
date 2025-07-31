@@ -46,8 +46,8 @@ fun CreateCardForDateScreen(cardViewModel: CardViewModel,
                 gotCardId
             )
 
-            if (noteCalendarViewModelFactory.noteId != gotCardId.toLong()) {
-                noteCalendarViewModelFactory.noteId = gotCardId.toLong()
+            if (noteCalendarViewModelFactory.noteId != gotCardId) {
+                noteCalendarViewModelFactory.noteId = gotCardId
                 cardViewModel.setSchedule(
                     Schedule(
                         Schedule.Pattern(

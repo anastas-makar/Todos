@@ -24,11 +24,11 @@ interface NoteAndHistoryDao {
 
 
     @Query("UPDATE notes_in_history SET todo = 'DONE' WHERE noteId = :noteId AND date = :day")
-    fun setNoteInHistoryDone(noteId: Long, day: Long) : Int
+    fun setNoteInHistoryDone(noteId: String, day: Long) : Int
 
 
     @Query("UPDATE notes_in_history SET todo = 'TODO' WHERE noteId = :noteId AND date = :day")
-    fun setNoteInHistoryNotDone(noteId: Long, day: Long) : Int
+    fun setNoteInHistoryNotDone(noteId: String, day: Long) : Int
 
     //todo: нужно заменить это на update, т.к. при изменении карточки она и на сегодня должна меняться
     @Query("""
@@ -46,7 +46,7 @@ interface NoteAndHistoryDao {
 """)
     @TypeConverters(ScheduleConverter::class, SublistChainConverter::class)
     fun updateNoteInHistory(
-        noteId: Long,
+        noteId: String,
         date: Long,
         title: String,
         description: String,
@@ -92,7 +92,7 @@ interface NoteAndHistoryDao {
     }
 
     @Query("SELECT COUNT(*) FROM notes_in_history WHERE noteId=:noteId AND date=:day AND edited=0")
-    suspend fun findNotEdited(noteId: Long, day: Long): Int
+    suspend fun findNotEdited(noteId: String, day: Long): Int
 
     @Transaction
     suspend fun setCardDoneAndUpdateHistory(note: Note, historyNote: NoteInHistory, day: Long) {
@@ -107,7 +107,7 @@ interface NoteAndHistoryDao {
     }
 
     @Query("UPDATE notes SET todo='DONE' WHERE id=:noteId AND pattern_type='NO_TERMS'")
-    suspend fun updateNoteDoneIfNoTerms(noteId: Long)
+    suspend fun updateNoteDoneIfNoTerms(noteId: String)
 
     @Transaction
     suspend fun setCardNotDoneAndUpdateHistory(note: Note, historyNote: NoteInHistory, day: Long) {
@@ -148,13 +148,13 @@ interface NoteAndHistoryDao {
     }
 
     @Query("DELETE FROM notes_in_history WHERE date=:date AND noteId=:noteId")
-    fun remoCardForDay(date: Long, noteId: Long)
+    fun remoCardForDay(date: Long, noteId: String)
 
     @Query("SELECT MAX(date) FROM notes_in_history")
     fun getLatestDate(): Long?
 
     @Query("SELECT * FROM notes_in_history WHERE noteId=:noteId AND date=:epochDay")
-    fun getNoteInHistory(noteId: Long, epochDay: Long): NoteInHistory?
+    fun getNoteInHistory(noteId: String, epochDay: Long): NoteInHistory?
 
     /**
      * Для других дней история может сохраняться при удалении задачи, а на сегодня -- нет

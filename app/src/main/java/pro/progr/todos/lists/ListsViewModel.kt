@@ -5,7 +5,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -27,8 +26,8 @@ class ListsViewModel(private val repository: ListsRepository) : ViewModel() {
                         selectedListState.value = listOfLists[0]
                     } else {
                         //случай с обновлением описания у списка
-                        val currentId = selectedListState.value?.getId()
-                        selectedListState.value = listOfLists.first { nestedList -> nestedList.getId() == currentId }
+                        val currentId = selectedListState.value?.id
+                        selectedListState.value = listOfLists.first { nestedList -> nestedList.id == currentId }
                     }
                 }
             }

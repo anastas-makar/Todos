@@ -14,17 +14,11 @@ interface NoteWithDataDao {
     @RawQuery(observedEntities = [NoteWithData::class])
     fun getNotesWithTags(query: SupportSQLiteQuery) : Flow<List<NoteWithData>>
 
-    @Query("SELECT * FROM note_to_note WHERE note_to=:noteToId")
-    fun getLinkedToNote(noteToId : Long) : Flow<List<LinkWithNoteAndTags>>
-
     @Query("DELETE FROM notes WHERE id = :noteId")
-    fun deleteNoteById(noteId : Long)
-
-    @Query("DELETE FROM note_to_note WHERE note_from = :noteId OR note_to=:noteId")
-    fun deleteNoteToNote(noteId : Long)
+    fun deleteNoteById(noteId : String)
 
     @Query("DELETE FROM note_to_tag WHERE note_id = :noteId")
-    fun deleteNoteToTag(noteId: Long)
+    fun deleteNoteToTag(noteId: String)
 
     @Insert
     fun insertNoteToTags(notesToTags : List<NoteToTagXRef>)
@@ -33,9 +27,8 @@ interface NoteWithDataDao {
     fun insertNoteToTag(notesToTag : NoteToTagXRef)
 
     @Transaction
-    open fun deleteAllByNoteId(noteId: Long) {
+    open fun deleteAllByNoteId(noteId: String) {
         deleteNoteById(noteId)
-        deleteNoteToNote(noteId)
         deleteNoteToTag(noteId)
     }
 
@@ -57,15 +50,15 @@ interface NoteWithDataDao {
         })
     }
 
-    open fun addNoteTag(tagId : Long, noteId : Long) {
+    open fun addNoteTag(tagId : String, noteId : String) {
         insertNoteToTag(NoteToTagXRef(noteId = noteId, tagId = tagId))
     }
 
     @Query("SELECT * FROM notes WHERE id = :noteId")
-    fun getNote(noteId: Long): NoteWithData
+    fun getNote(noteId: String): NoteWithData
 
     @Query("SELECT * FROM notes WHERE id = :noteId")
-    fun getNoteFlow(noteId: Long): Flow<NoteWithData?>
+    fun getNoteFlow(noteId: String): Flow<NoteWithData?>
 
     @Transaction
     fun deleteWithHistoryForDate(note: Note, date: Long) : Int {
@@ -74,11 +67,11 @@ interface NoteWithDataDao {
     }
 
     @Query("DELETE FROM notes_in_history WHERE noteId = :noteId AND date = :date")
-    fun deleteInHistory(date: Long, noteId: Long)
+    fun deleteInHistory(date: Long, noteId: String)
 
     @Delete
     fun delete(note: Note): Int
 
     @Query("DELETE FROM note_to_tag WHERE tag_id = :tagId AND note_id = :noteId")
-    fun removeNoteTag(tagId: Long, noteId: Long)
+    fun removeNoteTag(tagId: String, noteId: String)
 }

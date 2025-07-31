@@ -7,7 +7,7 @@ interface ListedCardRepositoryInterface {
     suspend fun setNoteInHistoryDone(cardContent: CardContent, date: LocalDate)
     suspend fun setCardNotDone(cardContent: CardContent)
 
-    suspend fun removeForDay(date: LocalDate, noteId: Long)
+    suspend fun removeForDay(date: LocalDate, noteId: String)
     suspend fun addCardToHistory(cardContent: CardContent, date: LocalDate)
     suspend fun addCardForDay(cardContent: CardContent, date: LocalDate)
 }

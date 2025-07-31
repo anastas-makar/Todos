@@ -1,6 +1,7 @@
 package pro.progr.todos.db
 
 import androidx.room.*
+import java.util.UUID
 
 @Entity(tableName = "note_lists",
     indices = arrayOf(
@@ -8,8 +9,8 @@ import androidx.room.*
     ))
 @TypeConverters(SublistChainConverter::class)
 data class NotesList (
-    @PrimaryKey(autoGenerate = true)
-    val id : Int = 0,
+    @PrimaryKey(autoGenerate = false)
+    var id: String = UUID.randomUUID().toString(),
 
     var title: String,
 

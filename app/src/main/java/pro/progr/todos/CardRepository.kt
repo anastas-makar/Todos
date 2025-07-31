@@ -31,25 +31,25 @@ class CardRepository @Inject constructor(
     private val parentJob = Job()
     private val coroutineScope = CoroutineScope(Dispatchers.Default + parentJob)
 
-    private var scheduleSetForId : Long? = null
+    private var scheduleSetForId : String? = null
 
     override suspend fun getCard(id: String): CardContent {
-        observeNoteFromBase(id.toLong())
+        observeNoteFromBase(id)
 
-        note = notesWithDataDao.getNote(id.toLong())
+        note = notesWithDataDao.getNote(id)
 
         //todo
         return NoteConverter.toCardContent(note)
     }
 
-    fun getCardInHistory(id: Long, epochDay: Long): CardContent? {
+    fun getCardInHistory(id: String, epochDay: Long): CardContent? {
         val noteInHistory = noteAndHistoryDao.getNoteInHistory(id, epochDay)
 
         noteInHistory?.let {
 
             val cardContent = NoteInHistoryConverter.toCardContent(noteInHistory)
 
-            note = NoteWithData(NoteConverter.toNote(cardContent), emptyList(), emptyList())
+            note = NoteWithData(NoteConverter.toNote(cardContent), emptyList())
 
             return cardContent
 
@@ -67,7 +67,7 @@ class CardRepository @Inject constructor(
             )
     }
 
-    fun observeNoteFromBase(id : Long) {
+    fun observeNoteFromBase(id : String) {
         coroutineScope.launch {
             notesWithDataDao.getNoteFlow(id).collectLatest { noteFromBase ->
                 noteFromBase?.let {
@@ -177,15 +177,18 @@ class CardRepository @Inject constructor(
         noteAndHistoryDao.setCardDoneAndUpdateHistory(note, historyNote, LocalDate.now().toEpochDay())
     }
 
-    fun insertTag(tagName: String) : Long {
-        return tagsDao.insert(NoteTag(title = tagName))
+    fun insertTag(tagName: String) : String {
+        val nTag = NoteTag(title = tagName)
+        tagsDao.insert(nTag)
+
+        return nTag.id
     }
 
-    fun addTag(tagId: Long, noteId: Long) {
+    fun addTag(tagId: String, noteId: String) {
         notesWithDataDao.addNoteTag(tagId = tagId, noteId = noteId)
     }
 
-    fun removeNoteTag(tagId: Long, noteId: Long) {
+    fun removeNoteTag(tagId: String, noteId: String) {
         notesWithDataDao.removeNoteTag(tagId = tagId, noteId = noteId)
     }
 
@@ -193,7 +196,7 @@ class CardRepository @Inject constructor(
         noteAndHistoryDao.updateNoteDates(note.note)
     }
 
-    suspend fun removeForDay(date: LocalDate, noteId: Long) {
+    suspend fun removeForDay(date: LocalDate, noteId: String) {
         noteAndHistoryDao.remoCardForDay(date.toEpochDay(), noteId)
     }
 }

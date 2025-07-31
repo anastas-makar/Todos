@@ -17,7 +17,7 @@ import javax.inject.Inject
 
 class NoteCalendarViewModel @Inject constructor(
     var datesGridRepository: DatesGridRepository,
-    id: Long
+    id: String
 ) : CalendarViewModel(datesGridRepository) {
 
     private var _note: MutableState<Note?> = mutableStateOf(null)

@@ -2,12 +2,13 @@ package pro.progr.todos.db
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.util.UUID
 
 @Entity(
     tableName = "note_tag")
 data class NoteTag(
-    @PrimaryKey(autoGenerate = true)
-    var id: Long = 0,
+    @PrimaryKey(autoGenerate = false)
+    var id: String = UUID.randomUUID().toString(),
 
     val title: String
 ) {

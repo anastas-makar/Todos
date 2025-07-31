@@ -61,7 +61,7 @@ class EditCardInHistoryViewModel private constructor(
 
     override fun getCard(id: String) : Job {
         return viewModelScope.launch (Dispatchers.Default) {
-            repository.getCardInHistory(id.toLong(), epochDay)?.let { cardContent ->
+            repository.getCardInHistory(id, epochDay)?.let { cardContent ->
                 _cardContent.value = cardContent
 
             }
@@ -116,7 +116,7 @@ class EditCardInHistoryViewModel private constructor(
         cardContent.value.id?.let {noteId ->
             viewModelScope.launch(Dispatchers.Default) {
 
-                repository.removeForDay(date, noteId = noteId.toLong())
+                repository.removeForDay(date, noteId = noteId)
             }
         }
     }

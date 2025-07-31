@@ -66,7 +66,7 @@ class ListRepository @Inject constructor(
      * нужно избавиться от путаницы и передавать SublistChain вместо String
      */
     override fun bindListToEntity(listId: String, entityId: String) {
-        notesDao.updateSublistChain(entityId.toLong(), listId)
+        notesDao.updateSublistChain(entityId, listId)
     }
 
     override fun findParent(list: NestedList, value: List<NestedList>): NestedList? {

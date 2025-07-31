@@ -16,7 +16,7 @@ class DatesGridRepository @Inject constructor(private val notesDao: NotesDao,
     //private val _selectedDates = mutableStateOf(listOf(LocalDate.now()))
     val selectedDates : HashSet<LocalDate> = hashSetOf()
 
-    fun getNote(id : Long) : Flow<Note?> {
+    fun getNote(id : String) : Flow<Note?> {
         return notesDao.getNoteFlow(id)
     }
 

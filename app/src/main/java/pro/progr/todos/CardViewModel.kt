@@ -173,7 +173,7 @@ class CardViewModel private constructor(
     fun addTag(tag: NoteTag) {
         viewModelScope.launch (Dispatchers.Default) {
             cardContent.value.id?.let { id ->
-                repository.addTag(tagId = tag.id, noteId = id.toLong())
+                repository.addTag(tagId = tag.id, noteId = id)
                 _cardContent.value =
                     _cardContent.value.copy(
                         tags = _cardContent.value.tags.plus(CardTag(tag.id, tag.title)))
@@ -184,7 +184,7 @@ class CardViewModel private constructor(
     fun removeNoteTag(tag: NoteTag) {
         viewModelScope.launch (Dispatchers.Default) {
             cardContent.value.id?.let { id ->
-                repository.removeNoteTag(tagId = tag.id, noteId = id.toLong())
+                repository.removeNoteTag(tagId = tag.id, noteId = id)
                 _cardContent.value = _cardContent.value.copy(
                     tags = _cardContent.value.tags.filter {
                             cardTag -> cardTag.id != tag.id })

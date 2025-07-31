@@ -19,7 +19,7 @@ fun ListsEditor(listsViewModel: ListsViewModel) {
 
     if (listsViewModel.editedListIdState.value != null) {
         val nestedList = listsViewModel.nestedListState.value.find {
-            it.getId() == listsViewModel.editedListIdState.value }
+            it.id == listsViewModel.editedListIdState.value }
         nestedList?.let {
             EditListDialog(viewModel = listsViewModel,
                 nestedList = nestedList,

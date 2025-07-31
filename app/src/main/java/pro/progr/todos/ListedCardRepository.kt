@@ -100,7 +100,7 @@ class ListedCardRepository(private val noteAndHistoryDao: NoteAndHistoryDao, pri
 
         noteAndHistoryDao.setCardNotDoneAndUpdateHistory(convertedNote, historyNote, LocalDate.now().toEpochDay())
     }
-    override suspend fun removeForDay(date: LocalDate, noteId: Long) {
+    override suspend fun removeForDay(date: LocalDate, noteId: String) {
         noteAndHistoryDao.remoCardForDay(date.toEpochDay(), noteId)
     }
 }

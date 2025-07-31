@@ -28,11 +28,11 @@ interface NotesDao {
     fun getNotes(query: SupportSQLiteQuery): Flow<List<Note>>
 
     @Query("SELECT * FROM notes WHERE id = :noteId")
-    fun getNote(noteId: Long): Note
+    fun getNote(noteId: String): Note
 
     @Query("SELECT * FROM notes WHERE id = :noteId")
-    fun getNoteFlow(noteId: Long): Flow<Note?>
+    fun getNoteFlow(noteId: String): Flow<Note?>
 
     @Query("UPDATE notes SET sublist_chain = :sublistChain WHERE id = :noteId")
-    fun updateSublistChain(noteId: Long, sublistChain: String): Int
+    fun updateSublistChain(noteId: String, sublistChain: String): Int
 }

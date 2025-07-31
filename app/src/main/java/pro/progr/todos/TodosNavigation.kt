@@ -173,7 +173,7 @@ fun TodosNavigation(
 
         composable("taskSchedule/{cardId}") { backStackEntry ->
             val cardId = backStackEntry.arguments?.getString("cardId")
-            noteCalendarViewModelFactory.noteId = cardId!!.toLong()
+            noteCalendarViewModelFactory.noteId = cardId!!
             val viewModel: NoteCalendarViewModel = viewModel(factory = noteCalendarViewModelFactory)
 
             SchedulePage(viewModel, navController)

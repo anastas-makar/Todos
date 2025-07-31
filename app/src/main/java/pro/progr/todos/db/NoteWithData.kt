@@ -18,16 +18,5 @@ data class NoteWithData (
             parentColumn = "note_id",
             entityColumn = "tag_id")
     )
-    val tags : List<NoteTag>,
-
-    @Relation(
-        parentColumn = "id",
-        entity = NoteImage::class,
-        entityColumn = "id",
-        associateBy = Junction(
-            value = NoteToImageXRef::class,
-            parentColumn = "note_id",
-            entityColumn = "image_id")
-    )
-    val images : List<NoteImage>
+    val tags : List<NoteTag>
 )

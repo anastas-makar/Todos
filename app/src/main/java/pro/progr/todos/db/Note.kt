@@ -8,14 +8,15 @@ import pro.progr.diamondsandberries.db.PatternDatesConverter
 import pro.progr.diamondsandberries.db.Schedule
 import pro.progr.diamondsandberries.db.ScheduleConverter
 import pro.progr.todos.datefilters.FilterType
+import java.util.UUID
 
 @Entity(
     tableName = "notes"
 )
 @TypeConverters(SublistChainConverter::class, ColorStyleConverter::class)
 data class Note(
-    @PrimaryKey(autoGenerate = true)
-    var id: Long = 0,
+    @PrimaryKey(autoGenerate = false)
+    var id: String = UUID.randomUUID().toString(),
 
     val date: Long,
 

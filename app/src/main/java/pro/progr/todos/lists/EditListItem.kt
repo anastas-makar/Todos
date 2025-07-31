@@ -41,7 +41,7 @@ fun EditListItem(viewModel: ListsViewModel, nestedList: NestedList) {
 
         IconButton(
             onClick = {
-                viewModel.editedListIdState.value = nestedList.getId()
+                viewModel.editedListIdState.value = nestedList.id
             },
             modifier = Modifier
                 .width(50.dp)

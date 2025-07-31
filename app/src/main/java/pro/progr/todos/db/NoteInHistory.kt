@@ -6,6 +6,7 @@ import pro.progr.todos.brightcards.model.TodoStatus
 import pro.progr.diamondsandberries.db.Schedule
 import pro.progr.diamondsandberries.db.ScheduleConverter
 import pro.progr.todos.datefilters.FilterType
+import java.util.UUID
 
 @Entity(
     tableName = "notes_in_history",
@@ -14,10 +15,10 @@ import pro.progr.todos.datefilters.FilterType
     ))
 @TypeConverters(SublistChainConverter::class, ScheduleConverter::class, ColorStyleConverter::class)
 data class NoteInHistory(
-    @PrimaryKey(autoGenerate = true)
-    var id: Long = 0,
+    @PrimaryKey(autoGenerate = false)
+    var id: String = UUID.randomUUID().toString(),
 
-    var noteId: Long,
+    var noteId: String,
 
     val date: Long,
 

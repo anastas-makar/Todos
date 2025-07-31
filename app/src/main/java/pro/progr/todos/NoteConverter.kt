@@ -34,7 +34,7 @@ class NoteConverter {
             note.schedule = schedule
 
             cardContent.id?.let {
-                note.id = it.toLong()
+                note.id = it
             }
 
             return note

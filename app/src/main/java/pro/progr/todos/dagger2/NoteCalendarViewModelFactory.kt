@@ -9,7 +9,7 @@ import javax.inject.Inject
 class NoteCalendarViewModelFactory @Inject constructor(
     private val repository: DatesGridRepository
 ) : ViewModelProvider.Factory {
-    var noteId: Long = 0
+    var noteId: String = ""
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(NoteCalendarViewModel::class.java)) {

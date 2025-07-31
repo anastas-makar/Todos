@@ -140,8 +140,7 @@ class CardsListViewModel @Inject constructor(
             viewModelCreator(
                 NoteWithData(
                     note = NoteConverter.toNote(cardContent),
-                    tags = cardContent.tags.map { tag -> NoteTag(tag.id, tag.title) },
-                    images = emptyList()
+                    tags = cardContent.tags.map { tag -> NoteTag(tag.id, tag.title) }
                 ),
                 cardContent,
                 date

@@ -14,11 +14,8 @@ import pro.progr.diamondsandberries.db.ScheduleDatesConverter
         Note::class,
         NoteInHistory::class,
         NotesList::class,
-        NoteToNote::class,
         NoteTag::class,
         NoteToTagXRef::class,
-        NoteToImageXRef::class,
-        NoteImage::class,
         DiamondsCount::class], version = 4
 )
 @TypeConverters(
@@ -35,8 +32,6 @@ abstract class DoFlowDataBase : RoomDatabase() {
     abstract fun noteWithDataDao(): NoteWithDataDao
     abstract fun tagsDao(): TagsDao
     abstract fun noteToTagDao(): NoteToTagDao
-    abstract fun noteWithNotesDao(): NoteWithNotesDao
-    abstract fun noteToNoteDao(): NoteToNoteDao
     abstract fun noteAndHistoryDao(): NoteAndHistoryDao
     abstract fun notesInHistoryDao(): NotesInHistoryDao
     abstract fun diamondsCountDao(): DiamondsCountDao
