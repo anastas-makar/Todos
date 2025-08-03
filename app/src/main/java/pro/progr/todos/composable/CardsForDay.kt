@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import pro.progr.todos.brightcards.composable.BrightCard
 import pro.progr.todos.CardsListViewModel
+import pro.progr.todos.DiamondViewModel
 import pro.progr.todos.db.NoteTag
 import java.time.LocalDate
 
@@ -13,6 +14,7 @@ import java.time.LocalDate
 @Composable
 fun CardsForDay(
     cardsListViewModel: CardsListViewModel,
+    diamondViewModel: DiamondViewModel,
     navController: NavHostController,
     date: LocalDate
 ) {
@@ -27,7 +29,8 @@ fun CardsForDay(
                 ResolveDestinations(
                     cardViewModel = cardVm,
                     navHostController = navController,
-                    date = date
+                    date = date,
+                    diamondViewModel = diamondViewModel
                 )
 
                 if (cardVm.tagState.value != null) {

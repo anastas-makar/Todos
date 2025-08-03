@@ -16,13 +16,6 @@ interface NoteAndHistoryDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(noteInHistory: NoteInHistory): Long
 
-    @Query("INSERT INTO diamonds_count (day, count) VALUES(:day, :count)")
-    fun insertDiamondsCount(day: Long, count : Int)
-
-    @Query("UPDATE diamonds_count SET count = (count + :count) WHERE day = :day")
-    fun updateDiamondsCount(day: Long, count : Int) : Int
-
-
     @Query("UPDATE notes_in_history SET todo = 'DONE' WHERE noteId = :noteId AND date = :day")
     fun setNoteInHistoryDone(noteId: String, day: Long) : Int
 
@@ -100,10 +93,6 @@ interface NoteAndHistoryDao {
         if (setNoteInHistoryDone(note.id, LocalDate.now().toEpochDay()) == 0) {
             insert(noteInHistory = historyNote)
         }
-
-        if ( updateDiamondsCount(day, note.reward) == 0) {
-            insertDiamondsCount(day, note.reward)
-        }
     }
 
     @Query("UPDATE notes SET todo='DONE' WHERE id=:noteId AND pattern_type='NO_TERMS'")
@@ -114,17 +103,11 @@ interface NoteAndHistoryDao {
         if (setNoteInHistoryNotDone(note.id, LocalDate.now().toEpochDay()) == 0) {
             insert(noteInHistory = historyNote)
         }
-
-        updateDiamondsCount(day, -note.reward)
     }
 
     @Transaction
-    suspend fun setCardDoneAndUpdateCount(note: Note, day: Long) {
+    suspend fun setCardDone(note: Note, day: Long) {
         setNoteInHistoryDone(note.id, day)
-
-        if (updateDiamondsCount(day, note.reward) == 0) {
-            insertDiamondsCount(day, note.reward)
-        }
     }
 
     @Transaction

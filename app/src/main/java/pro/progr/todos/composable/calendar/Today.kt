@@ -96,7 +96,8 @@ fun Today(
                 ResolveDestinations(
                     cardViewModel = cardVm,
                     navHostController = navController,
-                    date = LocalDate.now()
+                    date = LocalDate.now(),
+                    diamondViewModel = diamondViewModel
                 )
 
                 BrightCard(

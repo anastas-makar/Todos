@@ -82,7 +82,7 @@ fun ListScreen(
                                 .fillMaxHeight()
                                 .navigationBarsPadding()
                         ) {
-                            CardsList(cardsListViewModel, navController)
+                            CardsList(cardsListViewModel, diamondViewModel, navController)
 
                             if (floatingElementViewModel.showScrim.value) {
                                 Box(modifier = Modifier

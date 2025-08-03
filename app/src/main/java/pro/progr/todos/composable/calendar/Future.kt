@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import pro.progr.todos.CardsListViewModel
+import pro.progr.todos.DiamondViewModel
 import pro.progr.todos.composable.CardsForDay
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -26,6 +27,7 @@ import java.util.Locale
 @OptIn(ExperimentalCoroutinesApi::class)
 @Composable
 fun Future(cardsListViewModel: CardsListViewModel,
+           diamondViewModel: DiamondViewModel,
            navController: NavHostController,
            date: LocalDate,
            onClick: () -> Unit = {}) {
@@ -59,6 +61,7 @@ fun Future(cardsListViewModel: CardsListViewModel,
 
         CardsForDay(
             cardsListViewModel,
+            diamondViewModel,
             navController,
             date
         )

@@ -14,12 +14,15 @@ import androidx.navigation.NavHostController
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import pro.progr.todos.brightcards.composable.BrightCard
 import pro.progr.todos.CardsListViewModel
+import pro.progr.todos.DiamondViewModel
 import pro.progr.todos.db.NoteTag
 import java.time.LocalDate
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @Composable
-fun CardsList(cardsListViewModel: CardsListViewModel, navController: NavHostController) {
+fun CardsList(cardsListViewModel: CardsListViewModel,
+              diamondViewModel: DiamondViewModel,
+              navController: NavHostController) {
     LazyColumn(modifier = Modifier
         .padding(start = 15.dp, end = 15.dp, top = 5.dp, bottom = 60.dp)
         .border(
@@ -35,7 +38,8 @@ fun CardsList(cardsListViewModel: CardsListViewModel, navController: NavHostCont
             ResolveDestinations(
                 cardViewModel = cardVm,
                 navHostController = navController,
-                date = LocalDate.now()
+                date = LocalDate.now(),
+                diamondViewModel = diamondViewModel
             )
 
             if (cardVm.tagState.value != null) {

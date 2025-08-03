@@ -93,7 +93,8 @@ fun DayInHistory(
                 ResolveDestinations(
                     cardViewModel = cardVm,
                     navHostController = navController,
-                    date = date
+                    date = date,
+                    diamondViewModel = diamondViewModel
                 )
 
                 BrightCard(

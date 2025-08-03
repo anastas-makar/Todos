@@ -100,6 +100,7 @@ fun CalendarScreen(
                                     } else if (date.isAfter(today)) {
                                         Future(
                                             cardsListViewModel = cardsListViewModel,
+                                            diamondViewModel = diamondViewModel,
                                             navController = navController,
                                             date = date
                                         ) {

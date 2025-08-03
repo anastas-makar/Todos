@@ -28,7 +28,7 @@ class DiamondsCountRepository
         return diamondsCountDao.getAll()
     }
 
-    suspend fun addDiamondForDate(date: LocalDate) {
-        diamondsCountDao.addOneToCount(date.toEpochDay())
+    suspend fun addDiamondsForDate(date: LocalDate, count: Int) {
+        diamondsCountDao.updateCount(date.toEpochDay(), count)
     }
 }

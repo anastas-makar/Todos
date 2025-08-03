@@ -74,7 +74,7 @@ class ListedCardRepository(private val noteAndHistoryDao: NoteAndHistoryDao, pri
     }
 
     override suspend fun setNoteInHistoryDone(cardContent: CardContent, date: LocalDate) {
-        noteAndHistoryDao.setCardDoneAndUpdateCount(NoteConverter.toNote(cardContent, note.note.schedule), date.toEpochDay())
+        noteAndHistoryDao.setCardDone(NoteConverter.toNote(cardContent, note.note.schedule), date.toEpochDay())
     }
 
     override suspend fun setCardNotDone(cardContent: CardContent) {
