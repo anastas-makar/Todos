@@ -108,7 +108,7 @@ class CardMenuItems(val date: LocalDate,
         if (!date.isBefore(LocalDate.now())) {
             add(
                 MenuItem(
-                    "Редактировать для будущего",
+                    "Редактировать карточку",
                     { updateDestination(Destinations.TO_EDIT_CARD) }
                 )
             )
@@ -120,7 +120,7 @@ class CardMenuItems(val date: LocalDate,
         if (!date.isAfter(LocalDate.now())) {
             add(
                 MenuItem(
-                    "Редактировать для " +
+                    "Изменить запись за " +
                             if (date.equals(LocalDate.now()))
                                 "сегодня"
                             else

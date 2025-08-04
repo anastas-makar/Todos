@@ -44,7 +44,7 @@ abstract class DoFlowDataBase : RoomDatabase() {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     DoFlowDataBase::class.java,
-                    "sample_database"
+                    "todos_database"
                 ).build()
                 INSTANCE = instance
                 instance
