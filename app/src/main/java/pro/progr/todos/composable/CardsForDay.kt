@@ -42,6 +42,7 @@ fun CardsForDay(
 
                 BrightCard(
                     viewModel = cardVm,
+                    diamondViewModel = diamondViewModel,
                     onclick = { /** navController.navigate("editCard/${cardVm.card.value.id}") */ }
                 )
             }

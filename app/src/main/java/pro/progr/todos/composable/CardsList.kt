@@ -51,6 +51,7 @@ fun CardsList(cardsListViewModel: CardsListViewModel,
 
             BrightCard(
                 cardVm,
+                diamondViewModel = diamondViewModel,
                 onclick = {
                     //navController.navigate("editCard/${cardVm.card.value.id}")
                 })

@@ -26,11 +26,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import pro.progr.todos.DiamondViewModel
 import pro.progr.todos.R
 import pro.progr.todos.brightcards.vm.ListedCardViewModel
 
 @Composable
-fun FilledTodoTitle(viewModel: ListedCardViewModel) {
+fun FilledTodoTitle(viewModel: ListedCardViewModel, diamondViewModel: DiamondViewModel) {
     Box {
         Text(
             modifier = Modifier
@@ -51,7 +52,7 @@ fun FilledTodoTitle(viewModel: ListedCardViewModel) {
                 .wrapContentWidth()
                 .align(Alignment.TopStart)
         ) {
-            TodoIcon(viewModel = viewModel)
+            TodoIcon(viewModel = viewModel, diamondViewModel)
 
             IconButton(onClick = { viewModel.menuOn.value = !viewModel.menuOn.value }, modifier = Modifier
                 .size(32.dp)
