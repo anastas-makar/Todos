@@ -47,12 +47,13 @@ fun FilledTodoTitle(viewModel: ListedCardViewModel, diamondViewModel: DiamondVie
             color = Color(viewModel.card.value.style.textColor()),
             textAlign = TextAlign.Start // Выравнивание текста по центру
         )
+
         Row(
             modifier = Modifier
                 .wrapContentWidth()
                 .align(Alignment.TopStart)
         ) {
-            TodoIcon(viewModel = viewModel, diamondViewModel)
+            TodoIcon(viewModel = viewModel, diamondViewModel = diamondViewModel)
 
             IconButton(onClick = { viewModel.menuOn.value = !viewModel.menuOn.value }, modifier = Modifier
                 .size(32.dp)
