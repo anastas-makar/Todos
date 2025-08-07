@@ -52,44 +52,10 @@ fun Title(viewModel: ListedCardViewModel,
             textAlign = TextAlign.Start // Выравнивание текста по центру
         )
 
-        Row(
-            modifier = Modifier
-                .wrapContentWidth()
-                .align(Alignment.TopStart)
-        ) {
-            TodoIcon(viewModel = viewModel, diamondViewModel = diamondViewModel)
-
-            IconButton(onClick = { viewModel.menuOn.value = !viewModel.menuOn.value }, modifier = Modifier
-                .size(32.dp)
-                .padding(vertical = 5.dp, horizontal = 0.dp)) {
-
-                Icon(
-                    imageVector = Icons.Filled.MoreVert,
-                    contentDescription = "more",
-                    tint = style.titleTextColor
-                )
-
-            }
-
-            DropdownMenu(
-                expanded = viewModel.menuOn.value,
-                onDismissRequest = { viewModel.menuOn.value = false },
-            ) {
-                viewModel.card.value.menuItems.forEach { option ->
-                    DropdownMenuItem(onClick = {
-                        viewModel.menuOn.value = false
-
-                        option.onClick()
-                    }) {
-                        Row(
-                            modifier = Modifier.wrapContentWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Text(text = option.text)
-                        }
-                    }
-                }
-            }
+        if (viewModel.card.value.todo == TodoStatus.NOT_ACTIVE) {
+            MenuBox(viewModel = viewModel, style = style)
+        } else {
+            TodoRow(viewModel, diamondViewModel, style)
         }
 
         Row(modifier = Modifier
