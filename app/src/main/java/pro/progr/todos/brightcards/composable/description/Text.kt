@@ -11,17 +11,17 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import pro.progr.todos.brightcards.CardStyle
 import pro.progr.todos.brightcards.vm.ListedCardViewModel
 
 @Composable
-fun ColumnScope.FilledText(viewModel: ListedCardViewModel) {
+fun ColumnScope.FilledText(viewModel: ListedCardViewModel, style: CardStyle) {
     Column(
         modifier = Modifier
             .background(
-                Color(viewModel.card.value.style.backgroundColor()),
+                style.descriptionBackgroundColor,
                 shape = RoundedCornerShape(bottomStart = 5.dp, bottomEnd = 5.dp)
             )
             .padding(start = 20.dp, top = 10.dp, bottom = 20.dp)
@@ -30,8 +30,8 @@ fun ColumnScope.FilledText(viewModel: ListedCardViewModel) {
             .align(Alignment.Start)) {
         Text(
             text = viewModel.card.value.text,
-            color = Color(viewModel.card.value.style.textColor()),
-            textAlign = TextAlign.Start // Выравнивание текста по центру
+            color = style.descriptionTextColor,
+            textAlign = TextAlign.Start
         )
 
         Tags(viewModel = viewModel)

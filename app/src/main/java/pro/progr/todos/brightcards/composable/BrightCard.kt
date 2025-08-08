@@ -44,7 +44,7 @@ fun BrightCard(viewModel: ListedCardViewModel, diamondViewModel: DiamondViewMode
             diamondViewModel = diamondViewModel,
             style = style)
 
-        Description(viewModel = viewModel)
+        Description(viewModel = viewModel, style = style)
 
     }
 }
