@@ -18,6 +18,13 @@ class CardStyle(private val card: MutableState<CardContent>) {
         get() = if (card.value.fillTitleBackground)
             Color(card.value.style.backgroundColor())
             else MaterialTheme.colors.surface
+
+    val titlePlaceHolderColor : Color
+        @Composable
+        get() = if (card.value.fillTitleBackground)
+            Color(card.value.style.placeHolderColor())
+        else Color.Unspecified
+
     val descriptionTextColor : Color
         @Composable
         get() = if (card.value.fillTextBackground)
@@ -29,4 +36,10 @@ class CardStyle(private val card: MutableState<CardContent>) {
         get() = if (card.value.fillTextBackground)
             Color(card.value.style.backgroundColor())
             else MaterialTheme.colors.surface
+
+    val descriptionPlaceHolderColor : Color
+        @Composable
+        get() = if (card.value.fillTextBackground)
+            Color(card.value.style.placeHolderColor())
+            else Color.Unspecified
 }

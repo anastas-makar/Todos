@@ -9,17 +9,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import pro.progr.todos.brightcards.composable.description.EditDescriptionFilled
-import pro.progr.todos.brightcards.composable.description.EditDescriptionTransparent
-import pro.progr.todos.brightcards.composable.title.EditTitleFilled
-import pro.progr.todos.brightcards.composable.title.EditTitleTransparent
+import pro.progr.todos.brightcards.CardStyle
+import pro.progr.todos.brightcards.composable.description.EditDescription
+import pro.progr.todos.brightcards.composable.title.EditTitle
 import pro.progr.todos.brightcards.vm.CardViewModel
 
 @Composable
 fun EditCard(cardViewModel: CardViewModel) {
+    val style = remember { CardStyle(cardViewModel.getCardContent()) }
 
     Column(
         modifier = Modifier
@@ -38,18 +39,9 @@ fun EditCard(cardViewModel: CardViewModel) {
             .fillMaxHeight()
     ) {
 
-        if(cardViewModel.getCardContent().value.fillTitleBackground) {
-            EditTitleFilled(cardViewModel = cardViewModel)
+        EditTitle(cardViewModel = cardViewModel, style = style)
 
-        } else {
-            EditTitleTransparent(cardViewModel = cardViewModel)
-        }
-
-        if(cardViewModel.getCardContent().value.fillTextBackground) {
-            EditDescriptionFilled(cardViewModel = cardViewModel)
-        } else {
-            EditDescriptionTransparent(cardViewModel = cardViewModel)
-        }
+        EditDescription(cardViewModel = cardViewModel, style = style)
 
     }
 }

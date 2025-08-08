@@ -1,9 +1,11 @@
 package pro.progr.todos.brightcards.composable.title
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
@@ -13,21 +15,28 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import pro.progr.todos.brightcards.CardStyle
 import pro.progr.todos.brightcards.vm.CardViewModel
 
 @Composable
-fun ColumnScope.EditTitleTransparent(cardViewModel: CardViewModel) {
+fun ColumnScope.EditTitle(cardViewModel: CardViewModel,
+                          style: CardStyle) {
     TextField(
         modifier = Modifier
+            .background(
+                style.titleBackgroundColor,
+                shape = RoundedCornerShape(topStart = 5.dp, topEnd = 5.dp)
+            ) // Фон заголовка
             .padding(10.dp)
             .fillMaxWidth()
             .wrapContentHeight()
             .align(Alignment.CenterHorizontally),
-        placeholder = { Text(text = "Заголовок") },
+        placeholder = { Text(text = "Заголовок", color = style.titlePlaceHolderColor) },
         value = cardViewModel.getCardContent().value.title,
         textStyle = MaterialTheme.typography.h6,
         onValueChange = { v : String -> cardViewModel.updateCard(cardViewModel.getCardContent().value.copy(title = v))},
         colors = TextFieldDefaults.textFieldColors(
+            textColor = style.titleTextColor,
             backgroundColor = Color.Transparent,
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,

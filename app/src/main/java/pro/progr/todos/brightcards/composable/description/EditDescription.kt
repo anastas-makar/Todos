@@ -13,14 +13,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import pro.progr.todos.brightcards.CardStyle
 import pro.progr.todos.brightcards.vm.CardViewModel
 
 @Composable
-fun ColumnScope.EditDescriptionFilled(cardViewModel: CardViewModel) {
+fun ColumnScope.EditDescription(cardViewModel: CardViewModel,
+                                style: CardStyle) {
     Column(
         modifier = Modifier
             .background(
-                Color(cardViewModel.getCardContent().value.style.backgroundColor()),
+                style.descriptionBackgroundColor,
                 shape = RoundedCornerShape(bottomStart = 5.dp, bottomEnd = 5.dp)
             )
             .fillMaxWidth()
@@ -38,13 +40,13 @@ fun ColumnScope.EditDescriptionFilled(cardViewModel: CardViewModel) {
                 cardViewModel.updateCard(cardViewModel.getCardContent().value.copy(text = v))
             },
             colors = TextFieldDefaults.textFieldColors(
-                textColor = Color(cardViewModel.getCardContent().value.style.textColor()),
+                textColor = style.descriptionTextColor,
                 backgroundColor = Color.Transparent,
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
                 disabledIndicatorColor = Color.Transparent
             ),
-            placeholder = { Text(text = "Описание", color = Color(cardViewModel.getCardContent().value.style.placeHolderColor())) }
+            placeholder = { Text(text = "Описание", color = style.descriptionPlaceHolderColor) }
         )
 
         //if (cardViewModel.getCardContent().value.text.isNotEmpty() || cardViewModel.getCardContent().value.title.isNotEmpty()) {
