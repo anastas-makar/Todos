@@ -8,6 +8,8 @@ import pro.progr.diamondsandberries.db.PatternDatesConverter
 import pro.progr.diamondsandberries.db.Schedule
 import pro.progr.diamondsandberries.db.ScheduleConverter
 import pro.progr.todos.datefilters.FilterType
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 import java.util.UUID
 
 @Entity(
@@ -60,6 +62,9 @@ data class Note(
     var todo: TodoStatus = TodoStatus.NOT_ACTIVE,
 
     var latestDone: Long? = null,
+
+    @ColumnInfo(name = "updated_at")
+    var updatedAt : Long = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)
 ) {
 
 

@@ -1,7 +1,10 @@
 package pro.progr.todos.db
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 import java.util.UUID
 
 @Entity(
@@ -10,7 +13,10 @@ data class NoteTag(
     @PrimaryKey(autoGenerate = false)
     var id: String = UUID.randomUUID().toString(),
 
-    val title: String
+    val title: String,
+
+    @ColumnInfo(name = "updated_at")
+    var updatedAt : Long = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)
 ) {
 
 
