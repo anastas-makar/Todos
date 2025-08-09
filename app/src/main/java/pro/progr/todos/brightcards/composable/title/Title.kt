@@ -37,20 +37,23 @@ fun Title(viewModel: ListedCardViewModel,
           diamondViewModel: DiamondViewModel,
           style: CardStyle) {
     Box {
-        Text(
-            modifier = Modifier
-                .background(
-                    style.titleBackgroundColor,
-                    shape = RoundedCornerShape(topStart = 5.dp, topEnd = 5.dp)
-                ) // Фон заголовка
-                .padding(20.dp, bottom = 10.dp, top = 45.dp)
-                .fillMaxWidth()
-                .wrapContentHeight(),
-            text = viewModel.card.value.title,
-            style = MaterialTheme.typography.h6,
-            color = style.titleTextColor,
-            textAlign = TextAlign.Start // Выравнивание текста по центру
-        )
+        if (viewModel.card.value.title.isNotEmpty()) {
+            Text(
+                modifier = Modifier
+                    .background(
+                        style.titleBackgroundColor,
+                        shape = RoundedCornerShape(topStart = 5.dp, topEnd = 5.dp)
+                    ) // Фон заголовка
+                    .padding(20.dp, bottom = 10.dp, top = 45.dp)
+                    .fillMaxWidth()
+                    .wrapContentHeight(),
+                text = viewModel.card.value.title,
+                style = MaterialTheme.typography.h6,
+                color = style.titleTextColor,
+                textAlign = TextAlign.Start // Выравнивание текста по центру
+            )
+
+        }
 
         if (viewModel.card.value.todo == TodoStatus.NOT_ACTIVE) {
             MenuBox(viewModel = viewModel, style = style)

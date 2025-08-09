@@ -1,8 +1,10 @@
 package pro.progr.todos.brightcards.composable.title
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
@@ -28,7 +30,8 @@ fun BoxScope.TodoRow(viewModel: ListedCardViewModel,
 ) {
     Row(
         modifier = Modifier
-            .wrapContentWidth()
+            .fillMaxWidth()
+            .background(style.titleBackgroundColor)
             .align(Alignment.TopStart)
     ) {
         TodoIcon(viewModel = viewModel, diamondViewModel = diamondViewModel)
