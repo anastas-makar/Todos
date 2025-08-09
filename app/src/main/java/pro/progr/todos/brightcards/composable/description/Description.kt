@@ -10,6 +10,6 @@ fun ColumnScope.Description(viewModel: ListedCardViewModel, style: CardStyle) {
     when {
         viewModel.card.value.text.isEmpty()
                 && viewModel.card.value.tags.isEmpty() -> EmptyText(viewModel = viewModel)
-        else -> FilledText(viewModel = viewModel, style = style)
+        else -> Text(viewModel = viewModel, style = style)
     }
 }

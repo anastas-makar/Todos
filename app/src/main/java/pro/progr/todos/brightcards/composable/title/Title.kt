@@ -43,7 +43,7 @@ fun Title(viewModel: ListedCardViewModel,
                     style.titleBackgroundColor,
                     shape = RoundedCornerShape(topStart = 5.dp, topEnd = 5.dp)
                 ) // Фон заголовка
-                .padding(20.dp, top = 55.dp)
+                .padding(20.dp, bottom = 10.dp, top = 45.dp)
                 .fillMaxWidth()
                 .wrapContentHeight(),
             text = viewModel.card.value.title,

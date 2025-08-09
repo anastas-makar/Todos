@@ -17,7 +17,7 @@ import pro.progr.todos.brightcards.CardStyle
 import pro.progr.todos.brightcards.vm.ListedCardViewModel
 
 @Composable
-fun ColumnScope.FilledText(viewModel: ListedCardViewModel, style: CardStyle) {
+fun ColumnScope.Text(viewModel: ListedCardViewModel, style: CardStyle) {
     Column(
         modifier = Modifier
             .background(
