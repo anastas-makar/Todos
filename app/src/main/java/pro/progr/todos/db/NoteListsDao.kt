@@ -2,6 +2,8 @@ package pro.progr.todos.db
 
 import androidx.room.*
 import kotlinx.coroutines.flow.Flow
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 import kotlin.collections.List
 
 @Dao
@@ -9,16 +11,18 @@ interface NoteListsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(notesList: NotesList) : Long
 
-    @Query("INSERT INTO note_lists(title, is_current, sublist_chain, id) SElECT :listName, 0, " +
+    @Query("INSERT INTO note_lists(title, is_current, updated_at, sublist_chain, id) SElECT :listName, 0, :updatedAt, " +
             ":parentChain || ':' || (MAX(REPLACE(sublist_chain, :parentChain || ':', \"\")) + 1), :id " +
             " FROM note_lists WHERE sublist_chain LIKE :parentChain || '%'" +
             " AND NOT sublist_chain LIKE :parentChain || '%:'")
     fun insertNextIntoSublist(listName : String,
                               @TypeConverters(SublistChainConverter::class) parentChain : SublistChain,
-                              id: String)
+                              id: String,
+                              updatedAt : Long = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC))
 
-    @Query("INSERT INTO note_lists(title, is_current, sublist_chain, id) VALUES (:listName, :current, 1, :id)")
-    fun insertFirst(listName: String, current : Int, id:String)
+    @Query("INSERT INTO note_lists(title, is_current, sublist_chain, updated_at, id) VALUES (:listName, :current, 1, :updatedAt, :id)")
+    fun insertFirst(listName: String, current : Int, id:String,
+                    updatedAt : Long = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC))
 /*
     Использовать метод insertNextIntoSublist
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -27,14 +31,8 @@ interface NoteListsDao {
     @Update
     fun update(notesList: NotesList) : Int
 
-    @Query("UPDATE note_lists SET is_current = CASE WHEN id = :id THEN 1 ELSE 0 END")
-    fun setNewCurrent(id: Int)
-
     @Query("SELECT * FROM note_lists")
     fun getAllNoteLists() : Flow<List<NotesList>>
-
-    @Query("SELECT * FROM note_lists WHERE id = :id")
-    fun getNoteListById(id : Int) : Flow<List<NotesList>>
 
     @Delete
     fun delete(list: NotesList)
