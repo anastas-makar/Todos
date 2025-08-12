@@ -2,6 +2,8 @@ package pro.progr.todos.db
 
 import androidx.room.*
 import kotlinx.coroutines.flow.Flow
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 
 @Dao
 interface DiamondsCountDao {
@@ -17,24 +19,14 @@ interface DiamondsCountDao {
     @Query("SELECT * FROM diamonds_count")
     fun getAll() : Flow<List<DiamondsCount>?>
 
-    @Query("SELECT count FROM diamonds_count WHERE day = :day")
-    fun getDayCount(day: Long) : Flow<Long>
+    @Query("INSERT INTO diamonds_count (day, count, updated_at) VALUES(:day, :count, :updatedAt)")
+    fun insertDiamondsCount(day: Long, count : Int,
+                            updatedAt : Long = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC))
 
-    @Delete
-    fun delete(diamondsCount: DiamondsCount)
+    @Query("UPDATE diamonds_count SET count = (count + :count) AND updated_at = :updatedAt WHERE day = :day")
+    fun updateDiamondsCount(day: Long, count : Int,
+                            updatedAt : Long = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)) : Int
 
-    @Query("INSERT INTO diamonds_count (day, count) VALUES(:day, :count)")
-    fun insertDiamondsCount(day: Long, count : Int)
-
-    @Query("UPDATE diamonds_count SET count = (count + :count) WHERE day = :day")
-    fun updateDiamondsCount(day: Long, count : Int) : Int
-
-    @Transaction
-    suspend fun addOneToCount(day: Long) {
-        if (updateDiamondsCount(day, 1) == 0) {
-            insertDiamondsCount(day, 1)
-        }
-    }
 
     @Transaction
     suspend fun updateCount(day: Long, count: Int) {

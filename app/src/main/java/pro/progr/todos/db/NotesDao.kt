@@ -21,15 +21,6 @@ interface NotesDao {
     @Update
     fun update(note: Note): Int
 
-    @Query("SELECT * FROM notes ORDER BY date")
-    fun getAllNotes(): Flow<List<Note>>
-
-    @RawQuery(observedEntities = [Note::class])
-    fun getNotes(query: SupportSQLiteQuery): Flow<List<Note>>
-
-    @Query("SELECT * FROM notes WHERE id = :noteId")
-    fun getNote(noteId: String): Note
-
     @Query("SELECT * FROM notes WHERE id = :noteId")
     fun getNoteFlow(noteId: String): Flow<Note?>
 
