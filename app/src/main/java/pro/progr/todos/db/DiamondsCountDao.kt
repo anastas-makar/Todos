@@ -18,7 +18,7 @@ interface DiamondsCountDao {
     fun insertDiamondsCount(day: Long, count : Int,
                             updatedAt : Long = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC))
 
-    @Query("UPDATE diamonds_count SET count = (count + :count) AND updated_at = :updatedAt WHERE day = :day")
+    @Query("UPDATE diamonds_count SET count = (count + :count), updated_at = :updatedAt WHERE day = :day")
     fun updateDiamondsCount(day: Long, count : Int,
                             updatedAt : Long = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)) : Int
 

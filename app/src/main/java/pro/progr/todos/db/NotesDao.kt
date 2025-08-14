@@ -13,7 +13,7 @@ interface NotesDao {
     @Query("SELECT * FROM notes WHERE id = :noteId")
     fun getNoteFlow(noteId: String): Flow<Note?>
 
-    @Query("UPDATE notes SET sublist_chain = :sublistChain AND updated_at = :updatedAt WHERE id = :noteId")
+    @Query("UPDATE notes SET sublist_chain = :sublistChain, updated_at = :updatedAt WHERE id = :noteId")
     fun updateSublistChain(noteId: String, sublistChain: String,
                            updatedAt : Long = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)): Int
 }

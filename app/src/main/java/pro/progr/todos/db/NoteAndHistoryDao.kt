@@ -18,14 +18,14 @@ interface NoteAndHistoryDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(noteInHistory: NoteInHistory)
 
-    @Query("UPDATE notes_in_history SET todo = 'DONE' AND updated_at = :updatedAt " +
+    @Query("UPDATE notes_in_history SET todo = 'DONE', updated_at = :updatedAt " +
             "WHERE noteId = :noteId AND date = :day")
     fun setNoteInHistoryDone(noteId: String, day: Long,
                              updatedAt : Long = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)) : Int
 
 
-    @Query("UPDATE notes_in_history SET todo = 'TODO' " +
-            " AND updated_at = :updatedAt WHERE noteId = :noteId AND date = :day")
+    @Query("UPDATE notes_in_history SET todo = 'TODO', " +
+            " updated_at = :updatedAt WHERE noteId = :noteId AND date = :day")
     fun setNoteInHistoryNotDone(noteId: String, day: Long,
                                 updatedAt : Long = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)) : Int
 
