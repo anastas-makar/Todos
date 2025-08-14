@@ -7,6 +7,8 @@ import pro.progr.diamondsandberries.db.Schedule
 import pro.progr.diamondsandberries.db.ScheduleConverter
 import pro.progr.todos.NoteConverter
 import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 
 @Dao
 interface NoteAndHistoryDao {
@@ -14,14 +16,18 @@ interface NoteAndHistoryDao {
     suspend fun update(note: Note): Int
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(noteInHistory: NoteInHistory): Long
+    suspend fun insert(noteInHistory: NoteInHistory)
 
-    @Query("UPDATE notes_in_history SET todo = 'DONE' WHERE noteId = :noteId AND date = :day")
-    fun setNoteInHistoryDone(noteId: String, day: Long) : Int
+    @Query("UPDATE notes_in_history SET todo = 'DONE' AND updated_at = :updatedAt " +
+            "WHERE noteId = :noteId AND date = :day")
+    fun setNoteInHistoryDone(noteId: String, day: Long,
+                             updatedAt : Long = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)) : Int
 
 
-    @Query("UPDATE notes_in_history SET todo = 'TODO' WHERE noteId = :noteId AND date = :day")
-    fun setNoteInHistoryNotDone(noteId: String, day: Long) : Int
+    @Query("UPDATE notes_in_history SET todo = 'TODO' " +
+            " AND updated_at = :updatedAt WHERE noteId = :noteId AND date = :day")
+    fun setNoteInHistoryNotDone(noteId: String, day: Long,
+                                updatedAt : Long = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)) : Int
 
     //todo: нужно заменить это на update, т.к. при изменении карточки она и на сегодня должна меняться
     @Query("""

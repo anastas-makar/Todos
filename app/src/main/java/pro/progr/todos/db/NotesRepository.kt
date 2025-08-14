@@ -101,27 +101,6 @@ class NotesRepository @Inject constructor(
         return NotesQueryBuilder(notesQueryFlow.value)
     }
 
-    fun updateNote(note: Note) {
-        notesDao.update(note)
-    }
-
-    suspend fun setTodaysNotes() {
-        notesListFlow.first { notesList ->
-            val notesInHistory = notesList.filter { note ->
-                note.note.schedule.pattern.type.datesFilter.isActual(
-                    note.note.schedule,
-                    LocalDate.now()
-                )
-            }.map {
-                    note -> NoteConverter.toNoteInHistory(note.note, LocalDate.now().toEpochDay())
-            }
-
-            saveNotesInHistory(notesInHistory)
-
-            return@first true
-        }
-    }
-
     suspend fun setLastNotes() {
 
         val latestDate = noteAndHistoryDao.getLatestDate()

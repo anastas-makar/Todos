@@ -7,11 +7,6 @@ import java.time.ZoneOffset
 
 @Dao
 interface DiamondsCountDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(diamondsCount: DiamondsCount) : Long
-
-    @Update
-    fun update(diamondsCount: DiamondsCount) : Int
 
     @Query("SELECT SUM(count) FROM diamonds_count")
     fun getTotal() : Flow<Int>
@@ -26,7 +21,6 @@ interface DiamondsCountDao {
     @Query("UPDATE diamonds_count SET count = (count + :count) AND updated_at = :updatedAt WHERE day = :day")
     fun updateDiamondsCount(day: Long, count : Int,
                             updatedAt : Long = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)) : Int
-
 
     @Transaction
     suspend fun updateCount(day: Long, count: Int) {

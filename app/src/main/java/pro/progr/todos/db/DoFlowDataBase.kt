@@ -16,7 +16,7 @@ import pro.progr.diamondsandberries.db.ScheduleDatesConverter
         NotesList::class,
         NoteTag::class,
         NoteToTagXRef::class,
-        DiamondsCount::class], version = 4
+        DiamondsCount::class], version = 1
 )
 @TypeConverters(
     SublistChainConverter::class,

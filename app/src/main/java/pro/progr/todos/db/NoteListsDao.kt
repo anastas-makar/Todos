@@ -8,8 +8,6 @@ import kotlin.collections.List
 
 @Dao
 interface NoteListsDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(notesList: NotesList) : Long
 
     @Query("INSERT INTO note_lists(title, is_current, updated_at, sublist_chain, id) SElECT :listName, 0, :updatedAt, " +
             ":parentChain || ':' || (MAX(REPLACE(sublist_chain, :parentChain || ':', \"\")) + 1), :id " +
@@ -33,9 +31,6 @@ interface NoteListsDao {
 
     @Query("SELECT * FROM note_lists")
     fun getAllNoteLists() : Flow<List<NotesList>>
-
-    @Delete
-    fun delete(list: NotesList)
 
     @Query("DELETE FROM note_lists WHERE sublist_chain LIKE :sublistChain || '%'")
     fun deleteWithSubLists(@TypeConverters(SublistChainConverter::class) sublistChain: SublistChain)
