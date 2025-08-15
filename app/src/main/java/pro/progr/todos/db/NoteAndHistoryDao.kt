@@ -40,7 +40,8 @@ interface NoteAndHistoryDao {
         style = :style, 
         fillTitleBackground = :fillTitleBackground, 
         fillTextBackground = :fillTextBackground, 
-        todo = :todo 
+        todo = :todo, 
+        updated_at = :updatedAt 
     WHERE noteId = :noteId AND date = :date
 """)
     @TypeConverters(ScheduleConverter::class, SublistChainConverter::class)
@@ -55,17 +56,20 @@ interface NoteAndHistoryDao {
         style: ColorStyle,
         fillTitleBackground: Boolean,
         fillTextBackground: Boolean,
-        todo: TodoStatus
+        todo: TodoStatus,
+        updatedAt : Long = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)
     ): Int
 
     @Query("""
     UPDATE notes_in_history 
     SET title = :title, 
         description = :description,
-        edited = 1
+        edited = 1, 
+        updated_at = :updatedAt 
     WHERE noteId = :noteId AND date = :epochDay
 """)
-    fun editNoteInHistory(title: String, description: String, noteId: Long, epochDay: Long)
+    fun editNoteInHistory(title: String, description: String, noteId: Long, epochDay: Long,
+                          updatedAt : Long = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC))
 
     @Transaction
     suspend fun updateDaysNoteHistoryIfNotEdited(historyNote: NoteInHistory, day: Long) {
@@ -86,6 +90,7 @@ interface NoteAndHistoryDao {
                 fillTextBackground = historyNote.fillTextBackground,
                 todo = historyNote.todo
             ) == 0) {
+            historyNote.updatedAt = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)
             insert(noteInHistory = historyNote)
         }
     }
@@ -118,6 +123,7 @@ interface NoteAndHistoryDao {
 
     @Transaction
     suspend fun updateNoteDates(note: Note) {
+        note.updatedAt = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)
         update(note)
 
         val date = LocalDate.now().toEpochDay()
