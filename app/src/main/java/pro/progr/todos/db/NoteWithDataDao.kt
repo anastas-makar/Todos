@@ -3,6 +3,8 @@ package pro.progr.todos.db
 import androidx.room.*
 import androidx.sqlite.db.SupportSQLiteQuery
 import kotlinx.coroutines.flow.Flow
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 import kotlin.collections.List
 
 @Dao
@@ -26,15 +28,6 @@ interface NoteWithDataDao {
     @Insert
     fun insertNoteToTag(notesToTag : NoteToTagXRef)
 
-    @Transaction
-    open fun deleteAllByNoteId(noteId: String) {
-        deleteNoteById(noteId)
-        deleteNoteToTag(noteId)
-    }
-
-    @Query("SELECT * FROM notes WHERE id IN (:ids)")
-    fun getByIds(ids : List<Long>) : Flow<List<NoteWithData>>
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(note: Note): Long
 
@@ -42,7 +35,8 @@ interface NoteWithDataDao {
     fun update(note: Note)
 
     @Transaction
-    open fun update(note: NoteWithData) {
+    fun update(note: NoteWithData) {
+        note.note.updatedAt = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)
         update(note.note)
         deleteNoteToTag(note.note.id)
         insertNoteToTags(note.tags.map { noteTag: NoteTag ->
@@ -50,7 +44,7 @@ interface NoteWithDataDao {
         })
     }
 
-    open fun addNoteTag(tagId : String, noteId : String) {
+    fun addNoteTag(tagId : String, noteId : String) {
         insertNoteToTag(NoteToTagXRef(noteId = noteId, tagId = tagId))
     }
 
