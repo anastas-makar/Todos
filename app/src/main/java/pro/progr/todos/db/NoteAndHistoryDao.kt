@@ -102,16 +102,19 @@ interface NoteAndHistoryDao {
     suspend fun setCardDoneAndUpdateHistory(note: Note, historyNote: NoteInHistory, day: Long) {
         updateNoteDoneIfNoTerms(note.id)
         if (setNoteInHistoryDone(note.id, LocalDate.now().toEpochDay()) == 0) {
+            historyNote.updatedAt = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)
             insert(noteInHistory = historyNote)
         }
     }
 
-    @Query("UPDATE notes SET todo='DONE' WHERE id=:noteId AND pattern_type='NO_TERMS'")
-    suspend fun updateNoteDoneIfNoTerms(noteId: String)
+    @Query("UPDATE notes SET todo='DONE', updated_at = :updatedAt WHERE id=:noteId AND pattern_type='NO_TERMS'")
+    suspend fun updateNoteDoneIfNoTerms(noteId: String,
+                                        updatedAt : Long = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC))
 
     @Transaction
     suspend fun setCardNotDoneAndUpdateHistory(note: Note, historyNote: NoteInHistory, day: Long) {
         if (setNoteInHistoryNotDone(note.id, LocalDate.now().toEpochDay()) == 0) {
+            historyNote.updatedAt = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)
             insert(noteInHistory = historyNote)
         }
     }
