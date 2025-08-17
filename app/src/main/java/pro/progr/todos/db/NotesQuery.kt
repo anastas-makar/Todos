@@ -36,7 +36,7 @@ class NotesQuery(
         this.notDone = notDone
     }
 
-    val queryString = "SELECT * FROM notes WHERE "
+    val queryString = "SELECT * FROM notes WHERE deleted = 0 AND "
         get() {
             return field +
                     (if (description.isNotEmpty()) "title || description LIKE :description AND " else "") +
@@ -51,7 +51,7 @@ class NotesQuery(
                     " ORDER BY id DESC"
         }
 
-    val historyQueryString = "SELECT * FROM notes_in_history WHERE "
+    val historyQueryString = "SELECT * FROM notes_in_history WHERE deleted = 0 AND "
         get() {
             return field +
                     (if (description.isNotEmpty()) "title || description LIKE :description AND " else "") +

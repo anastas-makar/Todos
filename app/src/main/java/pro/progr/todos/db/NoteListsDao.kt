@@ -29,9 +29,10 @@ interface NoteListsDao {
     @Update
     fun update(notesList: NotesList) : Int
 
-    @Query("SELECT * FROM note_lists")
+    @Query("SELECT * FROM note_lists WHERE deleted = 0")
     fun getAllNoteLists() : Flow<List<NotesList>>
 
-    @Query("DELETE FROM note_lists WHERE sublist_chain LIKE :sublistChain || '%'")
-    fun deleteWithSubLists(@TypeConverters(SublistChainConverter::class) sublistChain: SublistChain)
+    @Query("UPDATE note_lists SET deleted = 1, updated_at = :updatedAt WHERE sublist_chain LIKE :sublistChain || '%'")
+    fun deleteWithSubLists(@TypeConverters(SublistChainConverter::class) sublistChain: SublistChain,
+                           updatedAt : Long = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC))
 }

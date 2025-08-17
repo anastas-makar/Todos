@@ -8,7 +8,7 @@ interface TagsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(tag: NoteTag)
 
-    @Query("SELECT * FROM note_tag ORDER BY id DESC")
+    @Query("SELECT * FROM note_tag WHERE deleted = 0 ORDER BY id DESC")
     fun getAllTags() : Flow<List<NoteTag>>
 
 }

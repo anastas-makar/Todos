@@ -11,7 +11,7 @@ import java.util.UUID
 @Entity(
     tableName = "note_to_tag",
     indices = arrayOf(
-        Index(value = arrayOf("note_id", "tag_id"), unique = true)
+        Index(value = arrayOf("note_id", "tag_id"), unique = false)
     ))
 data class NoteToTagXRef(
     @PrimaryKey(autoGenerate = false)

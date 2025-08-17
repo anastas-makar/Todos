@@ -95,7 +95,7 @@ interface NoteAndHistoryDao {
         }
     }
 
-    @Query("SELECT COUNT(*) FROM notes_in_history WHERE noteId=:noteId AND date=:day AND edited=0")
+    @Query("SELECT COUNT(*) FROM notes_in_history WHERE noteId=:noteId AND date=:day AND edited=0 AND deleted = 0")
     suspend fun findNotEdited(noteId: String, day: Long): Int
 
     @Transaction
@@ -145,25 +145,28 @@ interface NoteAndHistoryDao {
 
     }
 
-    @Query("DELETE FROM notes_in_history WHERE date=:date AND noteId=:noteId")
-    fun remoCardForDay(date: Long, noteId: String)
+    @Query("UPDATE notes_in_history SET deleted = 1, " +
+            "updated_at = :updatedAt WHERE date=:date AND noteId=:noteId")
+    fun remoCardForDay(date: Long, noteId: String,
+                       updatedAt : Long = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC))
 
-    @Query("SELECT MAX(date) FROM notes_in_history")
+    @Query("SELECT MAX(date) FROM notes_in_history WHERE deleted = 0")
     fun getLatestDate(): Long?
 
-    @Query("SELECT * FROM notes_in_history WHERE noteId=:noteId AND date=:epochDay")
+    @Query("SELECT * FROM notes_in_history WHERE noteId=:noteId AND date=:epochDay AND deleted = 0")
     fun getNoteInHistory(noteId: String, epochDay: Long): NoteInHistory?
 
     /**
      * Для других дней история может сохраняться при удалении задачи, а на сегодня -- нет
      */
-    @Query("DELETE FROM notes_in_history WHERE date = :today AND noteId IN(" +
+    @Query("UPDATE notes_in_history SET deleted = 1, updated_at = :updatedAt WHERE date = :today AND noteId IN(" +
             " SELECT id FROM notes WHERE coalesce(title, '') = '' AND coalesce(description, '') = ''" +
             ")")
-    fun deleteUnlinkedHistoryForToday(today : Long) : Int
+    fun deleteUnlinkedHistoryForToday(today : Long,
+                                      updatedAt : Long = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)) : Int
 
-    @Query("DELETE FROM notes WHERE coalesce(title, '') = '' AND coalesce(description, '') = ''")
-    fun deleteEmptyNotes(): Int
+    @Query("UPDATE notes SET deleted = 1, updated_at = :updatedAt WHERE coalesce(title, '') = '' AND coalesce(description, '') = ''")
+    fun deleteEmptyNotes(updatedAt : Long = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)): Int
 
     @Transaction
     fun deleteEmptyNotesAndUnlinkedHistoryForToday(today: Long) : Int {

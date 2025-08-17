@@ -12,7 +12,7 @@ interface NotesInHistoryDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(notes: List<NoteInHistory>)
 
-    @Query("SELECT * FROM notes_in_history ORDER BY id DESC")
+    @Query("SELECT * FROM notes_in_history WHERE deleted = 0 ORDER BY id DESC")
     fun getHistory(): Flow<List<NoteInHistoryWithData>>
 
     @RawQuery(observedEntities = [NoteInHistory::class])

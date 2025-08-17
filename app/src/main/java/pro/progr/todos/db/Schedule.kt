@@ -2,7 +2,6 @@ package pro.progr.diamondsandberries.db
 
 import pro.progr.todos.datefilters.FilterType
 
-@Deprecated(message = "В классе Note отдельные поля")
 class Schedule(
     val pattern: Pattern,
     var dates : Dates? = null
