@@ -46,5 +46,8 @@ data class NoteInHistory(
     var edited: Boolean = false,
 
     @ColumnInfo(name = "updated_at")
-    var updatedAt : Long = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)
+    var updatedAt : Long = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC),
+
+    @ColumnInfo(defaultValue = "0")
+    var deleted : Boolean = false
 )

@@ -24,5 +24,8 @@ data class NoteToTagXRef(
     val tagId: String,
 
     @ColumnInfo(name = "updated_at")
-    var updatedAt : Long = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)
+    var updatedAt : Long = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC),
+
+    @ColumnInfo(defaultValue = "0")
+    var deleted : Boolean = false
 )

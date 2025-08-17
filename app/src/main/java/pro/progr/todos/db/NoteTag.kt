@@ -16,7 +16,10 @@ data class NoteTag(
     val title: String,
 
     @ColumnInfo(name = "updated_at")
-    var updatedAt : Long = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)
+    var updatedAt : Long = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC),
+
+    @ColumnInfo(defaultValue = "0")
+    var deleted : Boolean = false
 ) {
 
 
