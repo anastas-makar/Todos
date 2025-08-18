@@ -36,6 +36,12 @@ class DatabaseModule {
 
     @Singleton
     @Provides
+    fun provideNoteToTagXRefDao(database: DoFlowDataBase): NoteToTagXRefDao {
+        return database.noteToTagXRefDao()
+    }
+
+    @Singleton
+    @Provides
     fun provideNoteAndHistoryDao(database: DoFlowDataBase): NoteAndHistoryDao {
         return database.noteAndHistoryDao()
     }

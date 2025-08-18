@@ -9,6 +9,12 @@ import kotlin.collections.List
 @Dao
 interface NoteListsDao {
 
+    @Query("SELECT * FROM note_lists WHERE updated_at > :lastUpdateTime")
+    suspend fun getUpdates(lastUpdateTime : Long) : List<NotesList>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun setUpdates(updates : List<NotesList>)
+
     @Query("INSERT INTO note_lists(title, is_current, updated_at, sublist_chain, id) SElECT :listName, 0, :updatedAt, " +
             ":parentChain || ':' || (MAX(REPLACE(sublist_chain, :parentChain || ':', \"\")) + 1), :id " +
             " FROM note_lists WHERE sublist_chain LIKE :parentChain || '%'" +

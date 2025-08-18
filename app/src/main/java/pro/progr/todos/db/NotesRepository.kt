@@ -19,7 +19,6 @@ import javax.inject.Inject
 class NotesRepository @Inject constructor(
     initialQuery : NotesQuery,
     private val dao: NoteWithDataDao,
-    private val notesDao : NotesDao,
     private val notesInHistoryDao: NotesInHistoryDao,
     private val noteAndHistoryDao: NoteAndHistoryDao
 ) {

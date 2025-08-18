@@ -11,6 +11,7 @@ import javax.inject.Singleton
     ViewModelModule::class,
     ViewModelFactoryModule::class,
     PaletteModule::class,
+    SyncModule::class,
     AppModule::class])
 interface TodosComponent {
     fun diamondsCountRepository(): DiamondsCountRepository

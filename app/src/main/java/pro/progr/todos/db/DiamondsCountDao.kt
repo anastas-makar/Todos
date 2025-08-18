@@ -8,6 +8,12 @@ import java.time.ZoneOffset
 @Dao
 interface DiamondsCountDao {
 
+    @Query("SELECT * FROM diamonds_count WHERE updated_at > :lastUpdateTime")
+    suspend fun getUpdates(lastUpdateTime : Long) : List<DiamondsCount>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun setUpdates(updates : List<DiamondsCount>)
+
     @Query("SELECT SUM(count) FROM diamonds_count")
     fun getTotal() : Flow<Int>
 

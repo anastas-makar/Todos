@@ -9,6 +9,12 @@ import javax.inject.Singleton
 @Singleton
 interface NotesInHistoryDao {
 
+    @Query("SELECT * FROM notes_in_history WHERE updated_at > :lastUpdateTime")
+    suspend fun getUpdates(lastUpdateTime : Long) : List<NoteInHistory>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun setUpdates(updates : List<NoteInHistory>)
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(notes: List<NoteInHistory>)
 

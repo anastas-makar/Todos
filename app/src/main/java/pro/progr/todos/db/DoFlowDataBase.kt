@@ -35,6 +35,8 @@ abstract class DoFlowDataBase : RoomDatabase() {
     abstract fun notesInHistoryDao(): NotesInHistoryDao
     abstract fun diamondsCountDao(): DiamondsCountDao
 
+    abstract fun noteToTagXRefDao(): NoteToTagXRefDao
+
     companion object {
         @Volatile
         private var INSTANCE: DoFlowDataBase? = null

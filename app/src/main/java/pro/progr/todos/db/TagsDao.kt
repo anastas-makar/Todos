@@ -5,6 +5,13 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface TagsDao {
+
+    @Query("SELECT * FROM note_tag WHERE updated_at > :lastUpdateTime")
+    suspend fun getUpdates(lastUpdateTime : Long) : List<NoteTag>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun setUpdates(updates : List<NoteTag>)
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(tag: NoteTag)
 

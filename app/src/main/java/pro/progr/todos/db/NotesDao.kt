@@ -10,6 +10,12 @@ import javax.inject.Singleton
 @Singleton
 interface NotesDao {
 
+    @Query("SELECT * FROM notes WHERE updated_at > :lastUpdateTime")
+    suspend fun getUpdates(lastUpdateTime : Long) : List<Note>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun setUpdates(updates : List<Note>)
+
     @Query("SELECT * FROM notes WHERE id = :noteId")
     fun getNoteFlow(noteId: String): Flow<Note?>
 
