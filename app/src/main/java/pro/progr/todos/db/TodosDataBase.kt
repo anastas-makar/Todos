@@ -16,7 +16,7 @@ import pro.progr.diamondsandberries.db.ScheduleDatesConverter
         NotesList::class,
         NoteTag::class,
         NoteToTagXRef::class,
-        DiamondsCount::class], version = 1
+        DiamondsCount::class], version = 4
 )
 @TypeConverters(
     SublistChainConverter::class,
@@ -26,7 +26,7 @@ import pro.progr.diamondsandberries.db.ScheduleDatesConverter
     PatternDatesConverter::class,
     FilterTypeConverter::class
 )
-abstract class DoFlowDataBase : RoomDatabase() {
+abstract class TodosDataBase : RoomDatabase() {
     abstract fun notesDao(): NotesDao
     abstract fun noteListsDao(): NoteListsDao
     abstract fun noteWithDataDao(): NoteWithDataDao
@@ -39,15 +39,17 @@ abstract class DoFlowDataBase : RoomDatabase() {
 
     companion object {
         @Volatile
-        private var INSTANCE: DoFlowDataBase? = null
+        private var INSTANCE: TodosDataBase? = null
 
-        fun getDatabase(context: Context): DoFlowDataBase {
+        fun getDatabase(context: Context): TodosDataBase {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
-                    DoFlowDataBase::class.java,
+                    TodosDataBase::class.java,
                     "todos_database"
-                ).build()
+                )
+                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_1_3, MIGRATION_1_4, MIGRATION_2_4, MIGRATION_3_4)
+                .build()
                 INSTANCE = instance
                 instance
             }
