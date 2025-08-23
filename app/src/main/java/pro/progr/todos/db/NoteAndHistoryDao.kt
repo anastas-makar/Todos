@@ -68,7 +68,7 @@ interface NoteAndHistoryDao {
         updated_at = :updatedAt 
     WHERE noteId = :noteId AND date = :epochDay
 """)
-    fun editNoteInHistory(title: String, description: String, noteId: Long, epochDay: Long,
+    fun editNoteInHistory(title: String, description: String, noteId: String, epochDay: Long,
                           updatedAt : Long = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC))
 
     @Transaction

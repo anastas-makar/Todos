@@ -58,7 +58,7 @@ class CardRepository @Inject constructor(
         return null
     }
 
-    fun updateCardInHistory(title: String, description: String, noteId: Long, epochDay: Long) {
+    fun updateCardInHistory(title: String, description: String, noteId: String, epochDay: Long) {
         noteAndHistoryDao.editNoteInHistory(
             title = title,
             description = description,

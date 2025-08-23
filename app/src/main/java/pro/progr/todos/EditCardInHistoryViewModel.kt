@@ -86,7 +86,7 @@ class EditCardInHistoryViewModel private constructor(
             viewModelScope.launch(Dispatchers.Default) {
                 repository.updateCardInHistory(title = _cardContent.value.title,
                     description = _cardContent.value.text,
-                    noteId = cardId.toLong(),
+                    noteId = cardId,
                     epochDay = epochDay)
             }
 
