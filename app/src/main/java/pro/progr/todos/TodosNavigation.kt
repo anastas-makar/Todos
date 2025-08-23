@@ -103,6 +103,7 @@ fun TodosNavigation(
                 appDrawer = appDrawer,
                 diamondViewModel = diamondViewModel,
                 navController = navController,
+                externalNavController = externalNavController,
                 drawerState = drawerState,
                 cardsListViewModel = cardsListViewModel,
                 commonListsViewModel = commonListsViewModel,

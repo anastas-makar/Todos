@@ -44,6 +44,7 @@ fun ListScreen(
         content : @Composable () -> Unit) -> Unit,
     diamondViewModel: DiamondViewModel,
     navController: NavHostController,
+    externalNavController: NavHostController,
     drawerState: DrawerState,
     cardsListViewModel: CardsListViewModel,
     commonListsViewModel: ListsViewModel,
@@ -59,7 +60,7 @@ fun ListScreen(
     }
 
 
-    appDrawer(drawerState, diamondViewModel, navController) {
+    appDrawer(drawerState, diamondViewModel, externalNavController) {
 
         TagsScreen(tagsViewModel, cardsListViewModel) {
             Scaffold(
