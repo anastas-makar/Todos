@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import pro.progr.todos.api.TodosApiService
@@ -35,6 +36,16 @@ object TodosNetworkModule {
             .addInterceptor(logging)
             .build()
     }
+
+    @Provides @Singleton
+    fun provideApiKeyInterceptor(/* apiKey: String */): Interceptor =
+        Interceptor { chain ->
+            val url = chain.request().url.newBuilder()
+                .addQueryParameter("apiKey", /* apiKey */ "TEST")
+                .build()
+            val req = chain.request().newBuilder().url(url).build()
+            chain.proceed(req)
+        }
 
     @Provides @Singleton
     fun provideRetrofit(
