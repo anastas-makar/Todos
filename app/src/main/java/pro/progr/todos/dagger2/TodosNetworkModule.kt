@@ -13,9 +13,20 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 import pro.progr.todos.BuildConfig
+import javax.inject.Named
 
 @Module
 object TodosNetworkModule {
+
+    @Provides
+    @Singleton
+    @Named("baseUrl")
+    fun provideBaseUrl(): String = BuildConfig.API_BASE_URL
+
+    @Provides
+    @Singleton
+    @Named("apiKey")
+    fun provideApiKey(): String = BuildConfig.API_KEY
 
     @Provides @Singleton
     fun provideGson(): Gson = GsonBuilder()

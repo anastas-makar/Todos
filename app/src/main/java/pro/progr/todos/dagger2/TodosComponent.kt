@@ -4,6 +4,7 @@ import android.app.Application
 import dagger.BindsInstance
 import dagger.Component
 import pro.progr.todos.DiamondsCountRepository
+import pro.progr.todos.api.TodosApiService
 import javax.inject.Singleton
 
 @Singleton
@@ -12,7 +13,8 @@ import javax.inject.Singleton
     ViewModelFactoryModule::class,
     PaletteModule::class,
     SyncModule::class,
-    AppModule::class])
+    AppModule::class,
+    TodosNetworkModule::class])
 interface TodosComponent {
     fun diamondsCountRepository(): DiamondsCountRepository
 
@@ -28,8 +30,13 @@ interface TodosComponent {
 
     fun paletteViewModelFactory(): PaletteViewModelFactory
 
+    fun api(): TodosApiService
+
     @Component.Builder
     interface Builder {
+        @BindsInstance
+        fun baseUrl(baseUrl: String): Builder
+
         @BindsInstance
         fun application(application: Application): Builder
 
