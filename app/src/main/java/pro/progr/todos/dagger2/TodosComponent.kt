@@ -34,8 +34,6 @@ interface TodosComponent {
 
     @Component.Builder
     interface Builder {
-        @BindsInstance
-        fun baseUrl(baseUrl: String): Builder
 
         @BindsInstance
         fun application(application: Application): Builder

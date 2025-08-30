@@ -18,26 +18,19 @@ import javax.inject.Named
 @Module
 object TodosNetworkModule {
 
-    @Provides
-    @Singleton
-    @Named("baseUrl")
-    fun provideBaseUrl(): String = BuildConfig.API_BASE_URL
+    @Provides @Singleton @Named("baseUrl")
+    fun provideBaseUrl(): String = BuildConfig.API_BASE_URL  // локально
 
-    @Provides
-    @Singleton
-    @Named("apiKey")
-    fun provideApiKey(): String = BuildConfig.API_KEY
+    @Provides @Singleton @Named("apiKey")
+    fun provideApiKey(): String = BuildConfig.API_KEY        // локально
 
     @Provides @Singleton
-    fun provideGson(): Gson = GsonBuilder()
-        // .setDateFormat("yyyy-MM-dd'T'HH:mm:ssX") // если нужно
-        .create()
+    fun provideGson(): Gson = GsonBuilder().create()
 
     @Provides @Singleton
     fun provideConverterFactory(gson: Gson): Converter.Factory =
         GsonConverterFactory.create(gson)
 
-    // 1) Логгер — отдельный провайдер
     @Provides @Singleton
     fun provideLoggingInterceptor(): HttpLoggingInterceptor =
         HttpLoggingInterceptor().apply {
@@ -47,45 +40,40 @@ object TodosNetworkModule {
                 HttpLoggingInterceptor.Level.NONE
         }
 
-    // 2) ApiKey — отдельный провайдер (nullable: можно отключить)
+    // Лучше не читать BuildConfig внутри, а принять уже предоставленный ключ:
     @Provides @Singleton
-    fun provideApiKeyInterceptor(): Interceptor? {
-        // возьми ключ откуда удобно: BuildConfig, SharedPrefs, и т.п.
-        val apiKey = BuildConfig.API_KEY // или null, если не нужен
-        if (apiKey.isNullOrBlank()) return null
-
-        return Interceptor { chain ->
-            val old = chain.request()
-            val newUrl = old.url.newBuilder()
-                .addQueryParameter("apiKey", apiKey)
-                .build()
-            val newReq = old.newBuilder().url(newUrl).build()
-            chain.proceed(newReq)
+    fun provideApiKeyInterceptor(@Named("apiKey") apiKey: String): Interceptor? =
+        apiKey.takeIf { it.isNotBlank() }?.let { key ->
+            Interceptor { chain ->
+                val old = chain.request()
+                val newUrl = old.url.newBuilder()
+                    .addQueryParameter("apiKey", key)
+                    .build()
+                chain.proceed(old.newBuilder().url(newUrl).build())
+            }
         }
-    }
 
-    // 3) OkHttp — инжектим оба интерцептора параметрами
     @Provides @Singleton
     fun provideOkHttp(
         logging: HttpLoggingInterceptor,
-        apiKeyInterceptor: Interceptor?,   // ← вот «его» и инжектим
+        apiKeyInterceptor: Interceptor?
     ): OkHttpClient =
         OkHttpClient.Builder()
             .addInterceptor(logging)
             .apply { apiKeyInterceptor?.let { addInterceptor(it) } }
             .build()
 
-
     @Provides @Singleton
     fun provideRetrofit(
-        baseUrl: String,
+        @Named("baseUrl") baseUrl: String,
         okHttp: OkHttpClient,
         converterFactory: Converter.Factory
-    ): Retrofit = Retrofit.Builder()
-        .baseUrl(baseUrl) // ДОЛЖЕН заканчиваться на '/'
-        .client(okHttp)
-        .addConverterFactory(converterFactory)
-        .build()
+    ): Retrofit =
+        Retrofit.Builder()
+            .baseUrl(baseUrl) // со слэшем на конце в BuildConfig
+            .client(okHttp)
+            .addConverterFactory(converterFactory)
+            .build()
 
     @Provides @Singleton
     fun provideTodosApi(retrofit: Retrofit): TodosApiService =
