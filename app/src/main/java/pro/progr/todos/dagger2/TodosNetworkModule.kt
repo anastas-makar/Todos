@@ -19,10 +19,10 @@ import javax.inject.Named
 object TodosNetworkModule {
 
     @Provides @Singleton @Named("baseUrl")
-    fun provideBaseUrl(): String = BuildConfig.API_BASE_URL  // локально
+    fun provideBaseUrl(): String = BuildConfig.API_BASE_URL
 
     @Provides @Singleton @Named("apiKey")
-    fun provideApiKey(): String = BuildConfig.API_KEY        // локально
+    fun provideApiKey(): String = BuildConfig.API_KEY
 
     @Provides @Singleton
     fun provideGson(): Gson = GsonBuilder().create()
@@ -40,7 +40,6 @@ object TodosNetworkModule {
                 HttpLoggingInterceptor.Level.NONE
         }
 
-    // Лучше не читать BuildConfig внутри, а принять уже предоставленный ключ:
     @Provides @Singleton
     fun provideApiKeyInterceptor(@Named("apiKey") apiKey: String): Interceptor? =
         apiKey.takeIf { it.isNotBlank() }?.let { key ->
