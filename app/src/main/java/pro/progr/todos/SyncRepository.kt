@@ -32,7 +32,7 @@ class SyncRepository @Inject constructor(
             diamondCounts = diamondsCountDao.getUpdates(lastUpdateTime)
         )
 
-        val result = serverSync(syncData)
+        val result = startServerSync(syncData)
 
         if (result.isSuccess) {
             val data = result.getOrThrow()
@@ -44,11 +44,24 @@ class SyncRepository @Inject constructor(
                 noteToTagXRefDao.setUpdates(data.noteToTags)
                 diamondsCountDao.setUpdates(data.diamondCounts)
             }
+
+            finishServerSync(syncData)
+        }
+
+
+    }
+
+    private suspend fun startServerSync(payload: TodosSync): Result<TodosSync> = runCatching {
+        val resp = apiService.syncStart(payload)
+        if (resp.isSuccessful) {
+            resp.body() ?: error("Empty body")
+        } else {
+            error("HTTP ${resp.code()}: ${resp.errorBody()?.string().orEmpty()}")
         }
     }
 
-    private suspend fun serverSync(payload: TodosSync): Result<TodosSync> = runCatching {
-        val resp = apiService.sync(payload)
+    private suspend fun finishServerSync(payload: TodosSync): Result<Boolean> = runCatching {
+        val resp = apiService.syncFinish(payload)
         if (resp.isSuccessful) {
             resp.body() ?: error("Empty body")
         } else {
