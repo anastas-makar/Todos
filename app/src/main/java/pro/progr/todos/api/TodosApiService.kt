@@ -6,6 +6,9 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 
 interface TodosApiService {
-    @POST("sync")
-    suspend fun sync(@Body payload: TodosSync): Response<TodosSync>
+    @POST("sync/start")
+    suspend fun syncStart(@Body payload: TodosSync): Response<TodosSync>
+
+    @POST("sync/finish")
+    suspend fun syncFinish(@Body payload: TodosSync): Response<Boolean>
 }
