@@ -1,7 +1,9 @@
 package pro.progr.todos
 
 import androidx.room.withTransaction
+import pro.progr.todos.api.SyncMetaData
 import pro.progr.todos.api.TodosApiService
+import pro.progr.todos.api.TodosSync
 import pro.progr.todos.db.DiamondsCountDao
 import pro.progr.todos.db.NoteListsDao
 import pro.progr.todos.db.NoteToTagXRefDao
@@ -24,6 +26,7 @@ class SyncRepository @Inject constructor(
 
     suspend fun sync(lastUpdateTime : Long) {
         val syncData = TodosSync(
+            syncMetaData = SyncMetaData(),
             notes = notesDao.getUpdates(lastUpdateTime),
             notesInHistory = notesInHistoryDao.getUpdates(lastUpdateTime),
             notesLists = noteListsDao.getUpdates(lastUpdateTime),
@@ -45,7 +48,7 @@ class SyncRepository @Inject constructor(
                 diamondsCountDao.setUpdates(data.diamondCounts)
             }
 
-            finishServerSync(syncData)
+            finishServerSync(SyncMetaData())
         }
 
 
@@ -60,7 +63,7 @@ class SyncRepository @Inject constructor(
         }
     }
 
-    private suspend fun finishServerSync(payload: TodosSync): Result<Boolean> = runCatching {
+    private suspend fun finishServerSync(payload: SyncMetaData): Result<Boolean> = runCatching {
         val resp = apiService.syncFinish(payload)
         if (resp.isSuccessful) {
             resp.body() ?: error("Empty body")

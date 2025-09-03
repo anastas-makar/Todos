@@ -1,6 +1,5 @@
 package pro.progr.todos.api
 
-import pro.progr.todos.TodosSync
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.POST
@@ -10,5 +9,5 @@ interface TodosApiService {
     suspend fun syncStart(@Body payload: TodosSync): Response<TodosSync>
 
     @POST("sync/finish")
-    suspend fun syncFinish(@Body payload: TodosSync): Response<Boolean>
+    suspend fun syncFinish(@Body payload: SyncMetaData): Response<Boolean>
 }
