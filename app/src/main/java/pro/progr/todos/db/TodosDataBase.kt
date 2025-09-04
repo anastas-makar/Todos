@@ -52,32 +52,105 @@ abstract class TodosDataBase : RoomDatabase() {
                 .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_1_3, MIGRATION_1_4, MIGRATION_2_4, MIGRATION_3_4)
                     .addCallback(object : RoomDatabase.Callback() {
                         override fun onOpen(db: SupportSQLiteDatabase) {
-                            db.execSQL("""
-                CREATE TABLE IF NOT EXISTS outbox(
-                  id INTEGER PRIMARY KEY AUTOINCREMENT,
-                  table_name TEXT NOT NULL,
-                  row_id TEXT NOT NULL,
-                  op TEXT NOT NULL,
-                  created_at INTEGER NOT NULL
-                );
-            """.trimIndent())
 
-                            // Набор триггеров для всех нужных таблиц:
+                            /**
+                             * Триггеры для таблиц
+                             */
+                            //notes
                             db.execSQL("""
-                CREATE TRIGGER IF NOT EXISTS trg_notes_ins_outbox
-                AFTER INSERT ON notes BEGIN
-                  INSERT INTO outbox(table_name,row_id,op,created_at)
-                  VALUES('notes', NEW.id, 'UPSERT', CAST(strftime('%s','now') AS INTEGER)*1000);
-                END;
-            """.trimIndent())
+                            CREATE TRIGGER IF NOT EXISTS trg_notes_ins_outbox
+                            AFTER INSERT ON notes BEGIN
+                              INSERT INTO outbox(table_name,row_id,op,created_at)
+                              VALUES('notes', NEW.id, 'UPSERT', CAST(strftime('%s','now') AS INTEGER)*1000);
+                            END;
+                            """.trimIndent())
                             db.execSQL("""
-                CREATE TRIGGER IF NOT EXISTS trg_notes_upd_outbox
-                AFTER UPDATE ON notes BEGIN
-                  INSERT INTO outbox(table_name,row_id,op,created_at)
-                  VALUES('notes', NEW.id, 'UPSERT', CAST(strftime('%s','now') AS INTEGER)*1000);
-                END;
-            """.trimIndent())
-                            // todo: для tags, note_to_tag_xref, и т.д.
+                            CREATE TRIGGER IF NOT EXISTS trg_notes_upd_outbox
+                            AFTER UPDATE ON notes BEGIN
+                              INSERT INTO outbox(table_name,row_id,op,created_at)
+                              VALUES('notes', NEW.id, 'UPSERT', CAST(strftime('%s','now') AS INTEGER)*1000);
+                            END;
+                            """.trimIndent())
+
+                            //notes_in_history
+                            db.execSQL("""
+                            CREATE TRIGGER IF NOT EXISTS trg_notes_in_history_ins_outbox
+                            AFTER INSERT ON notes_in_history BEGIN
+                              INSERT INTO outbox(table_name,row_id,op,created_at)
+                              VALUES('notes_in_history', NEW.id, 'UPSERT', CAST(strftime('%s','now') AS INTEGER)*1000);
+                            END;
+                            """.trimIndent())
+                            db.execSQL("""
+                            CREATE TRIGGER IF NOT EXISTS trg_notes_in_history_upd_outbox
+                            AFTER UPDATE ON notes_in_history BEGIN
+                              INSERT INTO outbox(table_name,row_id,op,created_at)
+                              VALUES('notes_in_history', NEW.id, 'UPSERT', CAST(strftime('%s','now') AS INTEGER)*1000);
+                            END;
+                            """.trimIndent())
+
+                            //note_lists
+                            db.execSQL("""
+                            CREATE TRIGGER IF NOT EXISTS trg_note_lists_ins_outbox
+                            AFTER INSERT ON note_lists BEGIN
+                              INSERT INTO outbox(table_name,row_id,op,created_at)
+                              VALUES('note_lists', NEW.id, 'UPSERT', CAST(strftime('%s','now') AS INTEGER)*1000);
+                            END;
+                            """.trimIndent())
+                            db.execSQL("""
+                            CREATE TRIGGER IF NOT EXISTS trg_note_lists_upd_outbox
+                            AFTER UPDATE ON note_lists BEGIN
+                              INSERT INTO outbox(table_name,row_id,op,created_at)
+                              VALUES('note_lists', NEW.id, 'UPSERT', CAST(strftime('%s','now') AS INTEGER)*1000);
+                            END;
+                            """.trimIndent())
+
+                            //note_tag
+                            db.execSQL("""
+                            CREATE TRIGGER IF NOT EXISTS trg_note_tag_ins_outbox
+                            AFTER INSERT ON note_tag BEGIN
+                              INSERT INTO outbox(table_name,row_id,op,created_at)
+                              VALUES('note_tag', NEW.id, 'UPSERT', CAST(strftime('%s','now') AS INTEGER)*1000);
+                            END;
+                            """.trimIndent())
+                            db.execSQL("""
+                            CREATE TRIGGER IF NOT EXISTS trg_note_tag_upd_outbox
+                            AFTER UPDATE ON note_tag BEGIN
+                              INSERT INTO outbox(table_name,row_id,op,created_at)
+                              VALUES('note_tag', NEW.id, 'UPSERT', CAST(strftime('%s','now') AS INTEGER)*1000);
+                            END;
+                            """.trimIndent())
+
+                            //note_to_tag
+                            db.execSQL("""
+                            CREATE TRIGGER IF NOT EXISTS trg_note_to_tag_ins_outbox
+                            AFTER INSERT ON note_to_tag BEGIN
+                              INSERT INTO outbox(table_name,row_id,op,created_at)
+                              VALUES('note_to_tag', NEW.id, 'UPSERT', CAST(strftime('%s','now') AS INTEGER)*1000);
+                            END;
+                            """.trimIndent())
+                            db.execSQL("""
+                            CREATE TRIGGER IF NOT EXISTS trg_note_to_tag_upd_outbox
+                            AFTER UPDATE ON note_to_tag BEGIN
+                              INSERT INTO outbox(table_name,row_id,op,created_at)
+                              VALUES('note_to_tag', NEW.id, 'UPSERT', CAST(strftime('%s','now') AS INTEGER)*1000);
+                            END;
+                            """.trimIndent())
+
+                            //diamonds_count
+                            db.execSQL("""
+                            CREATE TRIGGER IF NOT EXISTS trg_diamonds_count_ins_outbox
+                            AFTER INSERT ON diamonds_count BEGIN
+                              INSERT INTO outbox(table_name,row_id,op,created_at)
+                              VALUES('diamonds_count', NEW.id, 'UPSERT', CAST(strftime('%s','now') AS INTEGER)*1000);
+                            END;
+                            """.trimIndent())
+                            db.execSQL("""
+                            CREATE TRIGGER IF NOT EXISTS trg_diamonds_count_upd_outbox
+                            AFTER UPDATE ON diamonds_count BEGIN
+                              INSERT INTO outbox(table_name,row_id,op,created_at)
+                              VALUES('diamonds_count', NEW.id, 'UPSERT', CAST(strftime('%s','now') AS INTEGER)*1000);
+                            END;
+                            """.trimIndent())
                         }
                     })
                 .build()
