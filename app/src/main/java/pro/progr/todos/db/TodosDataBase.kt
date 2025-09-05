@@ -17,7 +17,8 @@ import pro.progr.diamondsandberries.db.ScheduleDatesConverter
         NotesList::class,
         NoteTag::class,
         NoteToTagXRef::class,
-        DiamondsCount::class], version = 4
+        DiamondsCount::class,
+        Outbox::class], version = 4
 )
 @TypeConverters(
     SublistChainConverter::class,
@@ -37,6 +38,8 @@ abstract class TodosDataBase : RoomDatabase() {
     abstract fun diamondsCountDao(): DiamondsCountDao
 
     abstract fun noteToTagXRefDao(): NoteToTagXRefDao
+
+    abstract fun outBoxDao(): OutboxDao
 
     companion object {
         @Volatile
