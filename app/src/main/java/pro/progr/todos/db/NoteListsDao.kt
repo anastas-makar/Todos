@@ -2,31 +2,27 @@ package pro.progr.todos.db
 
 import androidx.room.*
 import kotlinx.coroutines.flow.Flow
-import java.time.LocalDateTime
-import java.time.ZoneOffset
 import kotlin.collections.List
 
 @Dao
 interface NoteListsDao {
 
-    @Query("SELECT * FROM note_lists WHERE updated_at > :lastUpdateTime")
-    suspend fun getUpdates(lastUpdateTime : Long) : List<NotesList>
+    @Query("SELECT * FROM note_lists WHERE id IN (:uuids)")
+    suspend fun getUpdates(uuids: List<String>) : List<NotesList>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun setUpdates(updates : List<NotesList>)
 
-    @Query("INSERT INTO note_lists(title, is_current, updated_at, sublist_chain, id) SElECT :listName, 0, :updatedAt, " +
+    @Query("INSERT INTO note_lists(title, is_current, sublist_chain, id) SElECT :listName, 0, " +
             ":parentChain || ':' || (MAX(REPLACE(sublist_chain, :parentChain || ':', \"\")) + 1), :id " +
             " FROM note_lists WHERE sublist_chain LIKE :parentChain || '%'" +
             " AND NOT sublist_chain LIKE :parentChain || '%:'")
     fun insertNextIntoSublist(listName : String,
                               @TypeConverters(SublistChainConverter::class) parentChain : SublistChain,
-                              id: String,
-                              updatedAt : Long = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC))
+                              id: String)
 
-    @Query("INSERT INTO note_lists(title, is_current, sublist_chain, updated_at, id) VALUES (:listName, :current, 1, :updatedAt, :id)")
-    fun insertFirst(listName: String, current : Int, id:String,
-                    updatedAt : Long = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC))
+    @Query("INSERT INTO note_lists(title, is_current, sublist_chain, id) VALUES (:listName, :current, 1, :id)")
+    fun insertFirst(listName: String, current : Int, id:String)
 /*
     Использовать метод insertNextIntoSublist
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -38,7 +34,6 @@ interface NoteListsDao {
     @Query("SELECT * FROM note_lists WHERE deleted = 0")
     fun getAllNoteLists() : Flow<List<NotesList>>
 
-    @Query("UPDATE note_lists SET deleted = 1, updated_at = :updatedAt WHERE sublist_chain LIKE :sublistChain || '%'")
-    fun deleteWithSubLists(@TypeConverters(SublistChainConverter::class) sublistChain: SublistChain,
-                           updatedAt : Long = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC))
+    @Query("UPDATE note_lists SET deleted = 1 WHERE sublist_chain LIKE :sublistChain || '%'")
+    fun deleteWithSubLists(@TypeConverters(SublistChainConverter::class) sublistChain: SublistChain)
 }

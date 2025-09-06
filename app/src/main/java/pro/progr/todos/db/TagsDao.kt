@@ -6,8 +6,8 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface TagsDao {
 
-    @Query("SELECT * FROM note_tag WHERE updated_at > :lastUpdateTime")
-    suspend fun getUpdates(lastUpdateTime : Long) : List<NoteTag>
+    @Query("SELECT * FROM note_tag WHERE id IN (:uuids)")
+    suspend fun getUpdates(uuids: List<String>) : List<NoteTag>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun setUpdates(updates : List<NoteTag>)

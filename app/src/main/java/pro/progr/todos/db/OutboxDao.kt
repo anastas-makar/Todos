@@ -7,7 +7,7 @@ import androidx.room.Query
 @Dao
 interface OutboxDao {
 
-    @Query("SELECT table_name, row_id, MAX(created_at) FROM outbox GROUP BY row_id")
+    @Query("SELECT id, table_name, row_id, MAX(created_at) as created_at FROM outbox GROUP BY row_id")
     fun getSync() : List<Outbox>
 
     @Delete

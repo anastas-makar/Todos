@@ -138,22 +138,6 @@ abstract class TodosDataBase : RoomDatabase() {
                               VALUES('note_to_tag', NEW.id, CAST(strftime('%s','now') AS INTEGER)*1000);
                             END;
                             """.trimIndent())
-
-                            //diamonds_count
-                            db.execSQL("""
-                            CREATE TRIGGER IF NOT EXISTS trg_diamonds_count_ins_outbox
-                            AFTER INSERT ON diamonds_count BEGIN
-                              INSERT INTO outbox(table_name,row_id,created_at)
-                              VALUES('diamonds_count', NEW.id, CAST(strftime('%s','now') AS INTEGER)*1000);
-                            END;
-                            """.trimIndent())
-                            db.execSQL("""
-                            CREATE TRIGGER IF NOT EXISTS trg_diamonds_count_upd_outbox
-                            AFTER UPDATE ON diamonds_count BEGIN
-                              INSERT INTO outbox(table_name,row_id,created_at)
-                              VALUES('diamonds_count', NEW.id, CAST(strftime('%s','now') AS INTEGER)*1000);
-                            END;
-                            """.trimIndent())
                         }
                     })
                 .build()

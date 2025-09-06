@@ -4,8 +4,6 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import java.time.LocalDateTime
-import java.time.ZoneOffset
 import java.util.UUID
 
 @Entity(
@@ -22,9 +20,6 @@ data class NoteToTagXRef(
 
     @ColumnInfo(name = "tag_id")
     val tagId: String,
-
-    @ColumnInfo(name = "updated_at")
-    var updatedAt : Long = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC),
 
     @ColumnInfo(defaultValue = "0")
     var deleted : Boolean = false

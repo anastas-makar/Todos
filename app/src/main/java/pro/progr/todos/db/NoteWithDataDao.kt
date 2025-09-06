@@ -3,8 +3,6 @@ package pro.progr.todos.db
 import androidx.room.*
 import androidx.sqlite.db.SupportSQLiteQuery
 import kotlinx.coroutines.flow.Flow
-import java.time.LocalDateTime
-import java.time.ZoneOffset
 import kotlin.collections.List
 
 @Dao
@@ -16,9 +14,8 @@ interface NoteWithDataDao {
     @RawQuery(observedEntities = [NoteWithData::class])
     fun getNotesWithTags(query: SupportSQLiteQuery) : Flow<List<NoteWithData>>
 
-    @Query("UPDATE note_to_tag SET deleted = 1, note_id = \"\", updated_at = :updatedAt WHERE note_id = :noteId")
-    fun deleteNoteToTag(noteId: String,
-                        updatedAt : Long = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC))
+    @Query("UPDATE note_to_tag SET deleted = 1, note_id = \"\" WHERE note_id = :noteId")
+    fun deleteNoteToTag(noteId: String)
 
     @Insert
     fun insertNoteToTags(notesToTags : List<NoteToTagXRef>)
@@ -34,7 +31,6 @@ interface NoteWithDataDao {
 
     @Transaction
     fun update(note: NoteWithData) {
-        note.note.updatedAt = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)
         update(note.note)
         deleteNoteToTag(note.note.id)
         insertNoteToTags(note.tags.map { noteTag: NoteTag ->
@@ -58,15 +54,12 @@ interface NoteWithDataDao {
         return delete(note.id)
     }
 
-    @Query("UPDATE notes_in_history SET deleted = 1, updated_at = :updatedAt WHERE noteId = :noteId AND date = :date")
-    fun deleteInHistory(date: Long, noteId: String,
-                        updatedAt : Long = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC))
+    @Query("UPDATE notes_in_history SET deleted = 1 WHERE noteId = :noteId AND date = :date")
+    fun deleteInHistory(date: Long, noteId: String)
 
-    @Query("UPDATE notes SET deleted = 1, updated_at = :updatedAt WHERE id = :noteId")
-    fun delete(noteId: String,
-               updatedAt : Long = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)): Int
+    @Query("UPDATE notes SET deleted = 1 WHERE id = :noteId")
+    fun delete(noteId: String): Int
 
-    @Query("UPDATE note_to_tag SET deleted = 1, note_id = \"\", updated_at = :updatedAt WHERE tag_id = :tagId AND note_id = :noteId")
-    fun removeNoteTag(tagId: String, noteId: String,
-                      updatedAt : Long = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC))
+    @Query("UPDATE note_to_tag SET deleted = 1, note_id = \"\" WHERE tag_id = :tagId AND note_id = :noteId")
+    fun removeNoteTag(tagId: String, noteId: String)
 }

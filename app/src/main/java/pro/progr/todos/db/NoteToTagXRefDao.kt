@@ -7,8 +7,8 @@ import javax.inject.Singleton
 @Singleton
 interface NoteToTagXRefDao {
 
-    @Query("SELECT * FROM note_to_tag WHERE updated_at > :lastUpdateTime")
-    suspend fun getUpdates(lastUpdateTime : Long) : List<NoteToTagXRef>
+    @Query("SELECT * FROM note_to_tag WHERE id IN (:uuids)")
+    suspend fun getUpdates(uuids: List<String>) : List<NoteToTagXRef>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun setUpdates(updates : List<NoteToTagXRef>)

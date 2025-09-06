@@ -24,15 +24,15 @@ class SyncRepository @Inject constructor(
     private val diamondsCountDao: DiamondsCountDao = db.diamondsCountDao()
     private val noteToTagXRefDao: NoteToTagXRefDao = db.noteToTagXRefDao()
 
-    suspend fun sync(lastUpdateTime : Long) {
+    suspend fun sync() {
         val syncData = TodosSync(
             syncMetaData = SyncMetaData(),
-            notes = notesDao.getUpdates(lastUpdateTime),
-            notesInHistory = notesInHistoryDao.getUpdates(lastUpdateTime),
-            notesLists = noteListsDao.getUpdates(lastUpdateTime),
-            noteTags = tagsDao.getUpdates(lastUpdateTime),
-            noteToTags = noteToTagXRefDao.getUpdates(lastUpdateTime),
-            diamondCounts = diamondsCountDao.getUpdates(lastUpdateTime)
+            notes = notesDao.getUpdates(listOf("TODO")),
+            notesInHistory = notesInHistoryDao.getUpdates(listOf("TODO")),
+            notesLists = noteListsDao.getUpdates(listOf("TODO")),
+            noteTags = tagsDao.getUpdates(listOf("TODO")),
+            noteToTags = noteToTagXRefDao.getUpdates(listOf("TODO")),
+            diamondCounts = emptyList() //todo:
         )
 
         val result = startServerSync(syncData)
@@ -45,7 +45,7 @@ class SyncRepository @Inject constructor(
                 noteListsDao.setUpdates(data.notesLists)
                 tagsDao.setUpdates(data.noteTags)
                 noteToTagXRefDao.setUpdates(data.noteToTags)
-                diamondsCountDao.setUpdates(data.diamondCounts)
+                //todo: diamondsCountDao.setUpdates(data.diamondCounts)
             }
 
             finishServerSync(SyncMetaData())

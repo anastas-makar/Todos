@@ -6,8 +6,6 @@ import pro.progr.todos.brightcards.model.TodoStatus
 import pro.progr.diamondsandberries.db.Schedule
 import pro.progr.diamondsandberries.db.ScheduleConverter
 import pro.progr.todos.datefilters.FilterType
-import java.time.LocalDateTime
-import java.time.ZoneOffset
 import java.util.UUID
 
 @Entity(
@@ -44,9 +42,6 @@ data class NoteInHistory(
     var todo: TodoStatus = TodoStatus.DONE,
 
     var edited: Boolean = false,
-
-    @ColumnInfo(name = "updated_at")
-    var updatedAt : Long = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC),
 
     @ColumnInfo(defaultValue = "0")
     var deleted : Boolean = false

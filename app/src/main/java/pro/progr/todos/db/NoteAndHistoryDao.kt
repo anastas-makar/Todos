@@ -7,8 +7,6 @@ import pro.progr.diamondsandberries.db.Schedule
 import pro.progr.diamondsandberries.db.ScheduleConverter
 import pro.progr.todos.NoteConverter
 import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.ZoneOffset
 
 @Dao
 interface NoteAndHistoryDao {
@@ -18,16 +16,14 @@ interface NoteAndHistoryDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(noteInHistory: NoteInHistory)
 
-    @Query("UPDATE notes_in_history SET todo = 'DONE', updated_at = :updatedAt " +
+    @Query("UPDATE notes_in_history SET todo = 'DONE' " +
             "WHERE noteId = :noteId AND date = :day")
-    fun setNoteInHistoryDone(noteId: String, day: Long,
-                             updatedAt : Long = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)) : Int
+    fun setNoteInHistoryDone(noteId: String, day: Long) : Int
 
 
-    @Query("UPDATE notes_in_history SET todo = 'TODO', " +
-            " updated_at = :updatedAt WHERE noteId = :noteId AND date = :day")
-    fun setNoteInHistoryNotDone(noteId: String, day: Long,
-                                updatedAt : Long = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)) : Int
+    @Query("UPDATE notes_in_history SET todo = 'TODO' " +
+            "  WHERE noteId = :noteId AND date = :day")
+    fun setNoteInHistoryNotDone(noteId: String, day: Long) : Int
 
     //todo: нужно заменить это на update, т.к. при изменении карточки она и на сегодня должна меняться
     @Query("""
@@ -40,8 +36,7 @@ interface NoteAndHistoryDao {
         style = :style, 
         fillTitleBackground = :fillTitleBackground, 
         fillTextBackground = :fillTextBackground, 
-        todo = :todo, 
-        updated_at = :updatedAt 
+        todo = :todo 
     WHERE noteId = :noteId AND date = :date
 """)
     @TypeConverters(ScheduleConverter::class, SublistChainConverter::class)
@@ -56,20 +51,17 @@ interface NoteAndHistoryDao {
         style: ColorStyle,
         fillTitleBackground: Boolean,
         fillTextBackground: Boolean,
-        todo: TodoStatus,
-        updatedAt : Long = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)
+        todo: TodoStatus
     ): Int
 
     @Query("""
     UPDATE notes_in_history 
     SET title = :title, 
         description = :description,
-        edited = 1, 
-        updated_at = :updatedAt 
+        edited = 1 
     WHERE noteId = :noteId AND date = :epochDay
 """)
-    fun editNoteInHistory(title: String, description: String, noteId: String, epochDay: Long,
-                          updatedAt : Long = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC))
+    fun editNoteInHistory(title: String, description: String, noteId: String, epochDay: Long)
 
     @Transaction
     suspend fun updateDaysNoteHistoryIfNotEdited(historyNote: NoteInHistory, day: Long) {
@@ -90,7 +82,6 @@ interface NoteAndHistoryDao {
                 fillTextBackground = historyNote.fillTextBackground,
                 todo = historyNote.todo
             ) == 0) {
-            historyNote.updatedAt = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)
             insert(noteInHistory = historyNote)
         }
     }
@@ -102,19 +93,16 @@ interface NoteAndHistoryDao {
     suspend fun setCardDoneAndUpdateHistory(note: Note, historyNote: NoteInHistory, day: Long) {
         updateNoteDoneIfNoTerms(note.id)
         if (setNoteInHistoryDone(note.id, LocalDate.now().toEpochDay()) == 0) {
-            historyNote.updatedAt = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)
             insert(noteInHistory = historyNote)
         }
     }
 
-    @Query("UPDATE notes SET todo='DONE', updated_at = :updatedAt WHERE id=:noteId AND pattern_type='NO_TERMS'")
-    suspend fun updateNoteDoneIfNoTerms(noteId: String,
-                                        updatedAt : Long = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC))
+    @Query("UPDATE notes SET todo='DONE' WHERE id=:noteId AND pattern_type='NO_TERMS'")
+    suspend fun updateNoteDoneIfNoTerms(noteId: String)
 
     @Transaction
     suspend fun setCardNotDoneAndUpdateHistory(note: Note, historyNote: NoteInHistory, day: Long) {
         if (setNoteInHistoryNotDone(note.id, LocalDate.now().toEpochDay()) == 0) {
-            historyNote.updatedAt = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)
             insert(noteInHistory = historyNote)
         }
     }
@@ -126,7 +114,6 @@ interface NoteAndHistoryDao {
 
     @Transaction
     suspend fun updateNoteDates(note: Note) {
-        note.updatedAt = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)
         update(note)
 
         val date = LocalDate.now().toEpochDay()
@@ -145,10 +132,9 @@ interface NoteAndHistoryDao {
 
     }
 
-    @Query("UPDATE notes_in_history SET deleted = 1, " +
-            "updated_at = :updatedAt WHERE date=:date AND noteId=:noteId")
-    fun remoCardForDay(date: Long, noteId: String,
-                       updatedAt : Long = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC))
+    @Query("UPDATE notes_in_history SET deleted = 1 " +
+            " WHERE date=:date AND noteId=:noteId")
+    fun remoCardForDay(date: Long, noteId: String)
 
     @Query("SELECT MAX(date) FROM notes_in_history WHERE deleted = 0")
     fun getLatestDate(): Long?
@@ -159,14 +145,13 @@ interface NoteAndHistoryDao {
     /**
      * Для других дней история может сохраняться при удалении задачи, а на сегодня -- нет
      */
-    @Query("UPDATE notes_in_history SET deleted = 1, updated_at = :updatedAt WHERE date = :today AND noteId IN(" +
+    @Query("UPDATE notes_in_history SET deleted = 1 WHERE date = :today AND noteId IN(" +
             " SELECT id FROM notes WHERE coalesce(title, '') = '' AND coalesce(description, '') = ''" +
             ")")
-    fun deleteUnlinkedHistoryForToday(today : Long,
-                                      updatedAt : Long = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)) : Int
+    fun deleteUnlinkedHistoryForToday(today : Long) : Int
 
-    @Query("UPDATE notes SET deleted = 1, updated_at = :updatedAt WHERE coalesce(title, '') = '' AND coalesce(description, '') = ''")
-    fun deleteEmptyNotes(updatedAt : Long = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)): Int
+    @Query("UPDATE notes SET deleted = 1 WHERE coalesce(title, '') = '' AND coalesce(description, '') = ''")
+    fun deleteEmptyNotes(): Int
 
     @Transaction
     fun deleteEmptyNotesAndUnlinkedHistoryForToday(today: Long) : Int {
