@@ -35,6 +35,18 @@ class DatabaseModule {
 
     @Singleton
     @Provides
+    fun provideOutboxDao(database: TodosDataBase): OutboxDao {
+        return database.outBoxDao()
+    }
+
+    @Singleton
+    @Provides
+    fun provideDiamondsLogDao(database: TodosDataBase): DiamondsLogDao {
+        return database.diamondsLogDao()
+    }
+
+    @Singleton
+    @Provides
     fun provideNoteAndHistoryDao(database: TodosDataBase): NoteAndHistoryDao {
         return database.noteAndHistoryDao()
     }
