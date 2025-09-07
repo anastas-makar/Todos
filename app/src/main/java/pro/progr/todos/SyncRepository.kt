@@ -79,7 +79,7 @@ class SyncRepository @Inject constructor(
                 diamondsCountDao.setUpdates(severData.diamondLogs)
             }
 
-        val finishResult = finishServerSync(SyncMetaData())
+            val finishResult = finishServerSync(SyncMetaData())
 
             if (finishResult.isSuccess) {
                 db.withTransaction {

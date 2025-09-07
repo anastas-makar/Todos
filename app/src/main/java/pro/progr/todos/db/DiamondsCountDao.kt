@@ -6,27 +6,34 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface DiamondsCountDao {
 
-    //todo: с сервера приходит сумма обновления для каждого дня, применяется сложение
-    @Query("SELECT SUM(count) FROM diamonds_count")
+    @Query("SELECT IFNULL(SUM(count), 0) FROM diamonds_count")
     fun getTotal() : Flow<Int>
 
     @Query("SELECT * FROM diamonds_count")
     fun getAll() : Flow<List<DiamondsCount>?>
 
-    @Query("INSERT INTO diamonds_count (day, count) VALUES(:day, :count)")
-    fun insertDiamondsCount(day: Long, count : Int)
+    @Insert
+    fun insertDiamondsCount(count: DiamondsCount)
 
     @Query("UPDATE diamonds_count SET count = (count + :count) WHERE day = :day")
     fun updateDiamondsCount(day: Long, count : Int) : Int
 
-
     suspend fun updateCount(day: Long, count: Int) {
         if (updateDiamondsCount(day, count) == 0) {
-            insertDiamondsCount(day, count)
+            insertDiamondsCount(
+                DiamondsCount(day = day,
+                    count = count))
         }
     }
 
+    @Transaction
     suspend fun setUpdates(diamondLogs: List<DiamondsLog>) {
-        //todo: логи сгруппироват по дням, взять сумму для каждого дня, прибавить сумму к каждому дню
+        if (diamondLogs.isEmpty()) return
+        // группируем по дню и суммируем
+        val totalsByDay = diamondLogs.groupBy { it.day }
+            .mapValues { entry -> entry.value.sumOf { it.count } }
+        for ((day, delta) in totalsByDay) {
+            if (delta != 0) updateCount(day, delta)
+        }
     }
 }
