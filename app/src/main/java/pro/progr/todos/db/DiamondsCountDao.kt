@@ -19,7 +19,7 @@ interface DiamondsCountDao {
     @Query("UPDATE diamonds_count SET count = (count + :count) WHERE day = :day")
     fun updateDiamondsCount(day: Long, count : Int) : Int
 
-    @Transaction
+
     suspend fun updateCount(day: Long, count: Int) {
         if (updateDiamondsCount(day, count) == 0) {
             insertDiamondsCount(day, count)

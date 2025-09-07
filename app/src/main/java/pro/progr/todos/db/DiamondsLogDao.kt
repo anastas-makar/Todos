@@ -10,4 +10,7 @@ interface DiamondsLogDao {
 
     @Delete
     fun clearSync(logs: List<DiamondsLog>)
+
+    @Insert
+    fun insert(diamondsLog: DiamondsLog)
 }
