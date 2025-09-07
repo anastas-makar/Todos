@@ -9,5 +9,5 @@ interface DiamondsLogDao {
     fun getSync() : List<DiamondsLog>
 
     @Delete
-    fun deleteSync(logs: List<DiamondsLog>)
+    fun clearSync(logs: List<DiamondsLog>)
 }

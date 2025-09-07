@@ -5,10 +5,12 @@ import pro.progr.todos.api.SyncMetaData
 import pro.progr.todos.api.TodosApiService
 import pro.progr.todos.api.TodosSync
 import pro.progr.todos.db.DiamondsCountDao
+import pro.progr.todos.db.DiamondsLogDao
 import pro.progr.todos.db.NoteListsDao
 import pro.progr.todos.db.NoteToTagXRefDao
 import pro.progr.todos.db.NotesDao
 import pro.progr.todos.db.NotesInHistoryDao
+import pro.progr.todos.db.OutboxDao
 import pro.progr.todos.db.TagsDao
 import pro.progr.todos.db.TodosDataBase
 import javax.inject.Inject
@@ -23,32 +25,68 @@ class SyncRepository @Inject constructor(
     private val notesInHistoryDao: NotesInHistoryDao = db.notesInHistoryDao()
     private val diamondsCountDao: DiamondsCountDao = db.diamondsCountDao()
     private val noteToTagXRefDao: NoteToTagXRefDao = db.noteToTagXRefDao()
+    private val diamondsLogDao: DiamondsLogDao = db.diamondsLogDao()
+    private val outBoxDao: OutboxDao = db.outBoxDao()
 
     suspend fun sync() {
+        val outboxes = outBoxDao.getSync()
+
+        val noteUUIDs = outboxes.filter {
+            it.tableName == "notes"
+        }.map { it.rowId }
+
+        val noteInHistoryUUIDs = outboxes.filter {
+            it.tableName == "notes_in_history"
+        }.map { it.rowId }
+
+        val noteListUUIDs = outboxes.filter {
+            it.tableName == "note_lists"
+        }.map { it.rowId }
+
+        val noteTagUUIDs = outboxes.filter {
+            it.tableName == "note_tag"
+        }.map { it.rowId }
+
+        val noteToTagUUIDs = outboxes.filter {
+            it.tableName == "note_to_tag"
+        }.map { it.rowId }
+
         val syncData = TodosSync(
             syncMetaData = SyncMetaData(),
-            notes = notesDao.getUpdates(listOf("TODO")),
-            notesInHistory = notesInHistoryDao.getUpdates(listOf("TODO")),
-            notesLists = noteListsDao.getUpdates(listOf("TODO")),
-            noteTags = tagsDao.getUpdates(listOf("TODO")),
-            noteToTags = noteToTagXRefDao.getUpdates(listOf("TODO")),
-            diamondCounts = emptyList() //todo:
+            notes = if (noteUUIDs.isEmpty()) emptyList()
+                else notesDao.getUpdates(noteUUIDs),
+            notesInHistory = if (noteInHistoryUUIDs.isEmpty()) emptyList()
+                else notesInHistoryDao.getUpdates(noteInHistoryUUIDs),
+            notesLists = if (noteListUUIDs.isEmpty()) emptyList()
+                else noteListsDao.getUpdates(noteListUUIDs),
+            noteTags = if (noteTagUUIDs.isEmpty()) emptyList()
+                else tagsDao.getUpdates(noteTagUUIDs),
+            noteToTags = if (noteToTagUUIDs.isEmpty()) emptyList()
+                else noteToTagXRefDao.getUpdates(noteToTagUUIDs),
+            diamondLogs = diamondsLogDao.getSync()
         )
 
         val result = startServerSync(syncData)
 
         if (result.isSuccess) {
-            val data = result.getOrThrow()
+            val severData = result.getOrThrow()
             db.withTransaction {
-                notesDao.setUpdates(data.notes)
-                notesInHistoryDao.setUpdates(data.notesInHistory)
-                noteListsDao.setUpdates(data.notesLists)
-                tagsDao.setUpdates(data.noteTags)
-                noteToTagXRefDao.setUpdates(data.noteToTags)
-                //todo: diamondsCountDao.setUpdates(data.diamondCounts)
+                notesDao.setUpdates(severData.notes)
+                notesInHistoryDao.setUpdates(severData.notesInHistory)
+                noteListsDao.setUpdates(severData.notesLists)
+                tagsDao.setUpdates(severData.noteTags)
+                noteToTagXRefDao.setUpdates(severData.noteToTags)
+                diamondsCountDao.setUpdates(severData.diamondLogs)
             }
 
-            finishServerSync(SyncMetaData())
+        val finishResult = finishServerSync(SyncMetaData())
+
+            if (finishResult.isSuccess) {
+                db.withTransaction {
+                    outBoxDao.clearSync(outboxes)
+                    diamondsLogDao.clearSync(syncData.diamondLogs)
+                }
+            }
         }
 
 

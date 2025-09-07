@@ -25,4 +25,8 @@ interface DiamondsCountDao {
             insertDiamondsCount(day, count)
         }
     }
+
+    suspend fun setUpdates(diamondLogs: List<DiamondsLog>) {
+        //todo: логи сгруппироват по дням, взять сумму для каждого дня, прибавить сумму к каждому дню
+    }
 }

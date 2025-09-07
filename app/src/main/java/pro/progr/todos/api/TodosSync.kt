@@ -1,6 +1,6 @@
 package pro.progr.todos.api
 
-import pro.progr.todos.db.DiamondsCount
+import pro.progr.todos.db.DiamondsLog
 import pro.progr.todos.db.Note
 import pro.progr.todos.db.NoteInHistory
 import pro.progr.todos.db.NoteTag
@@ -14,5 +14,5 @@ data class TodosSync(
     val notesLists: List<NotesList>,
     val noteTags: List<NoteTag>,
     val noteToTags: List<NoteToTagXRef>,
-    val diamondCounts: List<DiamondsCount>
+    val diamondLogs: List<DiamondsLog>
 )
