@@ -31,38 +31,22 @@ class SyncRepository @Inject constructor(
     suspend fun sync() {
         val outboxes = outBoxDao.getSync()
 
-        val noteUUIDs = outboxes.filter {
-            it.tableName == "notes"
-        }.map { it.rowId }
-
-        val noteInHistoryUUIDs = outboxes.filter {
-            it.tableName == "notes_in_history"
-        }.map { it.rowId }
-
-        val noteListUUIDs = outboxes.filter {
-            it.tableName == "note_lists"
-        }.map { it.rowId }
-
-        val noteTagUUIDs = outboxes.filter {
-            it.tableName == "note_tag"
-        }.map { it.rowId }
-
-        val noteToTagUUIDs = outboxes.filter {
-            it.tableName == "note_to_tag"
-        }.map { it.rowId }
+        val byTable: Map<String, List<String>> = outboxes
+            .groupBy { it.tableName }
+            .mapValues { entry -> entry.value.map { it.rowId }.distinct() }
 
         val syncData = TodosSync(
             syncMetaData = SyncMetaData(),
-            notes = if (noteUUIDs.isEmpty()) emptyList()
-                else notesDao.getUpdates(noteUUIDs),
-            notesInHistory = if (noteInHistoryUUIDs.isEmpty()) emptyList()
-                else notesInHistoryDao.getUpdates(noteInHistoryUUIDs),
-            notesLists = if (noteListUUIDs.isEmpty()) emptyList()
-                else noteListsDao.getUpdates(noteListUUIDs),
-            noteTags = if (noteTagUUIDs.isEmpty()) emptyList()
-                else tagsDao.getUpdates(noteTagUUIDs),
-            noteToTags = if (noteToTagUUIDs.isEmpty()) emptyList()
-                else noteToTagXRefDao.getUpdates(noteToTagUUIDs),
+            notes = if (byTable["notes"].isNullOrEmpty()) emptyList()
+                else notesDao.getUpdates(byTable["notes"]!!),
+            notesInHistory = if (byTable["notes_in_history"].isNullOrEmpty()) emptyList()
+                else notesInHistoryDao.getUpdates(byTable["notes_in_history"]!!),
+            notesLists = if (byTable["note_lists"].isNullOrEmpty()) emptyList()
+                else noteListsDao.getUpdates(byTable["note_lists"]!!),
+            noteTags = if (byTable["note_tag"].isNullOrEmpty()) emptyList()
+                else tagsDao.getUpdates(byTable["note_tag"]!!),
+            noteToTags = if (byTable["note_to_tag"].isNullOrEmpty()) emptyList()
+                else noteToTagXRefDao.getUpdates(byTable["note_to_tag"]!!),
             diamondLogs = diamondsLogDao.getSync()
         )
 
@@ -88,8 +72,6 @@ class SyncRepository @Inject constructor(
                 }
             }
         }
-
-
     }
 
     private suspend fun startServerSync(payload: TodosSync): Result<TodosSync> = runCatching {
