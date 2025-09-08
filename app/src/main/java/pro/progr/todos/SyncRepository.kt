@@ -60,7 +60,6 @@ class SyncRepository @Inject constructor(
                 noteListsDao.setUpdates(severData.notesLists)
                 tagsDao.setUpdates(severData.noteTags)
                 noteToTagXRefDao.setUpdates(severData.noteToTags)
-                diamondsCountDao.setUpdates(severData.diamondLogs)
             }
 
             val finishResult = finishServerSync(SyncMetaData())
@@ -68,6 +67,7 @@ class SyncRepository @Inject constructor(
             if (finishResult.isSuccess) {
                 db.withTransaction {
                     outBoxDao.clearSync(outboxes)
+                    diamondsCountDao.setUpdates(severData.diamondLogs)
                     diamondsLogDao.clearSync(syncData.diamondLogs)
                 }
             }
