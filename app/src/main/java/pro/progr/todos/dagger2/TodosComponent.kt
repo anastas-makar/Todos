@@ -4,6 +4,7 @@ import android.app.Application
 import dagger.BindsInstance
 import dagger.Component
 import pro.progr.todos.DiamondsCountRepository
+import pro.progr.todos.SyncRepository
 import pro.progr.todos.api.TodosApiService
 import javax.inject.Singleton
 
@@ -17,6 +18,8 @@ import javax.inject.Singleton
     TodosNetworkModule::class])
 interface TodosComponent {
     fun diamondsCountRepository(): DiamondsCountRepository
+
+    fun syncRepository(): SyncRepository
 
     fun cardViewModelFactory(): CardViewModelFactory
 
