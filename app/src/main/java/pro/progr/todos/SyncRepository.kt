@@ -55,11 +55,11 @@ class SyncRepository @Inject constructor(
         if (result.isSuccess) {
             val severData = result.getOrThrow()
             db.withTransaction {
-                notesDao.setUpdates(severData.notes)
-                notesInHistoryDao.setUpdates(severData.notesInHistory)
-                noteListsDao.setUpdates(severData.notesLists)
-                tagsDao.setUpdates(severData.noteTags)
-                noteToTagXRefDao.setUpdates(severData.noteToTags)
+                if (!severData.notes.isNullOrEmpty()) notesDao.setUpdates(severData.notes)
+                if (!severData.notesInHistory.isNullOrEmpty()) notesInHistoryDao.setUpdates(severData.notesInHistory)
+                if (!severData.notesLists.isNullOrEmpty()) noteListsDao.setUpdates(severData.notesLists)
+                if (!severData.noteTags.isNullOrEmpty()) tagsDao.setUpdates(severData.noteTags)
+                if (!severData.noteToTags.isNullOrEmpty()) noteToTagXRefDao.setUpdates(severData.noteToTags)
             }
 
             val finishResult = finishServerSync(SyncMetaData())
@@ -67,7 +67,7 @@ class SyncRepository @Inject constructor(
             if (finishResult.isSuccess) {
                 db.withTransaction {
                     outBoxDao.clearSync(outboxes)
-                    diamondsCountDao.setUpdates(severData.diamondLogs)
+                    if (!severData.diamondLogs.isNullOrEmpty()) diamondsCountDao.setUpdates(severData.diamondLogs)
                     diamondsLogDao.clearSync(syncData.diamondLogs)
                 }
             }
