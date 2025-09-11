@@ -46,9 +46,9 @@ class DiamondViewModel @Inject constructor(private val diamondsCountRepository: 
         }
     }
 
-    override suspend fun add(diamonds : Int): Result<Boolean> {
+    override suspend fun add(diamonds : Int): Result<Boolean>  = withContext(Dispatchers.IO) {
         diamondsCountRepository.addDiamondsForDate(LocalDate.now(), diamonds)
 
-        return Result.success(true)
+        Result.success(true)
     }
 }
