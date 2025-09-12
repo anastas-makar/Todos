@@ -33,8 +33,6 @@ fun EditCardScreen(cardViewModel: CardViewModel,
                    navController: NavHostController
 ) {
     LaunchedEffect(Unit) {
-        cardViewModel.getCard(cardId)
-
         val selectedSublistChain = cardViewModel.getSublistChane()
         for (list in listsViewModel.nestedListState.value) {
             if ((list as NList).sublistChain.equals(selectedSublistChain)) {

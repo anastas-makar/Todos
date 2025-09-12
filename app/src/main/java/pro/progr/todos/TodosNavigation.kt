@@ -116,18 +116,23 @@ fun TodosNavigation(
             cardViewModelFactory.cardId = cardId
             val cardViewModel: CardViewModel = viewModel(factory = cardViewModelFactory)
             val tagsViewModel: TagsViewModel = viewModel(factory = daggerViewModelFactory)
+            cardViewModel.getCard(cardId!!)
 
             val listsViewModel: ListsViewModel =
                 viewModel(factory = listsViewModelFactory, key = "editCard${cardId}")
 
-            EditCardScreen(
-                cardViewModel = cardViewModel,
-                tagsViewModel = tagsViewModel,
-                listsViewModel = listsViewModel,
-                cardId = cardId!!,
-                paletteViewModelState = paletteViewModelState,
-                navController = navController
-            )
+            if (cardViewModel.cardContent.value.id != null) {
+                EditCardScreen(
+                    cardViewModel = cardViewModel,
+                    tagsViewModel = tagsViewModel,
+                    listsViewModel = listsViewModel,
+                    cardId = cardId,
+                    paletteViewModelState = paletteViewModelState,
+                    navController = navController
+                )
+
+            }
+
         }
 
         composable("createCard") {
