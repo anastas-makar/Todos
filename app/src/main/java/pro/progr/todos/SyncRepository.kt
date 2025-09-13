@@ -36,7 +36,11 @@ class SyncRepository @Inject constructor(
             .mapValues { entry -> entry.value.map { it.rowId }.distinct() }
 
         val syncData = TodosSync(
-            syncMetaData = SyncMetaData(),
+            syncMetaData = SyncMetaData(dbVersion =  db.openHelper.readableDatabase.version,
+                latestUpdates = outboxes.fold(HashMap<String, Long>()) { acc, o ->
+                acc[o.rowId] = maxOf(acc[o.rowId] ?: Long.MIN_VALUE, o.createdAt)
+                acc
+            }),
             notes = if (byTable["notes"].isNullOrEmpty()) emptyList()
                 else notesDao.getUpdates(byTable["notes"]!!),
             notesInHistory = if (byTable["notes_in_history"].isNullOrEmpty()) emptyList()
@@ -62,7 +66,7 @@ class SyncRepository @Inject constructor(
                 if (!severData.noteToTags.isNullOrEmpty()) noteToTagXRefDao.setUpdates(severData.noteToTags)
             }
 
-            val finishResult = finishServerSync(SyncMetaData())
+            val finishResult = finishServerSync(SyncMetaData(dbVersion =  db.openHelper.readableDatabase.version))
 
             if (finishResult.isSuccess) {
                 db.withTransaction {
