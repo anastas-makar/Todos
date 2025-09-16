@@ -12,6 +12,7 @@ import pro.progr.todos.api.TodosApiService
 import pro.progr.todos.db.TodosDataBase
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import pro.progr.todos.BuildConfig
 
 class SyncWorker(
     appContext: Context,
