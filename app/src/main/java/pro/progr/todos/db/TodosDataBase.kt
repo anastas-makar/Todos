@@ -9,6 +9,8 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import pro.progr.diamondsandberries.db.FilterTypeConverter
 import pro.progr.diamondsandberries.db.PatternDatesConverter
 import pro.progr.diamondsandberries.db.ScheduleDatesConverter
+import pro.progr.todos.util.DeviceIdProvider
+import java.util.UUID
 
 @Database(
     entities = [
@@ -57,7 +59,17 @@ abstract class TodosDataBase : RoomDatabase() {
                 )
                 .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_1_3, MIGRATION_1_4, MIGRATION_2_4, MIGRATION_3_4)
                     .addCallback(object : RoomDatabase.Callback() {
+                        override fun onCreate(db: SupportSQLiteDatabase) {
+                            super.onCreate(db)
+                            val newId = UUID.randomUUID().toString()
+                            DeviceIdProvider.set(newId, context)
+                        }
                         override fun onOpen(db: SupportSQLiteDatabase) {
+                            // deviceId из prefs; если prefs потерялиcь, но БД есть — восстановим
+                            if (runCatching { DeviceIdProvider.get() }.isFailure) {
+                                val restored = UUID.randomUUID().toString()
+                                DeviceIdProvider.set(restored, context)
+                            }
 
                             /**
                              * Триггеры для таблиц
