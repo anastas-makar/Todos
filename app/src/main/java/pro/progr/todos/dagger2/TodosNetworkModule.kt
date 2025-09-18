@@ -13,6 +13,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 import pro.progr.todos.BuildConfig
+import pro.progr.todos.api.TodosNetworkFactory
 import javax.inject.Named
 
 @Module
@@ -67,12 +68,7 @@ object TodosNetworkModule {
         @Named("baseUrl") baseUrl: String,
         okHttp: OkHttpClient,
         converterFactory: Converter.Factory
-    ): Retrofit =
-        Retrofit.Builder()
-            .baseUrl(baseUrl) // со слэшем на конце в BuildConfig
-            .client(okHttp)
-            .addConverterFactory(converterFactory)
-            .build()
+    ): Retrofit = TodosNetworkFactory.retrofit(baseUrl, okHttp, converterFactory)
 
     @Provides @Singleton
     fun provideTodosApi(retrofit: Retrofit): TodosApiService =
