@@ -21,9 +21,10 @@ class SyncWorker(
 
             val api = TodosNetworkFactory.todosApi(
                 baseUrl = BuildConfig.API_BASE_URL,
-                isDebug = BuildConfig.DEBUG,
+                isDebug = true,
                 apiKey  = BuildConfig.API_KEY,
-                deviceIdProvider = { DeviceIdProvider.get() }
+                deviceIdProvider = { DeviceIdProvider.get() },
+                userIdProvider = { "testuserid" }
             )
 
             val db = TodosDataBase.getDatabase(applicationContext)

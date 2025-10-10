@@ -14,6 +14,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 import pro.progr.todos.BuildConfig
 import pro.progr.todos.api.TodosNetworkFactory
+import pro.progr.todos.util.DeviceIdProvider
 import javax.inject.Named
 
 @Module
@@ -55,13 +56,13 @@ object TodosNetworkModule {
 
     @Provides @Singleton
     fun provideOkHttp(
-        logging: HttpLoggingInterceptor,
-        apiKeyInterceptor: Interceptor?
-    ): OkHttpClient =
-        OkHttpClient.Builder()
-            .addInterceptor(logging)
-            .apply { apiKeyInterceptor?.let { addInterceptor(it) } }
-            .build()
+        @Named("apiKey") apiKey: String,
+    ): OkHttpClient = TodosNetworkFactory.okHttp(
+        isDebug = true,
+        apiKey = apiKey,
+        deviceIdProvider = { DeviceIdProvider.get() },
+        userIdProvider = { "testuserid" }
+    )
 
     @Provides @Singleton
     fun provideRetrofit(

@@ -10,12 +10,15 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object TodosNetworkFactory {
 
-    fun deviceIdInterceptor(provider: () -> String) = Interceptor { chain ->
-        val id = provider()
-        val req = chain.request().newBuilder()
-            .header("X-Device-Id", id)
+    fun authHeadersInterceptor(
+        deviceIdProvider: () -> String,
+        userIdProvider: () -> String
+    ) = Interceptor { chain ->
+        val request = chain.request().newBuilder()
+            .header("deviceId", deviceIdProvider())
+            .header("userId", userIdProvider())
             .build()
-        chain.proceed(req)
+        chain.proceed(request)
     }
 
     fun apiKeyInterceptor(key: String?): Interceptor? =
@@ -38,11 +41,12 @@ object TodosNetworkFactory {
     fun okHttp(
         isDebug: Boolean,
         apiKey: String?,
-        deviceIdProvider: () -> String
+        deviceIdProvider: () -> String,
+        userIdProvider: () -> String
     ): OkHttpClient = OkHttpClient.Builder()
-        // ВАЖНО: сначала заголовки, потом логгер — чтобы их было видно в логе
-        .addInterceptor(deviceIdInterceptor(deviceIdProvider))
-        .apply { apiKeyInterceptor(apiKey)?.let(::addInterceptor) }
+        // сначала заголовки
+        .addInterceptor(authHeadersInterceptor(deviceIdProvider, userIdProvider))
+        //.apply { apiKeyInterceptor(apiKey)?.let(::addInterceptor) }
         .addInterceptor(loggingInterceptor(isDebug))
         .build()
 
@@ -51,7 +55,7 @@ object TodosNetworkFactory {
         client: OkHttpClient,
         converterFactory: Converter.Factory = GsonConverterFactory.create(GsonBuilder().create())
     ): Retrofit = Retrofit.Builder()
-        .baseUrl(baseUrl)   // убедись, что в baseUrl есть завершающий '/'
+        .baseUrl(baseUrl)
         .client(client)
         .addConverterFactory(converterFactory)
         .build()
@@ -60,8 +64,11 @@ object TodosNetworkFactory {
         baseUrl: String,
         isDebug: Boolean,
         apiKey: String?,
-        deviceIdProvider: () -> String
+        deviceIdProvider: () -> String,
+        userIdProvider: () -> String
     ): TodosApiService =
-        retrofit(baseUrl, okHttp(isDebug, apiKey, deviceIdProvider))
-            .create(TodosApiService::class.java)
+        retrofit(
+            baseUrl,
+            okHttp(isDebug, apiKey, deviceIdProvider, userIdProvider)
+        ).create(TodosApiService::class.java)
 }
