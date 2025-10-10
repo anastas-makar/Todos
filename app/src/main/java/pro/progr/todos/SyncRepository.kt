@@ -1,9 +1,13 @@
 package pro.progr.todos
 
+import android.util.Log
 import androidx.room.withTransaction
+import com.google.gson.Gson
 import pro.progr.todos.api.SyncMetaData
 import pro.progr.todos.api.TodosApiService
 import pro.progr.todos.api.TodosSync
+import pro.progr.todos.api.mapper.toDto
+import pro.progr.todos.api.mapper.toEntity
 import pro.progr.todos.db.DiamondsCountDao
 import pro.progr.todos.db.DiamondsLogDao
 import pro.progr.todos.db.NoteListsDao
@@ -28,6 +32,8 @@ class SyncRepository @Inject constructor(
     private val diamondsLogDao: DiamondsLogDao = db.diamondsLogDao()
     private val outBoxDao: OutboxDao = db.outBoxDao()
 
+    private val gson : Gson = Gson()
+
     suspend fun sync() {
         val outboxes = outBoxDao.getSync()
 
@@ -42,39 +48,55 @@ class SyncRepository @Inject constructor(
                 acc
             }),
             notes = if (byTable["notes"].isNullOrEmpty()) emptyList()
-                else notesDao.getUpdates(byTable["notes"]!!),
+                else notesDao.getUpdates(byTable["notes"]!!).map { it.toDto(gson) },
             notesInHistory = if (byTable["notes_in_history"].isNullOrEmpty()) emptyList()
-                else notesInHistoryDao.getUpdates(byTable["notes_in_history"]!!),
+                else notesInHistoryDao.getUpdates(byTable["notes_in_history"]!!).map { it.toDto() },
             notesLists = if (byTable["note_lists"].isNullOrEmpty()) emptyList()
-                else noteListsDao.getUpdates(byTable["note_lists"]!!),
+                else noteListsDao.getUpdates(byTable["note_lists"]!!).map { it.toDto() },
             noteTags = if (byTable["note_tag"].isNullOrEmpty()) emptyList()
-                else tagsDao.getUpdates(byTable["note_tag"]!!),
+                else tagsDao.getUpdates(byTable["note_tag"]!!).map { it.toDto() },
             noteToTags = if (byTable["note_to_tag"].isNullOrEmpty()) emptyList()
-                else noteToTagXRefDao.getUpdates(byTable["note_to_tag"]!!),
-            diamondLogs = diamondsLogDao.getSync()
+                else noteToTagXRefDao.getUpdates(byTable["note_to_tag"]!!).map { it.toDto() },
+            diamondLogs = diamondsLogDao.getSync().map { it.toDto() }
         )
+
+        Log.wtf("SYNC DATA", syncData.toString())
 
         val result = startServerSync(syncData)
 
         if (result.isSuccess) {
             val severData = result.getOrThrow()
+            Log.wtf("SERVER DATA", severData.toString())
             db.withTransaction {
-                if (!severData.notes.isNullOrEmpty()) notesDao.setUpdates(severData.notes)
-                if (!severData.notesInHistory.isNullOrEmpty()) notesInHistoryDao.setUpdates(severData.notesInHistory)
-                if (!severData.notesLists.isNullOrEmpty()) noteListsDao.setUpdates(severData.notesLists)
-                if (!severData.noteTags.isNullOrEmpty()) tagsDao.setUpdates(severData.noteTags)
-                if (!severData.noteToTags.isNullOrEmpty()) noteToTagXRefDao.setUpdates(severData.noteToTags)
+                if (!severData.notes.isNullOrEmpty()) notesDao.setUpdates(
+                    severData.notes.map { it.toEntity(gson) })
+                if (!severData.notesInHistory.isNullOrEmpty()) notesInHistoryDao.setUpdates(
+                    severData.notesInHistory.map { it.toEntity() })
+                if (!severData.notesLists.isNullOrEmpty()) noteListsDao.setUpdates(
+                    severData.notesLists.map { it.toEntity() })
+                if (!severData.noteTags.isNullOrEmpty()) tagsDao.setUpdates(
+                    severData.noteTags.map { it.toEntity() })
+                if (!severData.noteToTags.isNullOrEmpty()) noteToTagXRefDao.setUpdates(
+                    severData.noteToTags.map { it.toEntity() })
             }
 
             val finishResult = finishServerSync(SyncMetaData(dbVersion =  db.openHelper.readableDatabase.version))
 
             if (finishResult.isSuccess) {
                 db.withTransaction {
+                    Log.wtf("OUTBOXES", outboxes.toString())
                     outBoxDao.clearSync(outboxes)
-                    if (!severData.diamondLogs.isNullOrEmpty()) diamondsCountDao.setUpdates(severData.diamondLogs)
-                    diamondsLogDao.clearSync(syncData.diamondLogs)
+                    if (!severData.diamondLogs.isNullOrEmpty()) diamondsCountDao.setUpdates(
+                        severData.diamondLogs.map { it.toEntity() })
+                    diamondsLogDao.clearSync(
+                        syncData.diamondLogs.map { it.toEntity() })
                 }
+
+                Log.wtf("SUCCESS", "SUCCESS")
             }
+            Log.wtf("wtf", finishResult.toString())
+        } else {
+            Log.wtf("RESULT IS NOT SUCCESS", result.toString())
         }
     }
 
