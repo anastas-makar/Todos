@@ -1,6 +1,7 @@
 package pro.progr.todos.db
 
 import android.content.Context
+import android.util.Log
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -21,7 +22,8 @@ import java.util.UUID
         NoteToTagXRef::class,
         DiamondsCount::class,
         DiamondsLog::class,
-        Outbox::class], version = 4
+        Outbox::class,
+        AppMeta::class], version = 4
 )
 @TypeConverters(
     SublistChainConverter::class,
@@ -46,6 +48,8 @@ abstract class TodosDataBase : RoomDatabase() {
 
     abstract fun diamondsLogDao(): DiamondsLogDao
 
+    abstract fun appMetDao(): AppMetaDao
+
     companion object {
         @Volatile
         private var INSTANCE: TodosDataBase? = null
@@ -61,14 +65,33 @@ abstract class TodosDataBase : RoomDatabase() {
                     .addCallback(object : RoomDatabase.Callback() {
                         override fun onCreate(db: SupportSQLiteDatabase) {
                             super.onCreate(db)
-                            val newId = UUID.randomUUID().toString()
-                            DeviceIdProvider.set(newId, context)
+                            // новый device_id при новой БД
+                            val id = UUID.randomUUID().toString()
+                            db.execSQL(
+                                "INSERT OR IGNORE INTO app_meta(key, value) VALUES('device_id', ?)",
+                                arrayOf(id)
+                            )
+                            // дублируем в prefs
+                            DeviceIdProvider.set(id, context)
                         }
                         override fun onOpen(db: SupportSQLiteDatabase) {
                             // deviceId из prefs; если prefs потерялиcь, но БД есть — восстановим
                             if (runCatching { DeviceIdProvider.get() }.isFailure) {
-                                val restored = UUID.randomUUID().toString()
-                                DeviceIdProvider.set(restored, context)
+                                val cursor = db.query("SELECT value FROM app_meta WHERE key='device_id' LIMIT 1")
+                                cursor.use {
+                                    if (it.moveToFirst()) {
+                                        DeviceIdProvider.set(it.getString(0), context)
+                                    } else {
+                                        // Странный случай: нет device_id в БД → создадим
+                                        Log.wtf("NO DEVICE ID:", "NO DEVICE ID IN PREFS AND DB")
+                                        val id = UUID.randomUUID().toString()
+                                        db.execSQL(
+                                            "INSERT OR IGNORE INTO app_meta(key, value) VALUES('device_id', ?)",
+                                            arrayOf(id)
+                                        )
+                                        DeviceIdProvider.set(id, context)
+                                    }
+                                }
                             }
 
                             /**
