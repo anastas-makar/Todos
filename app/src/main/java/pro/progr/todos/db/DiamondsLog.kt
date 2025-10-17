@@ -8,7 +8,6 @@ import java.util.UUID
 @Entity(
     tableName = "diamonds_log"
 )
-@TypeConverters(SublistChainConverter::class, ColorStyleConverter::class)
 data class DiamondsLog(
     @PrimaryKey(autoGenerate = false)
     val uuid: String = UUID.randomUUID().toString(),

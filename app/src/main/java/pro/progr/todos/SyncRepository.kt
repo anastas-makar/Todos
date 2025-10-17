@@ -37,7 +37,7 @@ class SyncRepository @Inject constructor(
     private val gson : Gson = Gson()
 
     suspend fun sync() {
-        val diamonsLogs = compressDiamondLogs()
+        val diamondsLogs = compressDiamondLogs()
 
         val outboxes = outBoxDao.getSync()
 
@@ -61,7 +61,7 @@ class SyncRepository @Inject constructor(
                 else tagsDao.getUpdates(byTable["note_tag"]!!).map { it.toDto() },
             noteToTags = if (byTable["note_to_tag"].isNullOrEmpty()) emptyList()
                 else noteToTagXRefDao.getUpdates(byTable["note_to_tag"]!!).map { it.toDto() },
-            diamondLogs = diamonsLogs.map { it.toDto() }
+            diamondLogs = diamondsLogs.map { it.toDto() }
         )
 
         Log.wtf("SYNC DATA", syncData.toString())
@@ -90,6 +90,7 @@ class SyncRepository @Inject constructor(
                 db.withTransaction {
                     Log.wtf("OUTBOXES", outboxes.toString())
                     outBoxDao.clearSync(outboxes)
+                    //применяются только после успешного /finish, чтобы избежать дублей
                     if (!severData.diamondLogs.isNullOrEmpty()) diamondsCountDao.setUpdates(
                         severData.diamondLogs.map { it.toEntity() })
                     diamondsLogDao.clear(
