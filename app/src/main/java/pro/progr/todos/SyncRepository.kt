@@ -1,6 +1,7 @@
 package pro.progr.todos
 
 import android.util.Log
+import androidx.room.Transaction
 import androidx.room.withTransaction
 import com.google.gson.Gson
 import pro.progr.todos.api.SyncMetaData
@@ -9,6 +10,7 @@ import pro.progr.todos.api.TodosSync
 import pro.progr.todos.api.mapper.toDto
 import pro.progr.todos.api.mapper.toEntity
 import pro.progr.todos.db.DiamondsCountDao
+import pro.progr.todos.db.DiamondsLog
 import pro.progr.todos.db.DiamondsLogDao
 import pro.progr.todos.db.NoteListsDao
 import pro.progr.todos.db.NoteToTagXRefDao
@@ -35,6 +37,8 @@ class SyncRepository @Inject constructor(
     private val gson : Gson = Gson()
 
     suspend fun sync() {
+        val diamonsLogs = compressDiamondLogs()
+
         val outboxes = outBoxDao.getSync()
 
         val byTable: Map<String, List<String>> = outboxes
@@ -57,7 +61,7 @@ class SyncRepository @Inject constructor(
                 else tagsDao.getUpdates(byTable["note_tag"]!!).map { it.toDto() },
             noteToTags = if (byTable["note_to_tag"].isNullOrEmpty()) emptyList()
                 else noteToTagXRefDao.getUpdates(byTable["note_to_tag"]!!).map { it.toDto() },
-            diamondLogs = diamondsLogDao.getSync().map { it.toDto() }
+            diamondLogs = diamonsLogs.map { it.toDto() }
         )
 
         Log.wtf("SYNC DATA", syncData.toString())
@@ -88,7 +92,7 @@ class SyncRepository @Inject constructor(
                     outBoxDao.clearSync(outboxes)
                     if (!severData.diamondLogs.isNullOrEmpty()) diamondsCountDao.setUpdates(
                         severData.diamondLogs.map { it.toEntity() })
-                    diamondsLogDao.clearSync(
+                    diamondsLogDao.clear(
                         syncData.diamondLogs.map { it.toEntity() })
                 }
 
@@ -116,5 +120,27 @@ class SyncRepository @Inject constructor(
         } else {
             error("HTTP ${resp.code()}: ${resp.errorBody()?.string().orEmpty()}")
         }
+    }
+
+    @Transaction
+    suspend fun compressDiamondLogs() : List<DiamondsLog> {
+        val allLogs = diamondsLogDao.getAll() // Получаем все локальные логи
+        if (allLogs.isEmpty()) return emptyList()
+
+        val grouped = allLogs.groupBy { it.day }.map { (day, logs) ->
+            DiamondsLog(
+                uuid = logs.maxOf { it.uuid },//пусть будет конкретный uuid, чтобы застраховаться от повторной вставки
+                day = day,
+                count = logs.sumOf { it.count }
+            )
+        }
+
+        // Удаляем старые строго по UUID — чтобы не задеть новые, если вдруг совпадения по дням
+        diamondsLogDao.clear(allLogs)
+
+        // Вставляем новые «ужатые» записи
+        diamondsLogDao.insert(grouped)
+
+        return grouped
     }
 }

@@ -6,11 +6,14 @@ import androidx.room.*
 interface DiamondsLogDao {
 
     @Query("SELECT * FROM diamonds_log")
-    suspend fun getSync() : List<DiamondsLog>
+    suspend fun getAll() : List<DiamondsLog>
 
     @Delete
-    suspend fun clearSync(logs: List<DiamondsLog>)
+    suspend fun clear(logs: List<DiamondsLog>)
 
     @Insert
     suspend fun insert(diamondsLog: DiamondsLog)
+
+    @Insert
+    suspend fun insert(diamondsLog: List<DiamondsLog>)
 }
