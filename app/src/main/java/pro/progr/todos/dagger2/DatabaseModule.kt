@@ -47,12 +47,6 @@ class DatabaseModule {
 
     @Singleton
     @Provides
-    fun provideDiamondsLogServerReceivedDao(database: TodosDataBase): DiamondsLogServerReceivedDao {
-        return database.diamondsLogServerReceivedDao()
-    }
-
-    @Singleton
-    @Provides
     fun provideNoteAndHistoryDao(database: TodosDataBase): NoteAndHistoryDao {
         return database.noteAndHistoryDao()
     }
