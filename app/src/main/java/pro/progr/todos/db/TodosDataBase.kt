@@ -22,6 +22,7 @@ import java.util.UUID
         NoteToTagXRef::class,
         DiamondsCount::class,
         DiamondsLog::class,
+        DiamondLogServerReceived::class,
         Outbox::class,
         AppMeta::class], version = 4
 )
@@ -47,6 +48,8 @@ abstract class TodosDataBase : RoomDatabase() {
     abstract fun outBoxDao(): OutboxDao
 
     abstract fun diamondsLogDao(): DiamondsLogDao
+
+    abstract fun diamondsLogServerReceivedDao(): DiamondsLogServerReceivedDao
 
     abstract fun appMetDao(): AppMetaDao
 
