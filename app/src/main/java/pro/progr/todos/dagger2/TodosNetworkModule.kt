@@ -4,9 +4,9 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
-import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import pro.progr.diamondapi.AuthInterface
 import pro.progr.todos.api.TodosApiService
 import retrofit2.Converter
 import retrofit2.Retrofit
@@ -14,7 +14,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 import pro.progr.todos.BuildConfig
 import pro.progr.todos.api.TodosNetworkFactory
-import pro.progr.todos.util.DeviceIdProvider
 import javax.inject.Named
 
 @Module
@@ -22,9 +21,6 @@ object TodosNetworkModule {
 
     @Provides @Singleton @Named("baseUrl")
     fun provideBaseUrl(): String = BuildConfig.API_BASE_URL
-
-    @Provides @Singleton @Named("apiKey")
-    fun provideApiKey(): String = BuildConfig.API_KEY
 
     @Provides @Singleton
     fun provideGson(): Gson = GsonBuilder().create()
@@ -43,25 +39,12 @@ object TodosNetworkModule {
         }
 
     @Provides @Singleton
-    fun provideApiKeyInterceptor(@Named("apiKey") apiKey: String): Interceptor? =
-        apiKey.takeIf { it.isNotBlank() }?.let { key ->
-            Interceptor { chain ->
-                val old = chain.request()
-                val newUrl = old.url.newBuilder()
-                    .addQueryParameter("apiKey", key)
-                    .build()
-                chain.proceed(old.newBuilder().url(newUrl).build())
-            }
-        }
-
-    @Provides @Singleton
     fun provideOkHttp(
-        @Named("apiKey") apiKey: String,
+        auth: AuthInterface
     ): OkHttpClient = TodosNetworkFactory.okHttp(
         isDebug = true,
-        apiKey = apiKey,
-        deviceIdProvider = { DeviceIdProvider.get() },
-        userIdProvider = { "testuserid" }
+        deviceIdProvider = { auth.getDeviceId() },
+        sessionIdProvider = { auth.getSessionId()!! }
     )
 
     @Provides @Singleton

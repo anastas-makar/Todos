@@ -12,25 +12,14 @@ object TodosNetworkFactory {
 
     fun authHeadersInterceptor(
         deviceIdProvider: () -> String,
-        userIdProvider: () -> String
+        sessionIdProvider: () -> String
     ) = Interceptor { chain ->
         val request = chain.request().newBuilder()
             .header("deviceId", deviceIdProvider())
-            .header("userId", userIdProvider())
+            .header("sessionId", sessionIdProvider())
             .build()
         chain.proceed(request)
     }
-
-    fun apiKeyInterceptor(key: String?): Interceptor? =
-        key?.takeIf { it.isNotBlank() }?.let { apiKey ->
-            Interceptor { chain ->
-                val old = chain.request()
-                val newUrl = old.url.newBuilder()
-                    .addQueryParameter("apiKey", apiKey)
-                    .build()
-                chain.proceed(old.newBuilder().url(newUrl).build())
-            }
-        }
 
     fun loggingInterceptor(isDebug: Boolean) =
         HttpLoggingInterceptor().apply {
@@ -40,13 +29,11 @@ object TodosNetworkFactory {
 
     fun okHttp(
         isDebug: Boolean,
-        apiKey: String?,
         deviceIdProvider: () -> String,
-        userIdProvider: () -> String
+        sessionIdProvider: () -> String
     ): OkHttpClient = OkHttpClient.Builder()
         // сначала заголовки
-        .addInterceptor(authHeadersInterceptor(deviceIdProvider, userIdProvider))
-        //.apply { apiKeyInterceptor(apiKey)?.let(::addInterceptor) }
+        .addInterceptor(authHeadersInterceptor(deviceIdProvider, sessionIdProvider))
         .addInterceptor(loggingInterceptor(isDebug))
         .build()
 
@@ -63,12 +50,11 @@ object TodosNetworkFactory {
     fun todosApi(
         baseUrl: String,
         isDebug: Boolean,
-        apiKey: String?,
         deviceIdProvider: () -> String,
-        userIdProvider: () -> String
+        sessionIdProvider: () -> String
     ): TodosApiService =
         retrofit(
             baseUrl,
-            okHttp(isDebug, apiKey, deviceIdProvider, userIdProvider)
+            okHttp(isDebug, deviceIdProvider, sessionIdProvider)
         ).create(TodosApiService::class.java)
 }

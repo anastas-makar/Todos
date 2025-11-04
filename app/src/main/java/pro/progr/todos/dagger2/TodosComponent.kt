@@ -3,6 +3,7 @@ package pro.progr.todos.dagger2
 import android.app.Application
 import dagger.BindsInstance
 import dagger.Component
+import pro.progr.diamondapi.AuthInterface
 import pro.progr.todos.DiamondsCountRepository
 import pro.progr.todos.SyncRepository
 import pro.progr.todos.api.TodosApiService
@@ -40,6 +41,9 @@ interface TodosComponent {
 
         @BindsInstance
         fun application(application: Application): Builder
+
+        @BindsInstance
+        fun auth(auth: AuthInterface): Builder
 
         fun appModule(appModule: AppModule): Builder
 
