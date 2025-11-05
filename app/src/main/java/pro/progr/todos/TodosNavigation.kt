@@ -16,6 +16,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import pro.progr.diamondapi.AuthInterface
 import pro.progr.diamondapi.GetDiamondsCountInterface
 import pro.progr.todos.composable.pages.EditCardScreen
 import pro.progr.lists.ListsViewModel
@@ -42,7 +43,8 @@ fun TodosNavigation(
                              externalNavController: NavHostController,
                              content : @Composable () -> Unit) -> Unit,
     externalNavController: NavHostController,
-    diamondViewModel : DiamondViewModel
+    diamondViewModel : DiamondViewModel,
+    auth: AuthInterface
 ) {
 
     val appContext = LocalContext.current.applicationContext
@@ -51,6 +53,7 @@ fun TodosNavigation(
     val component = remember { DaggerTodosComponent.builder()
         .application(appContext as Application)
         .appModule(AppModule(appContext as Application))
+        .auth(auth)
         .build() }
 
     val daggerViewModelFactory = component.daggerViewModelFactory()
