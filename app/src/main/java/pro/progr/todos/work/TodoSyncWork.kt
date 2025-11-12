@@ -16,8 +16,7 @@ suspend fun doTodoSyncWork(applicationContext: Context,
         val api = TodosNetworkFactory.todosApi(
             baseUrl = BuildConfig.API_BASE_URL,
             isDebug = BuildConfig.DEBUG,
-            deviceIdProvider = { auth.getDeviceId() },
-            sessionIdProvider = { auth.getSessionId().orEmpty() } // не запирайся на старом sid
+            auth = auth
         )
 
         val db = TodosDataBase.getDatabase(applicationContext)

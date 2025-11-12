@@ -43,8 +43,7 @@ object TodosNetworkModule {
         auth: AuthInterface
     ): OkHttpClient = TodosNetworkFactory.okHttp(
         isDebug = true,
-        deviceIdProvider = { auth.getDeviceId() },
-        sessionIdProvider = { auth.getSessionId()!! }
+        auth = auth
     )
 
     @Provides @Singleton

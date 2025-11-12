@@ -1,25 +1,14 @@
 package pro.progr.todos.api
 
 import com.google.gson.GsonBuilder
-import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import pro.progr.diamondapi.AuthInterface
 import retrofit2.Converter
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object TodosNetworkFactory {
-
-    fun authHeadersInterceptor(
-        deviceIdProvider: () -> String,
-        sessionIdProvider: () -> String
-    ) = Interceptor { chain ->
-        val request = chain.request().newBuilder()
-            .header("deviceId", deviceIdProvider())
-            .header("sessionId", sessionIdProvider())
-            .build()
-        chain.proceed(request)
-    }
 
     fun loggingInterceptor(isDebug: Boolean) =
         HttpLoggingInterceptor().apply {
@@ -29,11 +18,11 @@ object TodosNetworkFactory {
 
     fun okHttp(
         isDebug: Boolean,
-        deviceIdProvider: () -> String,
-        sessionIdProvider: () -> String
+        auth: AuthInterface
     ): OkHttpClient = OkHttpClient.Builder()
-        // сначала заголовки
-        .addInterceptor(authHeadersInterceptor(deviceIdProvider, sessionIdProvider))
+        // сначала подписание
+        .addInterceptor(signingInterceptor(auth))
+        // потом логирование, чтобы лог видел уже подписанные заголовки
         .addInterceptor(loggingInterceptor(isDebug))
         .build()
 
@@ -50,11 +39,11 @@ object TodosNetworkFactory {
     fun todosApi(
         baseUrl: String,
         isDebug: Boolean,
-        deviceIdProvider: () -> String,
-        sessionIdProvider: () -> String
+        auth: AuthInterface
     ): TodosApiService =
         retrofit(
             baseUrl,
-            okHttp(isDebug, deviceIdProvider, sessionIdProvider)
+            okHttp(isDebug, auth)
         ).create(TodosApiService::class.java)
 }
+
