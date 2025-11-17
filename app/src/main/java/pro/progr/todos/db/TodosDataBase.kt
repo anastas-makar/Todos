@@ -10,7 +10,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import pro.progr.diamondsandberries.db.FilterTypeConverter
 import pro.progr.diamondsandberries.db.PatternDatesConverter
 import pro.progr.diamondsandberries.db.ScheduleDatesConverter
-import pro.progr.todos.util.DeviceIdProvider
+//import pro.progr.todos.util.DeviceIdProvider
 import java.util.UUID
 
 @Database(
@@ -72,11 +72,11 @@ abstract class TodosDataBase : RoomDatabase() {
                                 arrayOf(id)
                             )
                             // дублируем в prefs
-                            DeviceIdProvider.set(id, context)
+                            //DeviceIdProvider.set(id, context)
                         }
                         override fun onOpen(db: SupportSQLiteDatabase) {
                             // deviceId из prefs; если prefs потерялиcь, но БД есть — восстановим
-                            if (runCatching { DeviceIdProvider.get() }.isFailure) {
+/**                            if (runCatching { DeviceIdProvider.get() }.isFailure) {
                                 val cursor = db.query("SELECT value FROM app_meta WHERE key='device_id' LIMIT 1")
                                 cursor.use {
                                     if (it.moveToFirst()) {
@@ -92,7 +92,7 @@ abstract class TodosDataBase : RoomDatabase() {
                                         DeviceIdProvider.set(id, context)
                                     }
                                 }
-                            }
+                            }**/
 
                             /**
                              * Триггеры для таблиц

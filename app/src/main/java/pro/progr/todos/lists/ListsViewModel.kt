@@ -21,17 +21,21 @@ class ListsViewModel(private val repository: ListsRepository) : ViewModel() {
             repository.getListOfLists().collectLatest { listOfLists ->
                 nestedListState.value = listOfLists
 
-                if (listOfLists.isNotEmpty()) {
-                    if (selectedListState.value == null) {
-                        selectedListState.value = listOfLists[0]
-                    } else {
-                        //случай с обновлением описания у списка
-                        val currentId = selectedListState.value?.id
-                        selectedListState.value = listOfLists.first { nestedList -> nestedList.id == currentId }
-                    }
+                if (listOfLists.isEmpty()) {
+                    // ничего нет — сбрасываем выбор
+                    selectedListState.value = null
+                    return@collectLatest
+                }
+
+                val currentId = selectedListState.value?.id
+
+                selectedListState.value = when {
+                    currentId == null -> listOfLists.firstOrNull()
+                    else -> listOfLists.firstOrNull { it.id == currentId } ?: listOfLists.firstOrNull()
                 }
             }
         }
+
     }
 
     fun addSublistToList(list: NestedList) {
