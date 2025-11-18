@@ -63,6 +63,6 @@ fun ResolveDestinations(
 
         diamondViewModel.updateCount(
             cardViewModel.card.value.reward,
-            LocalDate.now())
+            date)
     }
 }
