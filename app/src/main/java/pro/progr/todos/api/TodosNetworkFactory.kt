@@ -24,6 +24,7 @@ object TodosNetworkFactory {
         .addInterceptor(signingInterceptor(auth))
         // потом логирование, чтобы лог видел уже подписанные заголовки
         .addInterceptor(loggingInterceptor(isDebug))
+        .addInterceptor(UnauthorizedInterceptor(auth))
         .build()
 
     fun retrofit(
