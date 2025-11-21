@@ -119,7 +119,8 @@ dependencies {
     implementation("com.squareup.okhttp3:logging-interceptor")
 
     implementation("pro.progr:flow:0.1.0-alpha")
-    implementation("pro.progr:diamond-api:2.0.0-alpha")
+    implementation("pro.progr:diamond-api:3.0.0-alpha")
+    implementation("pro.progr:auth-api:0.0.3-alpha")
 }
 
 publishing {

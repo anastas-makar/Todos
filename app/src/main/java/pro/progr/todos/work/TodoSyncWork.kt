@@ -2,7 +2,7 @@ package pro.progr.todos.work
 
 import android.content.Context
 import androidx.work.ListenableWorker
-import pro.progr.diamondapi.AuthInterface
+import pro.progr.authapi.AuthInterface
 import pro.progr.todos.BuildConfig
 import pro.progr.todos.SyncRepository
 import pro.progr.todos.api.TodosNetworkFactory

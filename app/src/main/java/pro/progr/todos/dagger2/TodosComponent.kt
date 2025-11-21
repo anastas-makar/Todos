@@ -3,7 +3,7 @@ package pro.progr.todos.dagger2
 import android.app.Application
 import dagger.BindsInstance
 import dagger.Component
-import pro.progr.diamondapi.AuthInterface
+import pro.progr.authapi.AuthInterface
 import pro.progr.todos.DiamondsCountRepository
 import pro.progr.todos.SyncRepository
 import pro.progr.todos.api.TodosApiService

@@ -16,7 +16,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import pro.progr.diamondapi.AuthInterface
+import pro.progr.authapi.AuthInterface
 import pro.progr.diamondapi.GetDiamondsCountInterface
 import pro.progr.todos.composable.pages.EditCardScreen
 import pro.progr.lists.ListsViewModel

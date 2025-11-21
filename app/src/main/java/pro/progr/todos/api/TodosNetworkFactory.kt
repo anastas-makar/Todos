@@ -3,7 +3,9 @@ package pro.progr.todos.api
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import pro.progr.diamondapi.AuthInterface
+import pro.progr.authapi.AuthInterface
+import pro.progr.authapi.UnauthorizedInterceptor
+import pro.progr.authapi.signingInterceptor
 import retrofit2.Converter
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory

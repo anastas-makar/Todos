@@ -6,7 +6,7 @@ import dagger.Module
 import dagger.Provides
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import pro.progr.diamondapi.AuthInterface
+import pro.progr.authapi.AuthInterface
 import pro.progr.todos.api.TodosApiService
 import retrofit2.Converter
 import retrofit2.Retrofit
