@@ -45,22 +45,23 @@ class SyncRepository @Inject constructor(
             .groupBy { it.tableName }
             .mapValues { entry -> entry.value.map { it.rowId }.distinct() }
 
+        val latestUpdates = outboxes.fold(HashMap<String, Long>()) { acc, o ->
+            acc[o.rowId] = maxOf(acc[o.rowId] ?: Long.MIN_VALUE, o.createdAt)
+            acc
+        }
+
         val syncData = TodosSync(
-            syncMetaData = SyncMetaData(dbVersion =  db.openHelper.readableDatabase.version,
-                latestUpdates = outboxes.fold(HashMap<String, Long>()) { acc, o ->
-                acc[o.rowId] = maxOf(acc[o.rowId] ?: Long.MIN_VALUE, o.createdAt)
-                acc
-            }),
+            syncMetaData = SyncMetaData(dbVersion =  db.openHelper.readableDatabase.version),
             notes = if (byTable["notes"].isNullOrEmpty()) emptyList()
-                else notesDao.getUpdates(byTable["notes"]!!).map { it.toDto(gson) },
+                else notesDao.getUpdates(byTable["notes"]!!).map { it.toDto(gson, latestUpdates[it.id]) },
             notesInHistory = if (byTable["notes_in_history"].isNullOrEmpty()) emptyList()
-                else notesInHistoryDao.getUpdates(byTable["notes_in_history"]!!).map { it.toDto() },
+                else notesInHistoryDao.getUpdates(byTable["notes_in_history"]!!).map { it.toDto(latestUpdates[it.id]) },
             notesLists = if (byTable["note_lists"].isNullOrEmpty()) emptyList()
-                else noteListsDao.getUpdates(byTable["note_lists"]!!).map { it.toDto() },
+                else noteListsDao.getUpdates(byTable["note_lists"]!!).map { it.toDto(latestUpdates[it.id]) },
             noteTags = if (byTable["note_tag"].isNullOrEmpty()) emptyList()
-                else tagsDao.getUpdates(byTable["note_tag"]!!).map { it.toDto() },
+                else tagsDao.getUpdates(byTable["note_tag"]!!).map { it.toDto(latestUpdates[it.id]) },
             noteToTags = if (byTable["note_to_tag"].isNullOrEmpty()) emptyList()
-                else noteToTagXRefDao.getUpdates(byTable["note_to_tag"]!!).map { it.toDto() },
+                else noteToTagXRefDao.getUpdates(byTable["note_to_tag"]!!).map { it.toDto(latestUpdates[it.id]) },
             diamondLogs = diamondsLogs.map { it.toDto() }
         )
 

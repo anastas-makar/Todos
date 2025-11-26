@@ -5,5 +5,6 @@ data class NotesListDto(
     val title: String,
     val isCurrent: Boolean,
     val sublistChain: SublistChainDto,
-    val deleted: Boolean
+    val deleted: Boolean,
+    val latestUpdate: Long?
 )

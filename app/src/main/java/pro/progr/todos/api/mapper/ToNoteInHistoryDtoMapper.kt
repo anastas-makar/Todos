@@ -6,7 +6,7 @@ import pro.progr.todos.api.model.SublistChainDto
 import pro.progr.todos.db.ColorStyleConverter
 import pro.progr.todos.db.NoteInHistory
 
-fun NoteInHistory.toDto(): NoteInHistoryDto {
+fun NoteInHistory.toDto(latestUpdate: Long?): NoteInHistoryDto {
     return NoteInHistoryDto(
         id = id,
         noteId = noteId,
@@ -21,6 +21,7 @@ fun NoteInHistory.toDto(): NoteInHistoryDto {
         fillTextBackground = fillTextBackground,
         todo = todo.name,
         edited = edited,
-        deleted = deleted
+        deleted = deleted,
+        latestUpdate = latestUpdate
     )
 }

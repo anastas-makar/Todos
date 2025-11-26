@@ -7,7 +7,7 @@ import pro.progr.todos.api.model.SublistChainDto
 import pro.progr.todos.db.Note
 import pro.progr.todos.db.ColorStyleConverter
 
-fun Note.toDto(gson: Gson = Gson()): NoteDto {
+fun Note.toDto(gson: Gson = Gson(), latestUpdate: Long?): NoteDto {
     val styleString = ColorStyleConverter().fromColorStyle(style)
 
     return NoteDto(
@@ -34,6 +34,7 @@ fun Note.toDto(gson: Gson = Gson()): NoteDto {
         todo = todo.name,
         latestDone = latestDone,
         deleted = deleted,
-        schedule = gson.toJson(schedule) // сериализуем schedule в JSON-строку
+        schedule = gson.toJson(schedule), // сериализуем schedule в JSON-строку
+        latestUpdate = latestUpdate
     )
 }

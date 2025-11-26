@@ -4,5 +4,6 @@ data class NoteToTagXRefDto (
     val id: String,
     val noteId: String,
     val tagId: String,
-    val deleted: Boolean
+    val deleted: Boolean,
+    val latestUpdate: Long?
 )

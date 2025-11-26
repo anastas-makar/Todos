@@ -14,5 +14,6 @@ data class NoteInHistoryDto(
     val fillTextBackground: Boolean,
     val todo: String,                  // enum.name
     val edited: Boolean,
-    val deleted: Boolean
+    val deleted: Boolean,
+    val latestUpdate: Long?
 )
