@@ -14,7 +14,7 @@ interface NoteWithDataDao {
     @RawQuery(observedEntities = [NoteWithData::class])
     fun getNotesWithTags(query: SupportSQLiteQuery) : Flow<List<NoteWithData>>
 
-    @Query("UPDATE note_to_tag SET deleted = 1, note_id = \"\" WHERE note_id = :noteId")
+    @Query("UPDATE note_to_tag SET deleted = 1, note_id = \"\", tag_id = \"\" WHERE note_id = :noteId")
     fun deleteNoteToTag(noteId: String)
 
     @Insert
@@ -60,6 +60,6 @@ interface NoteWithDataDao {
     @Query("UPDATE notes SET deleted = 1 WHERE id = :noteId")
     fun delete(noteId: String): Int
 
-    @Query("UPDATE note_to_tag SET deleted = 1, note_id = \"\" WHERE tag_id = :tagId AND note_id = :noteId")
+    @Query("UPDATE note_to_tag SET deleted = 1, note_id = \"\", tag_id = \"\" WHERE tag_id = :tagId AND note_id = :noteId")
     fun removeNoteTag(tagId: String, noteId: String)
 }
