@@ -145,4 +145,28 @@ class SyncRepository @Inject constructor(
 
         return grouped
     }
+
+    @Transaction
+    suspend fun compressSink() {
+        val outboxes = outBoxDao.getSync()
+        if (outboxes.isEmpty()) return
+
+        // Группируем по (tableName, rowId) и берём самый свежий createdAt
+        val shrinkedOutboxes = outboxes
+            .groupBy { it.tableName to it.rowId }
+            .map { (_, list) ->
+                list.maxBy { it.createdAt }  // оставляем одну — самую новую
+            }
+
+        // Удаляем все старые записи (по id)
+        outBoxDao.clearSync(outboxes)
+
+        // Вставляем сжатый набор
+        outBoxDao.insert(shrinkedOutboxes)
+    }
+
+    suspend fun shrink() {
+        compressDiamondLogs()
+        compressSink()
+    }
 }

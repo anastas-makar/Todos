@@ -2,6 +2,7 @@ package pro.progr.todos.db
 
 import androidx.room.Dao
 import androidx.room.Delete
+import androidx.room.Insert
 import androidx.room.Query
 
 @Dao
@@ -12,4 +13,7 @@ interface OutboxDao {
 
     @Delete
     fun clearSync(outBoxes : List<Outbox>)
+
+    @Insert
+    fun insert(outBoxes : List<Outbox>)
 }
