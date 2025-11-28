@@ -8,7 +8,7 @@ import pro.progr.todos.api.model.NoteToTagXRefDto
 import pro.progr.todos.api.model.NotesListDto
 
 data class TodosSync(
-    val syncMetaData: SyncMetaData,
+    val syncMetaData: SyncMetaData?,
     val notes : List<NoteDto>,
     val notesInHistory : List<NoteInHistoryDto>,
     val notesLists: List<NotesListDto>,
