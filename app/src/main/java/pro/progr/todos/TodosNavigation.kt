@@ -34,6 +34,7 @@ import pro.progr.todos.dagger2.CardViewModelFactory
 import pro.progr.todos.dagger2.DaggerTodosComponent
 import pro.progr.todos.dagger2.ListsViewModelFactory
 import pro.progr.todos.dagger2.NoteCalendarViewModelFactory
+import pro.progr.todos.dagger2.TodosComponent
 
 @kotlinx.coroutines.ExperimentalCoroutinesApi
 @Composable
@@ -44,17 +45,10 @@ fun TodosNavigation(
                              content : @Composable () -> Unit) -> Unit,
     externalNavController: NavHostController,
     diamondViewModel : DiamondViewModel,
-    auth: AuthInterface
+    component: TodosComponent
 ) {
 
-    val appContext = LocalContext.current.applicationContext
     val drawerState = rememberDrawerState(DrawerValue.Closed)
-
-    val component = remember { DaggerTodosComponent.builder()
-        .application(appContext as Application)
-        .appModule(AppModule(appContext as Application))
-        .auth(auth)
-        .build() }
 
     val daggerViewModelFactory = component.daggerViewModelFactory()
     val listedCardViewModelFactory = component.listedCardViewModelFactory()
