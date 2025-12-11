@@ -1,6 +1,5 @@
 package pro.progr.todos
 
-import android.app.Application
 import androidx.compose.material.DrawerState
 import androidx.compose.material.DrawerValue
 import androidx.compose.material.rememberDrawerState
@@ -8,7 +7,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -16,7 +14,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import pro.progr.authapi.AuthInterface
 import pro.progr.diamondapi.GetDiamondsCountInterface
 import pro.progr.todos.composable.pages.EditCardScreen
 import pro.progr.lists.ListsViewModel
@@ -29,9 +26,7 @@ import pro.progr.todos.composable.pages.CreateCardScreen
 import pro.progr.todos.composable.pages.EditNoteInHistoryScreen
 import pro.progr.todos.composable.pages.ListScreen
 import pro.progr.todos.composable.pages.SchedulePage
-import pro.progr.todos.dagger2.AppModule
 import pro.progr.todos.dagger2.CardViewModelFactory
-import pro.progr.todos.dagger2.DaggerTodosComponent
 import pro.progr.todos.dagger2.ListsViewModelFactory
 import pro.progr.todos.dagger2.NoteCalendarViewModelFactory
 import pro.progr.todos.dagger2.TodosComponent
