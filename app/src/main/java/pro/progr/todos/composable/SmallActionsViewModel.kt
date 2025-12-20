@@ -24,12 +24,12 @@ class SmallActionsViewModel {
                 destination = "createCard"
             ),
             SmallActionModel(
-                color = Color(0xff1B5E20),
+                color = Color(0xff006064),
                 text = "Добавить задачу на сегодня",
                 destination = "createCardForDate/${LocalDate.now().toEpochDay()}"
             ),
             SmallActionModel(
-                color = Color(0xff004D40),
+                color = Color(0xff4d143c),
                 text = "Добавить задачу на завтра",
                 destination = "createCardForDate/${LocalDate.now().plusDays(1L).toEpochDay()}"
             ),

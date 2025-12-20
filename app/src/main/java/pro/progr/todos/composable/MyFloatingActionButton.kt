@@ -15,7 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
@@ -86,12 +86,7 @@ fun MyFloatingActionButton(
                 )
             },
             backgroundColor = Color(0xff01579B),
-            modifier = Modifier
-                .border(
-                    2.dp,
-                    MaterialTheme.colors.surface,
-                    shape = RoundedCornerShape(percent = 100)
-                )
+            shape = MaterialTheme.shapes.small.copy(CornerSize(percent = 10))
         )
     }
 }
