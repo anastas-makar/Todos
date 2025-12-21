@@ -34,10 +34,6 @@ fun BoxScope.SearchBar(cardsListViewModel: CardsListViewModel) {
             )
             .imePadding(),
     ) {
-        Box(modifier = Modifier
-            .height(20.dp)
-            .fillMaxWidth()
-        )
 
         var text by remember { mutableStateOf("") }
 
@@ -51,7 +47,7 @@ fun BoxScope.SearchBar(cardsListViewModel: CardsListViewModel) {
             leadingIcon = { Icon(Icons.Filled.Search, contentDescription = "Search Icon") },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 5.dp, start = 20.dp, end = 20.dp)
+                .padding(bottom = 5.dp, start = 20.dp, end = 20.dp, top = 20.dp)
                 .wrapContentHeight(),
             textStyle = TextStyle(color = Color.Black, fontSize = 16.sp, fontWeight = FontWeight.Normal) // измените размер шрифта здесь
         )
