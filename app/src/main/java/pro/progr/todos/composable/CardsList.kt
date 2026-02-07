@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -23,13 +24,18 @@ import java.time.LocalDate
 fun CardsList(cardsListViewModel: CardsListViewModel,
               diamondViewModel: DiamondViewModel,
               navController: NavHostController) {
+    val shape = RoundedCornerShape(10.dp)
+
     LazyColumn(modifier = Modifier
         .padding(start = 15.dp, end = 15.dp, top = 5.dp, bottom = 60.dp)
-        .border(
+        .dashedBorder(
             width = 1.dp,
             color = Color.LightGray,
-            shape = RoundedCornerShape(size = 10.dp)
+            shape = shape,
+            dashLength = 6.dp,
+            gapLength = 4.dp
         )
+        .clip(shape) // чтобы ripple/клик тоже был со скруглением
         .padding(vertical = 25.dp)
         .fillMaxHeight()) {
         itemsIndexed(cardsListViewModel.cardsList.value) { index, cardVm ->
