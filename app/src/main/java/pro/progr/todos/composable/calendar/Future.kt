@@ -1,6 +1,5 @@
 package pro.progr.todos.composable.calendar
 
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,6 +12,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -20,6 +20,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import pro.progr.todos.CardsListViewModel
 import pro.progr.todos.DiamondViewModel
 import pro.progr.todos.composable.CardsForDay
+import pro.progr.todos.composable.dashedBorder
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -34,18 +35,23 @@ fun Future(cardsListViewModel: CardsListViewModel,
 
     val formatter = DateTimeFormatter.ofPattern("E dd MMMM yyy", Locale.getDefault())
 
+    val shape = RoundedCornerShape(10.dp)
+
     Column(
         modifier = Modifier
             .padding(horizontal = 15.dp, vertical = 5.dp)
             .fillMaxWidth()
             .wrapContentHeight()
-            .border(
+            .dashedBorder(
                 width = 1.dp,
                 color = Color.LightGray,
-                shape = RoundedCornerShape(size = 10.dp)
+                shape = shape,
+                dashLength = 6.dp,
+                gapLength = 4.dp
             )
-            .padding(bottom = 10.dp)
+            .clip(shape) // чтобы ripple/клик тоже был со скруглением
             .clickable { onClick() }
+            .padding(bottom = 10.dp)
     ) {
 
         Row(modifier = Modifier

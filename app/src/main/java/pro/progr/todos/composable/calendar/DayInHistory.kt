@@ -1,6 +1,5 @@
 package pro.progr.todos.composable.calendar
 
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,6 +13,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -25,6 +25,7 @@ import pro.progr.todos.brightcards.vm.ListedCardViewModel
 import pro.progr.todos.CardsListViewModel
 import pro.progr.todos.DiamondViewModel
 import pro.progr.todos.composable.ResolveDestinations
+import pro.progr.todos.composable.dashedBorder
 import pro.progr.todos.db.NoteTag
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -41,16 +42,21 @@ fun DayInHistory(
 
     val formatter = DateTimeFormatter.ofPattern("E dd MMMM yyy", Locale.getDefault())
 
+    val shape = RoundedCornerShape(10.dp)
+
     Column(
         modifier = Modifier
             .padding(horizontal = 15.dp, vertical = 5.dp)
             .fillMaxWidth()
             .wrapContentHeight()
-            .border(
+            .dashedBorder(
                 width = 1.dp,
                 color = Color.LightGray,
-                shape = RoundedCornerShape(size = 10.dp)
+                shape = shape,
+                dashLength = 6.dp,
+                gapLength = 4.dp
             )
+            .clip(shape) // чтобы ripple/клик тоже был со скруглением
             .padding(bottom = 10.dp)
     ) {
         val count = diamondViewModel.diamondsCountForDates.value[date.toEpochDay()]
