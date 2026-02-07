@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
@@ -31,7 +32,8 @@ fun BoxScope.TodoRow(viewModel: ListedCardViewModel,
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(style.titleBackgroundColor)
+            .background(style.titleBackgroundColor,
+                shape = RoundedCornerShape(topStart = 5.dp, topEnd = 5.dp))
             .align(Alignment.TopStart)
     ) {
         TodoIcon(viewModel = viewModel, diamondViewModel = diamondViewModel)
