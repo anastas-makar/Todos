@@ -108,7 +108,7 @@ class CardMenuItems(val date: LocalDate,
         if (!date.isBefore(LocalDate.now())) {
             add(
                 MenuItem(
-                    "Редактировать карточку",
+                    "Редактировать шаблон",
                     { updateDestination(Destinations.TO_EDIT_CARD) }
                 )
             )
