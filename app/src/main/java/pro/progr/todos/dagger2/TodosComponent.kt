@@ -19,7 +19,7 @@ import javax.inject.Singleton
     TodosNetworkModule::class,
     PurchaseBindingModule::class])
 interface TodosComponent {
-    fun diamondsCountRepository(): PurchaseInterface
+    fun purchaseInterface(): PurchaseInterface
 
     fun syncRepository(): SyncRepository
 
