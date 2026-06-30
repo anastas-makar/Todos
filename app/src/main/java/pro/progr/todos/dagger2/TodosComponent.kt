@@ -4,7 +4,7 @@ import android.app.Application
 import dagger.BindsInstance
 import dagger.Component
 import pro.progr.authapi.AuthInterface
-import pro.progr.todos.DiamondsCountRepository
+import pro.progr.diamondapi.PurchaseInterface
 import pro.progr.todos.SyncRepository
 import pro.progr.todos.api.TodosApiService
 import javax.inject.Singleton
@@ -16,9 +16,10 @@ import javax.inject.Singleton
     PaletteModule::class,
     SyncModule::class,
     AppModule::class,
-    TodosNetworkModule::class])
+    TodosNetworkModule::class,
+    PurchaseBindingModule::class])
 interface TodosComponent {
-    fun diamondsCountRepository(): DiamondsCountRepository
+    fun diamondsCountRepository(): PurchaseInterface
 
     fun syncRepository(): SyncRepository
 
