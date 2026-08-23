@@ -1,7 +1,6 @@
 package pro.progr.todos
 
 import android.util.Log
-import androidx.room.Transaction
 import androidx.room.withTransaction
 import com.google.gson.Gson
 import pro.progr.todos.api.SyncMetaData
@@ -124,7 +123,6 @@ class SyncRepository @Inject constructor(
         }
     }
 
-    @Transaction
     suspend fun compressDiamondLogs() : List<DiamondsLog> {
         val allLogs = diamondsLogDao.getAll() // Получаем все локальные логи
         if (allLogs.isEmpty()) return emptyList()
@@ -146,7 +144,6 @@ class SyncRepository @Inject constructor(
         return grouped
     }
 
-    @Transaction
     suspend fun compressSink() {
         val outboxes = outBoxDao.getSync()
         if (outboxes.isEmpty()) return
