@@ -17,11 +17,14 @@ class ListedCardRepository(private val noteAndHistoryDao: NoteAndHistoryDao, pri
         val convertedNote = NoteConverter.toNote(cardContent, note.note.schedule)
         convertedNote.sublistChain = note.note.sublistChain
 
-        convertedNote.latestDone = LocalDate.now().toEpochDay()
+        val currentDate = LocalDate.now().toEpochDay()
+
+        convertedNote.latestDone = currentDate
 
         val historyNote = NoteInHistory(
+            id = "${convertedNote.id}_$currentDate",
             noteId = convertedNote.id,
-            date = LocalDate.now().toEpochDay(),
+            date = currentDate,
             title = convertedNote.title,
             description = convertedNote.description,
             sublistChain = convertedNote.sublistChain,
@@ -33,7 +36,7 @@ class ListedCardRepository(private val noteAndHistoryDao: NoteAndHistoryDao, pri
             todo = TodoStatus.DONE
         )
 
-        noteAndHistoryDao.setCardDoneAndUpdateHistory(convertedNote, historyNote, LocalDate.now().toEpochDay())
+        noteAndHistoryDao.setCardDoneAndUpdateHistory(convertedNote, historyNote, currentDate)
     }
 
     override suspend fun addCardToHistory(cardContent: CardContent, date: LocalDate) {
@@ -42,6 +45,7 @@ class ListedCardRepository(private val noteAndHistoryDao: NoteAndHistoryDao, pri
         convertedNote.sublistChain = note.note.sublistChain
 
         val historyNote = NoteInHistory(
+            id = "${convertedNote.id}_${date.toEpochDay()}",
             noteId = convertedNote.id,
             date = date.toEpochDay(),
             title = convertedNote.title,
@@ -84,9 +88,12 @@ class ListedCardRepository(private val noteAndHistoryDao: NoteAndHistoryDao, pri
 
         convertedNote.todo = TodoStatus.TODO
 
+        val currentDate = LocalDate.now().toEpochDay()
+
         val historyNote = NoteInHistory(
+            id = "${convertedNote.id}_$currentDate",
             noteId = convertedNote.id,
-            date = LocalDate.now().toEpochDay(),
+            date = currentDate,
             title = convertedNote.title,
             description = convertedNote.description,
             sublistChain = convertedNote.sublistChain,

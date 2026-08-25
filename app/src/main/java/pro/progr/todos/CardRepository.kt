@@ -160,11 +160,14 @@ class CardRepository @Inject constructor(
     override suspend fun setCardDone(cardContent: CardContent) {
         val note = NoteConverter.toNote(cardContent, note.note.schedule)
 
-        note.latestDone = LocalDate.now().toEpochDay()
+        val currentDate = LocalDate.now().toEpochDay()
+
+        note.latestDone = currentDate
 
         val historyNote = NoteInHistory(
+            id = "${note.id}_$currentDate",
             noteId = note.id,
-            date = LocalDate.now().toEpochDay(),
+            date = currentDate,
             title = note.title,
             description = note.description,
             sublistChain = note.sublistChain,

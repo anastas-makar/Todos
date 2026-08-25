@@ -86,6 +86,7 @@ class NoteConverter {
 
         fun toNoteInHistory(note: Note, date: Long) : NoteInHistory {
             return NoteInHistory(
+                id = "${note.id}_$date",
                 noteId = note.id,
                 date = date,
                 description = note.description,
