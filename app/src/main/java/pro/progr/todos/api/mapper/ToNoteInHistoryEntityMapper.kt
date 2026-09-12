@@ -7,14 +7,15 @@ import pro.progr.todos.brightcards.model.TodoStatus
 import pro.progr.todos.db.ColorStyleConverter
 import pro.progr.todos.db.NoteInHistory
 import pro.progr.todos.db.SublistChain
+import pro.progr.personalcrypto.PersonalCrypto
 
-fun NoteInHistoryDto.toEntity(): NoteInHistory {
+fun NoteInHistoryDto.toEntity(personalCrypto: PersonalCrypto): NoteInHistory {
     return NoteInHistory(
         id = id,
         noteId = noteId,
         date = date,
-        title = title,
-        description = description,
+        title = personalCrypto.decryptTodosValue(title),
+        description = personalCrypto.decryptTodosValue(description),
         reward = reward,
         sublistChain = SublistChain(sublistChain.sublistsString),
         schedule = Gson().fromJson(schedule, Schedule::class.java),

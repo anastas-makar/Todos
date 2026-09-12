@@ -9,8 +9,9 @@ import pro.progr.todos.db.Note
 import pro.progr.todos.db.ArrayPOJO
 import pro.progr.todos.db.ColorStyleConverter
 import java.util.LinkedHashMap
+import pro.progr.personalcrypto.PersonalCrypto
 
-fun NoteDto.toEntity(gson: Gson = Gson()): Note {
+fun NoteDto.toEntity(personalCrypto: PersonalCrypto, gson: Gson = Gson()): Note {
     val styleObj = ColorStyleConverter().toColorStyle(style)
 
     // восстановление patternDates
@@ -23,8 +24,8 @@ fun NoteDto.toEntity(gson: Gson = Gson()): Note {
     val entity = Note(
         id = id,
         date = date,
-        title = title,
-        description = description,
+        title = personalCrypto.decryptTodosValue(title),
+        description = personalCrypto.decryptTodosValue(description),
         sublistChain = pro.progr.todos.db.SublistChain(sublistChain.sublistsString),
         reward = reward,
         addedDates = ArrayPOJO(addedDates.toTypedArray()),

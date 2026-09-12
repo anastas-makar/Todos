@@ -30,6 +30,14 @@ dependencyResolutionManagement {
             }
         }
 
+        maven {
+            url = uri("https://maven.pkg.github.com/anastas-makar/PersonalCrypto")
+            credentials {
+                username = System.getenv("GITHUB_USERNAME")
+                password = System.getenv("GITHUB_TOKEN")
+            }
+        }
+
     }
 }
 

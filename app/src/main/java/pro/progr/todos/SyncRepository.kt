@@ -19,10 +19,12 @@ import pro.progr.todos.db.OutboxDao
 import pro.progr.todos.db.TagsDao
 import pro.progr.todos.db.TodosDataBase
 import javax.inject.Inject
+import pro.progr.personalcrypto.PersonalCrypto
 
 class SyncRepository @Inject constructor(
     private val db: TodosDataBase,
-    private val apiService: TodosApiService
+    private val apiService: TodosApiService,
+    private val personalCrypto: PersonalCrypto
 ) {
     private val notesDao: NotesDao = db.notesDao()
     private val noteListsDao: NoteListsDao = db.noteListsDao()
@@ -52,13 +54,21 @@ class SyncRepository @Inject constructor(
         val syncData = TodosSync(
             syncMetaData = SyncMetaData(dbVersion =  db.openHelper.readableDatabase.version),
             notes = if (byTable["notes"].isNullOrEmpty()) emptyList()
-                else notesDao.getUpdates(byTable["notes"]!!).map { it.toDto(gson, latestUpdates[it.id]) },
+                else notesDao.getUpdates(byTable["notes"]!!).map {
+                    it.toDto(personalCrypto, gson, latestUpdates[it.id])
+                },
             notesInHistory = if (byTable["notes_in_history"].isNullOrEmpty()) emptyList()
-                else notesInHistoryDao.getUpdates(byTable["notes_in_history"]!!).map { it.toDto(latestUpdates[it.id]) },
+                else notesInHistoryDao.getUpdates(byTable["notes_in_history"]!!).map {
+                    it.toDto(personalCrypto, latestUpdates[it.id])
+                },
             notesLists = if (byTable["note_lists"].isNullOrEmpty()) emptyList()
-                else noteListsDao.getUpdates(byTable["note_lists"]!!).map { it.toDto(latestUpdates[it.id]) },
+                else noteListsDao.getUpdates(byTable["note_lists"]!!).map {
+                    it.toDto(personalCrypto, latestUpdates[it.id])
+                },
             noteTags = if (byTable["note_tag"].isNullOrEmpty()) emptyList()
-                else tagsDao.getUpdates(byTable["note_tag"]!!).map { it.toDto(latestUpdates[it.id]) },
+                else tagsDao.getUpdates(byTable["note_tag"]!!).map {
+                    it.toDto(personalCrypto, latestUpdates[it.id])
+                },
             noteToTags = if (byTable["note_to_tag"].isNullOrEmpty()) emptyList()
                 else noteToTagXRefDao.getUpdates(byTable["note_to_tag"]!!).map { it.toDto(latestUpdates[it.id]) },
             diamondLogs = diamondsLogs.map { it.toDto() }
@@ -73,13 +83,13 @@ class SyncRepository @Inject constructor(
             Log.wtf("SERVER DATA", severData.toString())
             db.withTransaction {
                 if (!severData.notes.isNullOrEmpty()) notesDao.setUpdates(
-                    severData.notes.map { it.toEntity(gson) })
+                    severData.notes.map { it.toEntity(personalCrypto, gson) })
                 if (!severData.notesInHistory.isNullOrEmpty()) notesInHistoryDao.setUpdates(
-                    severData.notesInHistory.map { it.toEntity() })
+                    severData.notesInHistory.map { it.toEntity(personalCrypto) })
                 if (!severData.notesLists.isNullOrEmpty()) noteListsDao.setUpdates(
-                    severData.notesLists.map { it.toEntity() })
+                    severData.notesLists.map { it.toEntity(personalCrypto) })
                 if (!severData.noteTags.isNullOrEmpty()) tagsDao.setUpdates(
-                    severData.noteTags.map { it.toEntity() })
+                    severData.noteTags.map { it.toEntity(personalCrypto) })
                 if (!severData.noteToTags.isNullOrEmpty()) noteToTagXRefDao.setUpdates(
                     severData.noteToTags.map { it.toEntity() })
             }

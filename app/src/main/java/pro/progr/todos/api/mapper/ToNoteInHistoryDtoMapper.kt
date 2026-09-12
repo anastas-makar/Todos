@@ -5,14 +5,15 @@ import pro.progr.todos.api.model.NoteInHistoryDto
 import pro.progr.todos.api.model.SublistChainDto
 import pro.progr.todos.db.ColorStyleConverter
 import pro.progr.todos.db.NoteInHistory
+import pro.progr.personalcrypto.PersonalCrypto
 
-fun NoteInHistory.toDto(latestUpdate: Long?): NoteInHistoryDto {
+fun NoteInHistory.toDto(personalCrypto: PersonalCrypto, latestUpdate: Long?): NoteInHistoryDto {
     return NoteInHistoryDto(
         id = id,
         noteId = noteId,
         date = date,
-        title = title,
-        description = description,
+        title = personalCrypto.encryptTodosValue(title),
+        description = personalCrypto.encryptTodosValue(description),
         reward = reward,
         sublistChain = SublistChainDto(sublistChain.sublistsString),
         schedule = Gson().toJson(schedule), // сериализация Schedule в строку

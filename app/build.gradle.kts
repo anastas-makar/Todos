@@ -26,7 +26,7 @@ android {
         buildConfigField("String", "API_BASE_URL", "\"${localProperties["API_BASE_URL"]}\"")
         buildConfigField("String", "API_KEY", "\"${localProperties["API_KEY"]}\"")
 
-        version = "0.0.1-alpha"
+        version = "0.0.2-alpha"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -113,6 +113,7 @@ dependencies {
     implementation("pro.progr:flow:2.0.0-alpha")
     implementation("pro.progr:diamond-api:3.0.0-alpha")
     implementation("pro.progr:auth-api:0.0.3-alpha")
+    implementation("pro.progr:personal-crypto:0.0.1-alpha")
 }
 
 publishing {
@@ -122,7 +123,7 @@ publishing {
 
             groupId = "pro.progr"
             artifactId = "todos"
-            version = "0.0.1-alpha"
+            version = "0.0.2-alpha"
         }
     }
     repositories {

@@ -6,15 +6,20 @@ import pro.progr.todos.api.model.ScheduleDayDto
 import pro.progr.todos.api.model.SublistChainDto
 import pro.progr.todos.db.Note
 import pro.progr.todos.db.ColorStyleConverter
+import pro.progr.personalcrypto.PersonalCrypto
 
-fun Note.toDto(gson: Gson = Gson(), latestUpdate: Long?): NoteDto {
+fun Note.toDto(
+    personalCrypto: PersonalCrypto,
+    gson: Gson = Gson(),
+    latestUpdate: Long?
+): NoteDto {
     val styleString = ColorStyleConverter().fromColorStyle(style)
 
     return NoteDto(
         id = id,
         date = date,
-        title = title,
-        description = description,
+        title = personalCrypto.encryptTodosValue(title),
+        description = personalCrypto.encryptTodosValue(description),
         sublistChain = SublistChainDto(sublistChain.sublistsString),
         reward = reward,
         addedDates = addedDates?.longArray?.toList() ?: emptyList(),

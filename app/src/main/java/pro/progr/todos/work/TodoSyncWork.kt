@@ -8,9 +8,11 @@ import pro.progr.todos.BuildConfig
 import pro.progr.todos.SyncRepository
 import pro.progr.todos.api.TodosNetworkFactory
 import pro.progr.todos.db.TodosDataBase
+import pro.progr.personalcrypto.PersonalCrypto
 
 suspend fun doTodoSyncWork(applicationContext: Context,
-                           auth: AuthInterface): ListenableWorker.Result = try {
+                           auth: AuthInterface,
+                           personalCrypto: PersonalCrypto): ListenableWorker.Result = try {
     val api = TodosNetworkFactory.todosApi(
         baseUrl = BuildConfig.API_BASE_URL,
         isDebug = BuildConfig.DEBUG,
@@ -18,7 +20,7 @@ suspend fun doTodoSyncWork(applicationContext: Context,
     )
 
     val db = TodosDataBase.getDatabase(applicationContext)
-    val syncRepository = SyncRepository(db, api)
+    val syncRepository = SyncRepository(db, api, personalCrypto)
 
     val sid = auth.getSessionId()
     if (sid.isNullOrBlank()) {

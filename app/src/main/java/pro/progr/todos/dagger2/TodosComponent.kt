@@ -5,6 +5,7 @@ import dagger.BindsInstance
 import dagger.Component
 import pro.progr.authapi.AuthInterface
 import pro.progr.diamondapi.PurchaseInterface
+import pro.progr.personalcrypto.PersonalCrypto
 import pro.progr.todos.SyncRepository
 import pro.progr.todos.api.TodosApiService
 import javax.inject.Singleton
@@ -45,6 +46,9 @@ interface TodosComponent {
 
         @BindsInstance
         fun auth(auth: AuthInterface): Builder
+
+        @BindsInstance
+        fun personalCrypto(personalCrypto: PersonalCrypto): Builder
 
         fun appModule(appModule: AppModule): Builder
 
