@@ -8,7 +8,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
-class CardMenuItems(context: Context, val date: LocalDate,
+class CardMenuItems(private val context: Context, val date: LocalDate,
                     val todo : TodoStatus,
                     val updateDestination : (destination : Destinations) -> Unit) : ArrayList<MenuItem>() {
 

@@ -1,7 +1,6 @@
 package pro.progr.todos.composable
 
 import androidx.compose.ui.res.stringResource
-import pro.progr.todos.R
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size

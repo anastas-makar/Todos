@@ -5,7 +5,7 @@ import pro.progr.todos.R
 import pro.progr.todos.brightcards.MenuItem
 import pro.progr.todos.brightcards.model.TodoStatus
 
-class UndatedCardMenuItems(context: Context, val todo : TodoStatus,
+class UndatedCardMenuItems(private val context: Context, val todo : TodoStatus,
                            val updateDestination : (destination : Destinations) -> Unit) : ArrayList<MenuItem>() {
 
     init {

@@ -21,9 +21,10 @@ import pro.progr.todos.brightcards.vm.CardViewModel
 @Composable
 fun DiamondSelector(cardViewModel: CardViewModel) {
     val expanded = remember { mutableStateOf(false) }
+    val noteLabel = stringResource(R.string.note)
     val icon =
         painterResource(id = R.drawable.ic_diamond)
-    val options = listOf(100, 50, 25, 15, 10, 5, 1, stringResource(R.string.note))
+    val options = listOf(100, 50, 25, 15, 10, 5, 1, noteLabel)
 
 
     SquareButton(onClick = { expanded.value = true }, cardViewModel = cardViewModel) {
@@ -39,8 +40,8 @@ fun DiamondSelector(cardViewModel: CardViewModel) {
                     // Обработка выбора
                     cardViewModel.updateCard(
                         cardViewModel.getCardContent().value.copy(
-                            todo = if (option != stringResource(R.string.note)) TodoStatus.TODO else TodoStatus.NOT_ACTIVE,
-                            reward = if (option != stringResource(R.string.note)) (option as Int) else cardViewModel.getCardContent().value.reward
+                            todo = if (option != noteLabel) TodoStatus.TODO else TodoStatus.NOT_ACTIVE,
+                            reward = if (option != noteLabel) (option as Int) else cardViewModel.getCardContent().value.reward
                         )
                     )
 
@@ -51,7 +52,7 @@ fun DiamondSelector(cardViewModel: CardViewModel) {
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(text = option.toString())
-                        if (option != stringResource(R.string.note)) {
+                        if (option != noteLabel) {
                             Icon(
                                 painter = icon,
                                 contentDescription = stringResource(R.string.diamond),

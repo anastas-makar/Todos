@@ -49,7 +49,7 @@ class CardRepository @Inject constructor(
 
         noteInHistory?.let {
 
-            val cardContent = NoteInHistoryConverter.toCardContent(noteInHistory, context)
+            val cardContent = NoteInHistoryConverter.toCardContent(noteInHistory)
 
             note = NoteWithData(NoteConverter.toNote(cardContent), emptyList())
 
