@@ -1,5 +1,8 @@
 package pro.progr.todos.composable
 
+import androidx.compose.ui.res.stringResource
+import pro.progr.todos.R
+
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
@@ -15,11 +18,11 @@ import androidx.navigation.NavHostController
 fun TagsBar(navController: NavHostController) {
     TopAppBar(
         title = {
-            Text(text = "Фильтры и теги")
+            Text(text = stringResource(R.string.tags_and_filters))
         },
         navigationIcon = {
             IconButton(onClick = { navController.popBackStack() }) {
-                Icon(Icons.Filled.ArrowBack, contentDescription = "Назад")
+                Icon(Icons.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
             }
         },
         backgroundColor = Color.Transparent,

@@ -1,5 +1,8 @@
 package pro.progr.todos.composable
 
+import android.content.Context
+import pro.progr.todos.R
+
 import androidx.compose.ui.graphics.Color
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -8,51 +11,51 @@ import java.util.Locale
 class SmallActionsViewModel {
     var selectedDate: LocalDate? = null
 
-    fun getActions() : List<SmallActionModel> {
+    fun getActions(context: Context) : List<SmallActionModel> {
         selectedDate?.let { localDate ->
-            return getActionModels(localDate)
+            return getActionModels(localDate, context)
         } ?: run {
-            return getActionModels()
+            return getActionModels(context)
         }
     }
 
-    private fun getActionModels(): List<SmallActionModel> {
+    private fun getActionModels(context: Context): List<SmallActionModel> {
         return listOf(
             SmallActionModel(
                 color = Color(0xff01579B),
-                text = "Добавить задачу",
+                text = context.getString(R.string.add_task),
                 destination = "createCard"
             ),
             SmallActionModel(
                 color = Color(0xff006064),
-                text = "Добавить задачу на сегодня",
+                text = context.getString(R.string.add_task_today),
                 destination = "createCardForDate/${LocalDate.now().toEpochDay()}"
             ),
             SmallActionModel(
                 color = Color(0xff4d143c),
-                text = "Добавить задачу на завтра",
+                text = context.getString(R.string.add_task_tomorrow),
                 destination = "createCardForDate/${LocalDate.now().plusDays(1L).toEpochDay()}"
             ),
         )
     }
 
-    private fun getActionModels(selectedDate: LocalDate): List<SmallActionModel> {
+    private fun getActionModels(selectedDate: LocalDate, context: Context): List<SmallActionModel> {
         val formatter = DateTimeFormatter.ofPattern("E dd MMMM yyy", Locale.getDefault())
 
         return listOf(
             SmallActionModel(
                 color = Color(0xff4d143c),
                 text = if (selectedDate.equals(LocalDate.now()))
-                        "Добавить задачу на сегодня"
+                        context.getString(R.string.add_task_today)
                 else if (LocalDate.now().plusDays(1).equals(selectedDate))
-                        "Добавить задачу на завтра"
+                        context.getString(R.string.add_task_tomorrow)
                 else
-                    "+ на ${selectedDate.format(formatter)}",
+                    context.getString(R.string.add_task_for_date, selectedDate.format(formatter)),
                 destination = "createCardForDate/${selectedDate.toEpochDay()}"
             ),
             SmallActionModel(
                 color = Color(0xff01579B),
-                text = "Добавить задачу",
+                text = context.getString(R.string.add_task),
                 destination = "createCard"
             )
         )

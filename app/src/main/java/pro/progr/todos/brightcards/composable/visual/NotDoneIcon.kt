@@ -1,5 +1,8 @@
 package pro.progr.todos.brightcards.composable.visual
 
+import androidx.compose.ui.res.stringResource
+import pro.progr.todos.R
+
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.Icon
@@ -16,7 +19,7 @@ import pro.progr.todos.brightcards.vm.ListedCardViewModel
 fun NotDoneIcon(viewModel: ListedCardViewModel) {
     Icon(
         imageVector = Icons.Filled.Close,
-        contentDescription = "не сделано",
+        contentDescription = stringResource(R.string.not_done),
         tint = if (viewModel.card.value.fillTitleBackground) Color(viewModel.card.value.style.textColor())
                     else MaterialTheme.colors.onSurface,
         modifier = Modifier.padding(5.dp).size(16.dp)

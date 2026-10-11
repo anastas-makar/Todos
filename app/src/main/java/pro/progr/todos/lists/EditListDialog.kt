@@ -1,5 +1,8 @@
 package pro.progr.lists
 
+import androidx.compose.ui.res.stringResource
+import pro.progr.todos.R
+
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -37,7 +40,7 @@ fun EditListDialog(viewModel: ListsViewModel,
 
     AlertDialog(
         onDismissRequest = { viewModel.editedListIdState.value = null },
-        title = { Text(text = "Добавить элемент списка") },
+        title = { Text(text = stringResource(R.string.add_list_item)) },
         text = {
             Column {
                 if (parentList != null) {
@@ -95,7 +98,7 @@ fun EditListDialog(viewModel: ListsViewModel,
                         onValueChange = { v: String ->
                             nameState.value = v
                         },
-                        placeholder = {Text(text = "Название списка")},
+                        placeholder = {Text(text = stringResource(R.string.list_name))},
                         colors = TextFieldDefaults.textFieldColors(
                             backgroundColor = Color.Transparent,
 //                focusedIndicatorColor = Color.Transparent,
@@ -116,7 +119,7 @@ fun EditListDialog(viewModel: ListsViewModel,
                     viewModel.editedListIdState.value = null
                 }
             ) {
-                Text("Сохранить")
+                Text(stringResource(R.string.save))
             }
         }
     )

@@ -1,5 +1,8 @@
 package pro.progr.todos.brightcards.composable.title
 
+import androidx.compose.ui.res.stringResource
+import pro.progr.todos.R
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -31,7 +34,7 @@ fun ColumnScope.EditTitle(cardViewModel: CardViewModel,
             .fillMaxWidth()
             .wrapContentHeight()
             .align(Alignment.CenterHorizontally),
-        placeholder = { Text(text = "Заголовок", color = style.titlePlaceHolderColor) },
+        placeholder = { Text(text = stringResource(R.string.header), color = style.titlePlaceHolderColor) },
         value = cardViewModel.getCardContent().value.title,
         textStyle = MaterialTheme.typography.h6,
         onValueChange = { v : String -> cardViewModel.updateCard(cardViewModel.getCardContent().value.copy(title = v))},

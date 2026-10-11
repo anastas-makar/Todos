@@ -1,16 +1,18 @@
 package pro.progr.todos.datefilters
 
+import android.content.Context
+import pro.progr.todos.R
 import pro.progr.diamondsandberries.db.Schedule
 import java.time.Duration
 import java.time.LocalDate
 
 class DayAfterDayFilter : DatesFilter {
-    override fun getTitle(): String {
-        return "Через день"
+    override fun getTitle(context: Context): String {
+        return context.getString(R.string.every_other_day)
     }
 
-    override fun getDescription(schedule: Schedule): String {
-        return "Повторять через день"
+    override fun getDescription(schedule: Schedule, context: Context): String {
+        return context.getString(R.string.repeat_every_other_day)
     }
 
     override fun isActual(schedule: Schedule, date: LocalDate): Boolean {

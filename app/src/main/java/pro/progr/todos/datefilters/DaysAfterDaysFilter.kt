@@ -1,16 +1,18 @@
 package pro.progr.todos.datefilters
 
+import android.content.Context
+import pro.progr.todos.R
 import pro.progr.diamondsandberries.db.Schedule
 import java.time.Duration
 import java.time.LocalDate
 
 class DaysAfterDaysFilter : DatesFilter {
-    override fun getTitle(): String {
-        return "Своё расписание"
+    override fun getTitle(context: Context): String {
+        return context.getString(R.string.custom_schedule)
     }
 
-    override fun getDescription(schedule: Schedule): String {
-        return "Повторять ${schedule.pattern.days[0]?.longValue} через ${schedule.pattern.days[1]?.longValue}"
+    override fun getDescription(schedule: Schedule, context: Context): String {
+        return context.getString(R.string.repeat_after, schedule.pattern.days[0]?.longValue, schedule.pattern.days[1]?.longValue)
     }
 
     override fun isActual(schedule: Schedule, date: LocalDate): Boolean {

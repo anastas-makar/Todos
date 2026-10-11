@@ -1,5 +1,8 @@
 package pro.progr.todos.brightcards.composable.description
 
+import androidx.compose.ui.res.stringResource
+import pro.progr.todos.R
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -46,7 +49,7 @@ fun ColumnScope.EditDescription(cardViewModel: CardViewModel,
                 unfocusedIndicatorColor = Color.Transparent,
                 disabledIndicatorColor = Color.Transparent
             ),
-            placeholder = { Text(text = "Описание", color = style.descriptionPlaceHolderColor) }
+            placeholder = { Text(text = stringResource(R.string.description), color = style.descriptionPlaceHolderColor) }
         )
 
         //if (cardViewModel.getCardContent().value.text.isNotEmpty() || cardViewModel.getCardContent().value.title.isNotEmpty()) {

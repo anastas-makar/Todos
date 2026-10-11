@@ -1,5 +1,8 @@
 package pro.progr.lists
 
+import androidx.compose.ui.res.stringResource
+import pro.progr.todos.R
+
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -18,11 +21,11 @@ fun BoxScope.EditListButton(viewModel: ListsViewModel) {
         ),
         modifier = Modifier.align(Alignment.CenterEnd)
     ) {
-        Text(text = "Редактировать")
+        Text(text = stringResource(R.string.edit))
 
         Icon(
             imageVector = Icons.Outlined.Edit,
-            contentDescription = "Редактировать списки")
+            contentDescription = stringResource(R.string.edit_lists))
 
     }
 }

@@ -1,12 +1,14 @@
 package pro.progr.todos.brightcards.vm
 
+import android.content.Context
+import pro.progr.todos.R
 import pro.progr.todos.brightcards.MenuItem
 import pro.progr.todos.brightcards.model.TodoStatus
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
-class CardMenuItems(val date: LocalDate,
+class CardMenuItems(context: Context, val date: LocalDate,
                     val todo : TodoStatus,
                     val updateDestination : (destination : Destinations) -> Unit) : ArrayList<MenuItem>() {
 
@@ -29,7 +31,7 @@ class CardMenuItems(val date: LocalDate,
         ) {
             add(
                 MenuItem(
-                    "Не делать сегодня",
+                    context.getString(R.string.remove_today),
                     {
                         updateDestination(Destinations.REMOVE_FOR_DAY)
                     }
@@ -44,7 +46,7 @@ class CardMenuItems(val date: LocalDate,
             || (date == LocalDate.now() && todo == TodoStatus.DONE)) {
             add(
                 MenuItem(
-                    "Удалить эту запись",
+                    context.getString(R.string.delete_entry),
                     {
                         updateDestination(Destinations.REMOVE_FOR_DAY)
                     }
@@ -57,7 +59,7 @@ class CardMenuItems(val date: LocalDate,
         if (date.equals(LocalDate.now()) && todo == TodoStatus.NOT_ACTIVE) {
             add(
                 MenuItem(
-                    "Убать заметку на сегодня",
+                    context.getString(R.string.remove_note_today),
                     {
                         updateDestination(Destinations.REMOVE_FOR_DAY)
                     }
@@ -72,7 +74,7 @@ class CardMenuItems(val date: LocalDate,
         ) {
             add(
                 MenuItem(
-                    "Пометить сделанным",
+                    context.getString(R.string.mark_done),
                     { updateDestination(Destinations.MARK_DONE) }
                 )
             )
@@ -84,7 +86,7 @@ class CardMenuItems(val date: LocalDate,
             && date.isBefore(LocalDate.now())) {
             add(
                 MenuItem(
-                    "Пометить сделанным",
+                    context.getString(R.string.mark_done),
                     { updateDestination(Destinations.MARK_NOTE_IN_HISTORY_DONE) }
                 )
             )
@@ -97,7 +99,7 @@ class CardMenuItems(val date: LocalDate,
         ) {
             add(
                 MenuItem(
-                    "Пометить несделанным",
+                    context.getString(R.string.mark_not_done),
                     { updateDestination(Destinations.MARK_NOT_DONE) }
                 )
             )
@@ -108,7 +110,7 @@ class CardMenuItems(val date: LocalDate,
         if (!date.isBefore(LocalDate.now())) {
             add(
                 MenuItem(
-                    "Редактировать шаблон",
+                    context.getString(R.string.edit_template),
                     { updateDestination(Destinations.TO_EDIT_CARD) }
                 )
             )
@@ -120,11 +122,10 @@ class CardMenuItems(val date: LocalDate,
         if (!date.isAfter(LocalDate.now())) {
             add(
                 MenuItem(
-                    "Изменить запись за " +
-                            if (date.equals(LocalDate.now()))
-                                "сегодня"
-                            else
-                                date.format(formatter),
+                    context.getString(
+                        R.string.change_entry_date,
+                        if (date.equals(LocalDate.now())) context.getString(R.string.today) else date.format(formatter)
+                    ),
                     { updateDestination(Destinations.TO_EDIT_NOTE_IN_HISTORY) }
                 )
             )

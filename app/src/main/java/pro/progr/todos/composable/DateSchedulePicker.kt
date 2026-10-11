@@ -1,5 +1,6 @@
 package pro.progr.todos.composable
 
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,6 +23,7 @@ import pro.progr.todos.datefilters.FilterType
 
 @Composable
 fun DateSchedulePicker(calendarViewModel : NoteCalendarViewModel) {
+    val context = LocalContext.current
     val tabs = listOf(FilterType.DATE, FilterType.DATE_IN_YEAR, FilterType.DATE_IN_MONTH)
     var selectedTabIndex by remember { mutableStateOf(0) }
 
@@ -39,7 +41,7 @@ fun DateSchedulePicker(calendarViewModel : NoteCalendarViewModel) {
             backgroundColor = Color.Transparent) {
             tabs.forEachIndexed { index, filterType ->
                 Tab(
-                    text = { Text(filterType.datesFilter.getTitle()) },
+                    text = { Text(filterType.datesFilter.getTitle(context)) },
                     selected = selectedTabIndex == index,
                     onClick = {
                         selectedTabIndex = index

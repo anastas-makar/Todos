@@ -1,5 +1,8 @@
 package pro.progr.todos.composable
 
+import androidx.compose.ui.res.stringResource
+import pro.progr.todos.R
+
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
@@ -14,10 +17,10 @@ import androidx.navigation.NavHostController
 @Composable
 fun ScheduleBar(navController : NavHostController) {
     TopAppBar(
-        title = { Text(text = "Расписание") },
+        title = { Text(text = stringResource(R.string.schedule)) },
         navigationIcon = {
             IconButton(onClick = { navController.popBackStack() }) {
-                Icon(Icons.Filled.ArrowBack, contentDescription = "Назад")
+                Icon(Icons.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
             }
         },
         backgroundColor = Color.Transparent,

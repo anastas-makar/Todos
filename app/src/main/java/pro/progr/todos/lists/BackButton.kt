@@ -1,5 +1,8 @@
 package pro.progr.lists
 
+import androidx.compose.ui.res.stringResource
+import pro.progr.todos.R
+
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -21,7 +24,7 @@ fun BoxScope.BackButton(viewModel: ListsViewModel) {
 
         Icon(
             imageVector = Icons.Outlined.ArrowBack,
-            contentDescription = "Добавить список")
+            contentDescription = stringResource(R.string.add_list))
 
     }
 }

@@ -1,5 +1,6 @@
 package pro.progr.todos
 
+import android.content.Context
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -21,6 +22,7 @@ import java.time.LocalDate
 import javax.inject.Inject
 
 class CardRepository @Inject constructor(
+    private val context: Context,
     private val noteAndHistoryDao: NoteAndHistoryDao,
     private val notesWithDataDao: NoteWithDataDao,
     private val tagsDao: TagsDao
@@ -39,7 +41,7 @@ class CardRepository @Inject constructor(
         note = notesWithDataDao.getNote(id)
 
         //todo
-        return NoteConverter.toCardContent(note)
+        return NoteConverter.toCardContent(note, context)
     }
 
     fun getCardInHistory(id: String, epochDay: Long): CardContent? {
@@ -47,7 +49,7 @@ class CardRepository @Inject constructor(
 
         noteInHistory?.let {
 
-            val cardContent = NoteInHistoryConverter.toCardContent(noteInHistory)
+            val cardContent = NoteInHistoryConverter.toCardContent(noteInHistory, context)
 
             note = NoteWithData(NoteConverter.toNote(cardContent), emptyList())
 
@@ -156,6 +158,11 @@ class CardRepository @Inject constructor(
     fun getSchedule() : Schedule {
         return note.note.schedule
     }
+
+    fun getScheduleDescription(): String =
+        getSchedule().pattern.type.datesFilter.getDescription(getSchedule(), context)
+
+    fun getNoTagsText(): String = context.getString(R.string.no_tags)
 
     override suspend fun setCardDone(cardContent: CardContent) {
         val note = NoteConverter.toNote(cardContent, note.note.schedule)

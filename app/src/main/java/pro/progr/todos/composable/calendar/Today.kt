@@ -1,5 +1,8 @@
 package pro.progr.todos.composable.calendar
 
+import androidx.compose.ui.res.stringResource
+import pro.progr.todos.R
+
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -79,7 +82,7 @@ fun Today(
             )
             Icon(
                 painter = painterResource(id = pro.progr.todos.R.drawable.ic_diamond_bright),
-                contentDescription = "Diamond",
+                contentDescription = stringResource(R.string.diamond),
                 tint = Color.Unspecified,
                 modifier = Modifier.height(12.dp)
             )

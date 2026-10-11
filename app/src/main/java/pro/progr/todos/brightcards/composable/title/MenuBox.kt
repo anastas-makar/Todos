@@ -1,5 +1,7 @@
 package pro.progr.todos.brightcards.composable.title
 
+import androidx.compose.ui.res.stringResource
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -47,7 +49,7 @@ fun MenuBox(viewModel: ListedCardViewModel,
 
             Icon(
                 painter = painterResource(id = R.drawable.ic_menu),
-                contentDescription = "more",
+                contentDescription = stringResource(R.string.more),
                 tint = style.titleTextColor
             )
 

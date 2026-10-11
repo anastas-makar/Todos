@@ -1,5 +1,7 @@
 package pro.progr.todos.composable.calendar
 
+import androidx.compose.ui.res.stringResource
+
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -77,7 +79,7 @@ fun DayInHistory(
 
                 Icon(
                     painter = painterResource(id = R.drawable.ic_diamond),
-                    contentDescription = "Diamond",
+                    contentDescription = stringResource(R.string.diamond),
                     modifier = Modifier
                         .size(12.dp)
                 )

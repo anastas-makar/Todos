@@ -1,5 +1,8 @@
 package pro.progr.todos.composable
 
+import androidx.compose.ui.res.stringResource
+import pro.progr.todos.R
+
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -90,7 +93,7 @@ fun AddTagsScreen(tagsViewModel: TagsViewModel,
                                     .wrapContentHeight(),
                                 colors = TextFieldDefaults.textFieldColors(
                                     backgroundColor = Color.Transparent),
-                                placeholder = { Text(text = "тег") }
+                                placeholder = { Text(text = stringResource(R.string.tag_hint)) }
                             )
                         }
                         IconButton(onClick = {
@@ -98,7 +101,7 @@ fun AddTagsScreen(tagsViewModel: TagsViewModel,
                             text.value = ""
                             tagsViewModel.showTagsSheet.value = false
                         }) {
-                            Icon(Icons.Filled.Add, contentDescription = "Add Tag")
+                            Icon(Icons.Filled.Add, contentDescription = stringResource(R.string.add_tag))
                         }
                     }
 
@@ -114,7 +117,7 @@ fun AddTagsScreen(tagsViewModel: TagsViewModel,
 
                                         Icon(
                                             imageVector = Icons.Outlined.Done,
-                                            contentDescription = "Done",
+                                            contentDescription = stringResource(R.string.done),
                                             tint = MaterialTheme.colors.onSurface,
                                             modifier = Modifier.height(12.dp)
                                         )

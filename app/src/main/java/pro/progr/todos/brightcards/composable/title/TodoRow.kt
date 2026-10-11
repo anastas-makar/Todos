@@ -1,5 +1,8 @@
 package pro.progr.todos.brightcards.composable.title
 
+import androidx.compose.ui.res.stringResource
+import pro.progr.todos.R
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxScope
@@ -44,7 +47,7 @@ fun BoxScope.TodoRow(viewModel: ListedCardViewModel,
 
             Icon(
                 imageVector = Icons.Filled.MoreVert,
-                contentDescription = "more",
+                contentDescription = stringResource(R.string.more),
                 tint = style.titleTextColor
             )
 

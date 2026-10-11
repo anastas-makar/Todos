@@ -1,5 +1,8 @@
 package pro.progr.todos.brightcards.composable.colorpicker
 
+import androidx.compose.ui.res.stringResource
+import pro.progr.todos.R
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -38,7 +41,7 @@ fun ColorPicker(cardViewModel: CardViewModel, paletteViewModel: PaletteViewModel
             ) {
 
                 Row {
-                    Text(text = "ЗАГОЛОВОК", color = MaterialTheme.colors.onSurface)
+                    Text(text = stringResource(R.string.header), color = MaterialTheme.colors.onSurface)
 
                     Spacer(modifier = Modifier.width(5.dp))
 
@@ -82,7 +85,7 @@ fun ColorPicker(cardViewModel: CardViewModel, paletteViewModel: PaletteViewModel
 
                     Spacer(modifier = Modifier.width(5.dp))
 
-                    Text(text = "ОПИСАНИЕ", color = MaterialTheme.colors.onSurface)
+                    Text(text = stringResource(R.string.description), color = MaterialTheme.colors.onSurface)
 
                 }
             }
@@ -117,7 +120,7 @@ fun ColorPicker(cardViewModel: CardViewModel, paletteViewModel: PaletteViewModel
                         paletteViewModel.updateDefaultPalette(paletteViewModel.currentPage.value)
                     }
                 })
-            Text(text = "Выбрать", modifier = Modifier.align(Alignment.CenterVertically))
+            Text(text = stringResource(R.string.choose), modifier = Modifier.align(Alignment.CenterVertically))
         }
     }
 }

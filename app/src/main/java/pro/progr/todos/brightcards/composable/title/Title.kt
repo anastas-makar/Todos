@@ -1,5 +1,7 @@
 package pro.progr.todos.brightcards.composable.title
 
+import androidx.compose.ui.res.stringResource
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -71,7 +73,7 @@ fun Title(viewModel: ListedCardViewModel,
                     .padding(4.dp))
             Icon(
                 painter = painterResource(id = R.drawable.ic_diamond),
-                contentDescription = "Todo",
+                contentDescription = stringResource(R.string.todo),
                 tint = style.titleTextColor,
                 modifier = Modifier
                     .size(20.dp)

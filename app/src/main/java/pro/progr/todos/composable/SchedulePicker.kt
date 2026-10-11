@@ -1,5 +1,9 @@
 package pro.progr.todos.composable
 
+import androidx.compose.ui.res.stringResource
+import pro.progr.todos.R
+import androidx.compose.ui.platform.LocalContext
+
 import SinceTillElement
 import android.util.Log
 import androidx.compose.foundation.background
@@ -40,6 +44,7 @@ import pro.progr.todos.datefilters.FilterType
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun SchedulePicker(calendarViewModel : NoteCalendarViewModel) {
+    val context = LocalContext.current
     val tabs = listOf(FilterType.EVERY_DAY, FilterType.DAY_AFTER_DAY, FilterType.DAYS_AFTER_DAYS)
     var selectedTabIndex by remember { mutableStateOf(0) }
 
@@ -73,7 +78,7 @@ fun SchedulePicker(calendarViewModel : NoteCalendarViewModel) {
             backgroundColor = Color.Transparent) {
             tabs.forEachIndexed { index, filterType ->
                 Tab(
-                    text = { Text(filterType.datesFilter.getTitle()) },
+                    text = { Text(filterType.datesFilter.getTitle(context)) },
                     selected = selectedTabIndex == index,
                     onClick = {
                         selectedTabIndex = index
@@ -92,7 +97,7 @@ fun SchedulePicker(calendarViewModel : NoteCalendarViewModel) {
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
 
-                    Text("Выполнять каждый день с", fontSize = 16.sp)
+                    Text(stringResource(R.string.repeat_every_day_field), fontSize = 16.sp)
                     SinceTillElement(calendarViewModel)
 
                 }
@@ -103,7 +108,7 @@ fun SchedulePicker(calendarViewModel : NoteCalendarViewModel) {
                     verticalArrangement = Arrangement.Center,
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Text("Выполнять через день", fontSize = 16.sp)
+                    Text(stringResource(R.string.repeat_every_other_day_field), fontSize = 16.sp)
                     SinceTillElement(calendarViewModel)
                 }
             }
@@ -127,9 +132,9 @@ fun SchedulePicker(calendarViewModel : NoteCalendarViewModel) {
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
 
-                    Text("Выполнять", fontSize = 16.sp)
+                    Text(stringResource(R.string.repeat_field), fontSize = 16.sp)
                     CustomTextField(executeDays, onValueChange = { executeDays = it })
-                    Text("через", fontSize = 16.sp)
+                    Text(stringResource(R.string.through), fontSize = 16.sp)
                     CustomTextField(skipDays, onValueChange = { skipDays = it })
 
                     SinceTillElement(calendarViewModel)

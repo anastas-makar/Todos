@@ -1,5 +1,6 @@
 package pro.progr.todos
 
+import android.content.Context
 import pro.progr.todos.brightcards.MenuItem
 import pro.progr.todos.brightcards.model.CardContent
 import pro.progr.todos.brightcards.model.CardTag
@@ -41,7 +42,8 @@ class NoteConverter {
         }
 
         fun toCardContent(note: NoteWithData,
-                          listName: String = "Список",
+                          context: Context,
+                          listName: String = context.getString(R.string.list),
                           menuItems: List<MenuItem> = listOf()) : CardContent {
 
             //todo: Эту всю логику нужно в filtertype куда-то
@@ -63,7 +65,7 @@ class NoteConverter {
                 todo = if (datesExpired) TodoStatus.DONE else note.note.todo,
                 reward = note.note.reward,
                 stringAnnotations = listOf(
-                    StringAnnotation("schedule", note.note.schedule.pattern.type.datesFilter.getDescription(note.note.schedule)),
+                    StringAnnotation("schedule", note.note.schedule.pattern.type.datesFilter.getDescription(note.note.schedule, context)),
                     StringAnnotation("list", listName)
                 ),
                 latestDone = note.note.latestDone,

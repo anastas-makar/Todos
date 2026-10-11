@@ -1,5 +1,6 @@
 package pro.progr.todos.brightcards.vm
 
+import android.content.Context
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -11,7 +12,7 @@ import pro.progr.todos.brightcards.model.ListedCardRepositoryInterface
 import pro.progr.todos.brightcards.model.TodoStatus
 import java.time.LocalDate
 
-class ListedCardViewModel(cardContent: CardContent, val repository: ListedCardRepositoryInterface) : ViewModel() {
+class ListedCardViewModel(cardContent: CardContent, val repository: ListedCardRepositoryInterface, private val context: Context) : ViewModel() {
     val card = mutableStateOf(cardContent)
 
     val menuOn = mutableStateOf(false)
@@ -45,11 +46,11 @@ class ListedCardViewModel(cardContent: CardContent, val repository: ListedCardRe
     }
 
     fun setMenu(date: LocalDate) {
-        card.value.menuItems = CardMenuItems(date, card.value.todo, {updDestination -> this.destination.value = updDestination})
+        card.value.menuItems = CardMenuItems(context, date, card.value.todo, {updDestination -> this.destination.value = updDestination})
     }
 
     fun setMenu() {
-        card.value.menuItems = UndatedCardMenuItems(card.value.todo, {updDestination -> this.destination.value = updDestination})
+        card.value.menuItems = UndatedCardMenuItems(context, card.value.todo, {updDestination -> this.destination.value = updDestination})
     }
 
     fun removeForDay(date: LocalDate) {

@@ -1,5 +1,7 @@
 package pro.progr.todos.composable
 
+import pro.progr.todos.R
+
 import SinceTillElement
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -63,7 +65,7 @@ fun DaysOfWeekPanel(calendarViewModel: NoteCalendarViewModel) {
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text("Повторять", fontSize = 16.sp)
+                Text(stringResource(R.string.repeat), fontSize = 16.sp)
                 SinceTillElement(calendarViewModel)
             }
         }

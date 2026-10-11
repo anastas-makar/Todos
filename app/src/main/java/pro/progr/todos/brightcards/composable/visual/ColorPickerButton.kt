@@ -1,5 +1,7 @@
 package pro.progr.todos.brightcards.composable.visual
 
+import androidx.compose.ui.res.stringResource
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -42,7 +44,7 @@ fun ColorPickerButton(onClick: () -> Unit, cardViewModel: CardViewModel) {
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_palette),
-                contentDescription = "Todo",
+                contentDescription = stringResource(R.string.todo),
                 tint = if (cardViewModel.getCardContent().value.fillTextBackground) Color(cardViewModel.getCardContent().value.style.backgroundColor())
                         else MaterialTheme.colors.background
             )

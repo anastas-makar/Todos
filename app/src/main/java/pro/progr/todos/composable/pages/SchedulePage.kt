@@ -1,5 +1,9 @@
 package pro.progr.todos.composable.pages
 
+import androidx.compose.ui.res.stringResource
+import pro.progr.todos.R
+import androidx.compose.ui.platform.LocalContext
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -15,6 +19,7 @@ import pro.progr.todos.datefilters.FilterType
 @Composable
 fun SchedulePage(viewModel: NoteCalendarViewModel,
                  navController: NavHostController) {
+    val context = LocalContext.current
     val selectedType by remember { viewModel.filterTypeState }
 
     Scaffold(
@@ -51,7 +56,7 @@ fun SchedulePage(viewModel: NoteCalendarViewModel,
                             contentColor = Color.Transparent
                         )
                     ) {
-                        Text(text = "Повторять", color = MaterialTheme.colors.onSurface)
+                        Text(text = stringResource(R.string.repeat), color = MaterialTheme.colors.onSurface)
                     }
                     TextButton(
                         onClick = { viewModel.selectFilterType(FilterType.WEEK) },
@@ -63,7 +68,7 @@ fun SchedulePage(viewModel: NoteCalendarViewModel,
                             contentColor = Color.Transparent
                         )
                     ) {
-                        Text(text = "Дни недели", color = MaterialTheme.colors.onSurface)
+                        Text(text = stringResource(R.string.weekdays), color = MaterialTheme.colors.onSurface)
                     }
                     TextButton(
                         onClick = { viewModel.selectFilterType(FilterType.DATE) },
@@ -75,7 +80,7 @@ fun SchedulePage(viewModel: NoteCalendarViewModel,
                             contentColor = Color.Transparent
                         )
                     ) {
-                        Text(text = "Даты", color = MaterialTheme.colors.onSurface)
+                        Text(text = stringResource(R.string.dates), color = MaterialTheme.colors.onSurface)
                     }
                     TextButton(
                         onClick = { viewModel.selectFilterType(FilterType.NO_TERMS) },
@@ -87,7 +92,7 @@ fun SchedulePage(viewModel: NoteCalendarViewModel,
                             contentColor = Color.Transparent
                         )
                     ) {
-                        Text(text = FilterType.NO_TERMS.datesFilter.getTitle(), color = MaterialTheme.colors.onSurface)
+                        Text(text = FilterType.NO_TERMS.datesFilter.getTitle(context), color = MaterialTheme.colors.onSurface)
                     }
 
                 }
@@ -99,7 +104,7 @@ fun SchedulePage(viewModel: NoteCalendarViewModel,
                     } else if (isDatesFilterSelected.value) {
                         DateSchedulePicker(calendarViewModel = viewModel)
                     } else if (selectedType == FilterType.NO_TERMS) {
-                        Text("Задача не в календаре")
+                        Text(stringResource(R.string.task_not_in_calendar))
                     }
 
                 }

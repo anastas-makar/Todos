@@ -1,5 +1,7 @@
 package pro.progr.todos.composable
 
+import androidx.compose.ui.res.stringResource
+import pro.progr.todos.R
 import androidx.compose.material.DrawerState
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -42,7 +44,7 @@ fun ListModeBar(navController : NavHostController,
                 Icon(
                     painter = painterResource(id = pro.progr.todos.R.drawable.ic_sunduk_icon),
                     tint = Color.Unspecified,
-                    contentDescription = "DiamondPath"
+                    contentDescription = stringResource(R.string.diamond_path)
                 )
 
             }

@@ -1,5 +1,8 @@
 package pro.progr.todos.composable
 
+import androidx.compose.ui.res.stringResource
+import pro.progr.todos.R
+
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
@@ -23,6 +26,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -39,6 +43,7 @@ fun MyFloatingActionButton(
     smallActionsViewModel: SmallActionsViewModel,
     navHostController: NavHostController
 ) {
+    val context = LocalContext.current
     val rotationAngle =
         animateFloatAsState(if (floatingElementViewModel.showScrim.value) 45f else 0f)
 
@@ -62,12 +67,12 @@ fun MyFloatingActionButton(
                 }
 
                 // Всплывающие кнопки
-                for (smallAction in smallActionsViewModel.getActions()) {
+                for (smallAction in smallActionsViewModel.getActions(context)) {
                     FloatingActionTextButton(smallAction, navHostController)
                 }
-//                FloatingActionTextButton("Добавить задачу", Color(0xff01579B))
-//                FloatingActionTextButton("Добавить задачу на сегодня", Color(0xff1B5E20))
-//                FloatingActionTextButton("Добавить задачу на завтра", Color(0xff004D40))
+//                FloatingActionTextButton(stringResource(R.string.add_task), Color(0xff01579B))
+//                FloatingActionTextButton(stringResource(R.string.add_task_today), Color(0xff1B5E20))
+//                FloatingActionTextButton(stringResource(R.string.add_task_tomorrow), Color(0xff004D40))
             }
         }
 
@@ -79,7 +84,7 @@ fun MyFloatingActionButton(
             content = {
                 Icon(
                     imageVector = Icons.Default.Add,
-                    contentDescription = "Add",
+                    contentDescription = stringResource(R.string.add_action_description),
                     tint = MaterialTheme.colors.surface,
                     modifier = Modifier.rotate(rotationAngle.value)
                 )

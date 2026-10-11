@@ -1,3 +1,5 @@
+import androidx.compose.ui.res.stringResource
+import pro.progr.todos.R
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -53,9 +55,9 @@ fun SinceTillElement(calendarViewModel: NoteCalendarViewModel) {
     }
 
     Row(verticalAlignment = Alignment.CenterVertically) {
-        Text("с", fontSize = 16.sp)
+        Text(stringResource(R.string.from), fontSize = 16.sp)
         DateField(pattern, startFieldVm)
-        Text("по", fontSize = 16.sp)
+        Text(stringResource(R.string.to), fontSize = 16.sp)
         if (!showTill.value) {
             TextButton(onClick = { showTill.value = true }) {
                 Text(text = "...")
@@ -69,7 +71,7 @@ fun SinceTillElement(calendarViewModel: NoteCalendarViewModel) {
                     calendarViewModel.unsetTill()
                     showTill.value = false
                 }) {
-                    Icon(imageVector = Icons.Outlined.Close, contentDescription = "не завершать")
+                    Icon(imageVector = Icons.Outlined.Close, contentDescription = stringResource(R.string.not_finish))
                 }
 
             }

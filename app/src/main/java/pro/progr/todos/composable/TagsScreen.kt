@@ -1,5 +1,8 @@
 package pro.progr.todos.composable
 
+import androidx.compose.ui.res.stringResource
+import pro.progr.todos.R
+
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -69,7 +72,7 @@ fun TagsScreen(viewModel: TagsViewModel,
                     },
                         modifier = Modifier
                             .padding(top = 46.dp)) {
-                        Text(text = "Не выбирать тег",
+                        Text(text = stringResource(R.string.select_no_tag),
                             modifier = Modifier.padding(vertical = 8.dp),
                             color = MaterialTheme.colors.onSurface)
                     }

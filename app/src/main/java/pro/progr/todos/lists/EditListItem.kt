@@ -1,5 +1,8 @@
 package pro.progr.lists
 
+import androidx.compose.ui.res.stringResource
+import pro.progr.todos.R
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -50,7 +53,7 @@ fun EditListItem(viewModel: ListsViewModel, nestedList: NestedList) {
 
             Icon(
                 imageVector = Icons.Outlined.Edit,
-                contentDescription = "Редактировать список",
+                contentDescription = stringResource(R.string.edit_list),
                 modifier = Modifier
             )
 
@@ -68,7 +71,7 @@ fun EditListItem(viewModel: ListsViewModel, nestedList: NestedList) {
 
                 Icon(
                     imageVector = Icons.Outlined.Delete,
-                    contentDescription = "Удалить список",
+                    contentDescription = stringResource(R.string.delete_list),
                     modifier = Modifier
                 )
 

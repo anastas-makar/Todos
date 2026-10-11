@@ -1,5 +1,6 @@
 package pro.progr.todos
 
+import android.content.Context
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -16,6 +17,7 @@ import java.util.UUID
 import javax.inject.Inject
 
 class ListRepository @Inject constructor(
+    private val context: Context,
     private val noteListsDao: NoteListsDao,
     private val notesDao: NotesDao
 ) : ListsRepository {
@@ -31,7 +33,7 @@ class ListRepository @Inject constructor(
             noteListsDao.getAllNoteLists().collectLatest { notesList ->
 
                 if (notesList.isEmpty()) {
-                    noteListsDao.insertFirst("Все записи", 1, UUID.randomUUID().toString())
+                    noteListsDao.insertFirst(context.getString(R.string.all_records), 1, UUID.randomUUID().toString())
                 } else {
                     listsFlow.value = notesList.map { noteList ->
                         ListsConverter.toNList(noteList)

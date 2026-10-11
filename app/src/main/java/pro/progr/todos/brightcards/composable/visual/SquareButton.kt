@@ -1,5 +1,7 @@
 package pro.progr.todos.brightcards.composable.visual
 
+import androidx.compose.ui.res.stringResource
+
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -57,7 +59,7 @@ fun SquareButton(
         ) {
 
             if (cardViewModel.getCardContent().value.todo == TodoStatus.NOT_ACTIVE)
-                Text(text = "Заметка", color = textColor)
+                Text(text = stringResource(R.string.note), color = textColor)
             else {
                 Text(
                     text = cardViewModel.getCardContent().value.reward.toString(),
@@ -67,7 +69,7 @@ fun SquareButton(
 
                 Icon(
                     painter = painterResource(id = R.drawable.ic_diamond),
-                    contentDescription = "Diamond",
+                    contentDescription = stringResource(R.string.diamond),
                     modifier = Modifier
                         .height(10.dp)
                         .padding(horizontal = 4.dp)

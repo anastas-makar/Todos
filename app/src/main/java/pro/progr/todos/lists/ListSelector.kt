@@ -1,5 +1,8 @@
 package pro.progr.lists
 
+import androidx.compose.ui.res.stringResource
+import pro.progr.todos.R
+
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.KeyboardArrowDown
@@ -24,7 +27,7 @@ fun ListSelector(viewModel: ListsViewModel) {
 
         Icon(
             imageVector = Icons.Outlined.KeyboardArrowDown,
-            contentDescription = "Выберите список")
+            contentDescription = stringResource(R.string.select_list))
 
     }
 }

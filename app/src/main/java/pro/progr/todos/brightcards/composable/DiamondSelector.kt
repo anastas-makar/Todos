@@ -1,5 +1,7 @@
 package pro.progr.todos.brightcards.composable
 
+import androidx.compose.ui.res.stringResource
+
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
@@ -21,7 +23,7 @@ fun DiamondSelector(cardViewModel: CardViewModel) {
     val expanded = remember { mutableStateOf(false) }
     val icon =
         painterResource(id = R.drawable.ic_diamond)
-    val options = listOf(100, 50, 25, 15, 10, 5, 1, "Заметка")
+    val options = listOf(100, 50, 25, 15, 10, 5, 1, stringResource(R.string.note))
 
 
     SquareButton(onClick = { expanded.value = true }, cardViewModel = cardViewModel) {
@@ -37,8 +39,8 @@ fun DiamondSelector(cardViewModel: CardViewModel) {
                     // Обработка выбора
                     cardViewModel.updateCard(
                         cardViewModel.getCardContent().value.copy(
-                            todo = if (option != "Заметка") TodoStatus.TODO else TodoStatus.NOT_ACTIVE,
-                            reward = if (option != "Заметка") (option as Int) else cardViewModel.getCardContent().value.reward
+                            todo = if (option != stringResource(R.string.note)) TodoStatus.TODO else TodoStatus.NOT_ACTIVE,
+                            reward = if (option != stringResource(R.string.note)) (option as Int) else cardViewModel.getCardContent().value.reward
                         )
                     )
 
@@ -49,10 +51,10 @@ fun DiamondSelector(cardViewModel: CardViewModel) {
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(text = option.toString())
-                        if (option != "Заметка") {
+                        if (option != stringResource(R.string.note)) {
                             Icon(
                                 painter = icon,
-                                contentDescription = "Diamond",
+                                contentDescription = stringResource(R.string.diamond),
                                 modifier = Modifier.size(24.dp)
                                     .padding(4.dp)
                             )

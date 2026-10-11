@@ -1,5 +1,8 @@
 package pro.progr.lists
 
+import androidx.compose.ui.res.stringResource
+import pro.progr.todos.R
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -50,7 +53,7 @@ fun ListAdderElement(viewModel: ListsViewModel, nestedList: NestedList) {
 
             Icon(
                 imageVector = Icons.Outlined.Add,
-                contentDescription = "Добавить в список",
+                contentDescription = stringResource(R.string.add_to_list),
                 modifier = Modifier
             )
 

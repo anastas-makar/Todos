@@ -1,5 +1,6 @@
 package pro.progr.todos
 
+import android.content.Context
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -23,6 +24,7 @@ import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
 class CardsListViewModel @Inject constructor(
+    private val context: Context,
     private val notesRepository: NotesRepository
 ) : ViewModel() {
 
@@ -52,7 +54,7 @@ class CardsListViewModel @Inject constructor(
 
                 cardsList.value = notesList.map { note ->
 
-                    val cardContent = NoteConverter.toCardContent(note)
+                    val cardContent = NoteConverter.toCardContent(note, context)
 
                     if (note.note.latestDone == LocalDate.now().toEpochDay()) {
                         cardContent.todo = TodoStatus.DONE
@@ -87,7 +89,7 @@ class CardsListViewModel @Inject constructor(
                                 date
                             )
                         }.map { note ->
-                            val cardContent = NoteConverter.toCardContent(note)
+                            val cardContent = NoteConverter.toCardContent(note, context)
 
                             if (date.isEqual(LocalDate.now())) {
                                 //задачи на сегодня
@@ -194,7 +196,7 @@ class CardsListViewModel @Inject constructor(
             val deletedCount = notesRepository.deleteUnlinkedHistoryForToday(LocalDate.now().toEpochDay())
             if (deletedCount > 0) {
                 notifications.value =
-                    notifications.value + listOf("Удалено пустых заметок: $deletedCount")
+                    notifications.value + listOf(context.getString(R.string.delete_empty_notes, deletedCount))
             }
         }
     }

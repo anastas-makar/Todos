@@ -1,5 +1,8 @@
 package pro.progr.todos.brightcards.composable.title
 
+import androidx.compose.ui.res.stringResource
+import pro.progr.todos.R
+
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.Icon
@@ -16,7 +19,7 @@ import pro.progr.todos.brightcards.vm.ListedCardViewModel
 fun DoneIcon(viewModel: ListedCardViewModel) {
     Icon(
         imageVector = Icons.Outlined.Done,
-        contentDescription = "Done",
+        contentDescription = stringResource(R.string.done),
         tint = if (viewModel.card.value.fillTitleBackground)
                     Color(viewModel.card.value.style.textColor())
                 else

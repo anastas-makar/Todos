@@ -115,9 +115,7 @@ class CardViewModel private constructor(
             stringAnnotations = listOf(
                 StringAnnotation(
                     "schedule",
-                    getSchedule().pattern.type.datesFilter.getDescription(
-                        getSchedule()
-                    )
+                    repository.getScheduleDescription()
                 ),
                 StringAnnotation(
                     "list",
@@ -125,7 +123,7 @@ class CardViewModel private constructor(
                 ),
                 StringAnnotation(
                     "tags",
-                    if (cardContent.value.tags.isEmpty()) "Нет тегов" else cardContent.value.tags.fastJoinToString(separator = " #", prefix = "#")
+                    if (cardContent.value.tags.isEmpty()) repository.getNoTagsText() else cardContent.value.tags.fastJoinToString(separator = " #", prefix = "#")
                 )
             )
         ))

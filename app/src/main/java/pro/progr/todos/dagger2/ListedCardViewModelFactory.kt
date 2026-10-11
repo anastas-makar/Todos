@@ -1,5 +1,6 @@
 package pro.progr.todos.dagger2
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import pro.progr.todos.brightcards.model.CardContent
@@ -10,7 +11,7 @@ import pro.progr.todos.db.NoteAndHistoryDao
 import pro.progr.todos.db.NoteWithData
 import javax.inject.Inject
 
-class ListedCardViewModelFactory @Inject constructor(private val noteAndHistoryDao: NoteAndHistoryDao) : ViewModelProvider.Factory {
+class ListedCardViewModelFactory @Inject constructor(private val noteAndHistoryDao: NoteAndHistoryDao, private val context: Context) : ViewModelProvider.Factory {
 
     lateinit var cardContent: CardContent
     lateinit var note: NoteWithData
@@ -27,7 +28,7 @@ class ListedCardViewModelFactory @Inject constructor(private val noteAndHistoryD
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(ListedCardViewModel::class.java)) {
-            return ListedCardViewModel(cardContent = cardContent, repository = ListedCardRepository(noteAndHistoryDao, note)) as T
+            return ListedCardViewModel(cardContent = cardContent, repository = ListedCardRepository(noteAndHistoryDao, note), context = context) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

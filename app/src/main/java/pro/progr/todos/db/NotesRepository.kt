@@ -1,5 +1,6 @@
 package pro.progr.todos.db
 
+import android.content.Context
 import androidx.sqlite.db.SimpleSQLiteQuery
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -17,6 +18,7 @@ import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
 class NotesRepository @Inject constructor(
+    private val context: Context,
     initialQuery : NotesQuery,
     private val dao: NoteWithDataDao,
     private val notesInHistoryDao: NotesInHistoryDao,
@@ -63,7 +65,7 @@ class NotesRepository @Inject constructor(
                         noteInHistory.noteInHistory.date
                     }.mapValues { (_, notes) ->
                         notes.map { note ->
-                            NoteInHistoryConverter.toCardContent(note)
+                            NoteInHistoryConverter.toCardContent(note, context)
                         }
                     }
                 }
@@ -75,7 +77,7 @@ class NotesRepository @Inject constructor(
                         noteInHistory.noteInHistory.date
                     }.mapValues { (_, notes) ->
                         notes.map { note ->
-                            NoteInHistoryConverter.toCardContent(note)
+                            NoteInHistoryConverter.toCardContent(note, context)
                         }
                     }
                 }

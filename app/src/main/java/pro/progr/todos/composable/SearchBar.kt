@@ -1,5 +1,8 @@
 package pro.progr.todos.composable
 
+import androidx.compose.ui.res.stringResource
+import pro.progr.todos.R
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -43,8 +46,8 @@ fun BoxScope.SearchBar(cardsListViewModel: CardsListViewModel) {
                 text = it
                 cardsListViewModel.searchNotes(it)
                             },
-            placeholder = { Text("Искать...") },
-            leadingIcon = { Icon(Icons.Filled.Search, contentDescription = "Search Icon") },
+            placeholder = { Text(stringResource(R.string.search_hint)) },
+            leadingIcon = { Icon(Icons.Filled.Search, contentDescription = stringResource(R.string.search_icon)) },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 5.dp, start = 20.dp, end = 20.dp, top = 20.dp)

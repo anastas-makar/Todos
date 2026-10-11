@@ -1,15 +1,17 @@
 package pro.progr.todos.datefilters
 
+import android.content.Context
+import pro.progr.todos.R
 import pro.progr.diamondsandberries.db.Schedule
 import java.time.LocalDate
 
 class DaysSequenceFilter : DatesFilter {
-    override fun getTitle(): String {
-        return "Каждый день"
+    override fun getTitle(context: Context): String {
+        return context.getString(R.string.every_day)
     }
 
-    override fun getDescription(schedule: Schedule): String {
-        return "Повторять каждый день"
+    override fun getDescription(schedule: Schedule, context: Context): String {
+        return context.getString(R.string.repeat_daily)
     }
 
     override fun isActual(schedule: Schedule, date: LocalDate): Boolean {
