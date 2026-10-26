@@ -36,11 +36,15 @@ suspend fun doTodoSyncWork(applicationContext: Context,
 } catch (e: SyncApiException) {
     if (e.errorCode == "APP_UPDATE_REQUIRED") {
         Log.w("doTodoSyncWork", "Sync protocol is no longer supported; app update required")
+        val minimumVersion = e.minimumSyncProtocolVersion
+        if (!SyncUpdateRequiredStore.record(applicationContext, minimumVersion)) {
+            Log.e("doTodoSyncWork", "Could not persist app update requirement")
+        }
         ListenableWorker.Result.failure(
             Data.Builder()
                 .putString(SYNC_ERROR_CODE_KEY, e.errorCode)
                 .putString(SYNC_USER_MESSAGE_KEY, "Обновите приложение")
-                .putInt(SYNC_MIN_PROTOCOL_VERSION_KEY, e.minimumSyncProtocolVersion ?: -1)
+                .putInt(SYNC_MIN_PROTOCOL_VERSION_KEY, minimumVersion ?: -1)
                 .build()
         )
     } else if (e.httpStatus == 401 || e.httpStatus == 403) {

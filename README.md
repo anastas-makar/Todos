@@ -4,8 +4,14 @@
 `SyncRepository` создаёт UUID `syncId` один раз на одну синхронизацию и отправляет
 его вместе с `syncProtocolVersion` в `/sync/start` и `/sync/finish`.
 
-Если сервер возвращает `426 APP_UPDATE_REQUIRED`, фоновая задача завершается
-без повторов с данными `sync_error_code`, `sync_user_message` и
-`minimum_sync_protocol_version`. Приложение, запускающее WorkManager, может
-показать сообщение пользователю, наблюдая за результатом задачи и читая
-`outputData`.
+Если сервер возвращает `426 APP_UPDATE_REQUIRED`, фоновая задача сохраняет
+состояние предупреждения в SharedPreferences и завершается без повторов.
+Основное приложение должно вызвать `SyncUpdateRequiredDialog()` в корневом
+Compose-контенте (рядом с `AppNavigation`), чтобы предупреждение показывалось
+поверх любого раздела. Сам `SyncRepository.sync()` также нужно оборачивать
+обработчиком `SyncApiException` и записывать `APP_UPDATE_REQUIRED` через
+`SyncUpdateRequiredStore.record(...)`: этот прямой вызов не проходит через
+обработчик WorkManager. Закрытие диалога запоминается для текущей версии
+приложения и того же минимума протокола. Состояние автоматически очищается,
+когда меняется Android `versionCode`; поэтому при публикации обновления
+`versionCode` должен быть увеличен.

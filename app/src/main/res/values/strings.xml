@@ -87,4 +87,7 @@
     <string name="friday">Friday</string>
     <string name="saturday">Saturday</string>
     <string name="sunday">Sunday</string>
+    <string name="sync_update_required_title">Update required</string>
+    <string name="sync_update_required_message">Update the app to resume synchronization.</string>
+    <string name="sync_update_required_dismiss">Got it</string>
 </resources>

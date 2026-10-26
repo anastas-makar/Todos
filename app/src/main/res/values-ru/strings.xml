@@ -87,4 +87,7 @@
     <string name="friday">Пятница</string>
     <string name="saturday">Суббота</string>
     <string name="sunday">Воскресенье</string>
+    <string name="sync_update_required_title">Требуется обновление</string>
+    <string name="sync_update_required_message">Обновите приложение, чтобы продолжить синхронизацию.</string>
+    <string name="sync_update_required_dismiss">Понятно</string>
 </resources>

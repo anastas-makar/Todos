@@ -137,7 +137,9 @@ class SyncRepository @Inject constructor(
         }
         return SyncApiException(
             httpStatus = httpStatus,
-            errorCode = error?.code,
+            // The sync API uses HTTP 426 for an outdated client. Keep this
+            // recognizable even if a proxy strips or changes the JSON body.
+            errorCode = if (httpStatus == 426) "APP_UPDATE_REQUIRED" else error?.code,
             minimumSyncProtocolVersion = error?.minimumSyncProtocolVersion
         )
     }
