@@ -1,13 +1,17 @@
 package pro.progr.todos
 
+import android.content.ContentValues.TAG
 import android.util.Log
 import androidx.room.withTransaction
 import com.google.gson.Gson
-import pro.progr.todos.api.SyncMetaData
+import pro.progr.todos.api.SyncApiErrorResponse
+import pro.progr.todos.api.SyncApiException
+import pro.progr.todos.api.v1.CURRENT_SYNC_PROTOCOL_VERSION
+import pro.progr.todos.api.v1.SyncMetaData
 import pro.progr.todos.api.TodosApiService
-import pro.progr.todos.api.TodosSync
-import pro.progr.todos.api.mapper.toDto
-import pro.progr.todos.api.mapper.toEntity
+import pro.progr.todos.api.v1.TodosSync
+import pro.progr.todos.api.v1.mapper.toDto
+import pro.progr.todos.api.v1.mapper.toEntity
 import pro.progr.todos.db.DiamondsCountDao
 import pro.progr.todos.db.DiamondsLog
 import pro.progr.todos.db.DiamondsLogDao
@@ -20,6 +24,7 @@ import pro.progr.todos.db.TagsDao
 import pro.progr.todos.db.TodosDataBase
 import javax.inject.Inject
 import pro.progr.personalcrypto.PersonalCrypto
+import java.util.UUID
 
 class SyncRepository @Inject constructor(
     private val db: TodosDataBase,
@@ -38,8 +43,11 @@ class SyncRepository @Inject constructor(
     private val gson : Gson = Gson()
 
     suspend fun sync() {
+        val syncMetaData = SyncMetaData(
+            syncId = UUID.randomUUID().toString(),
+            syncProtocolVersion = CURRENT_SYNC_PROTOCOL_VERSION
+        )
         val diamondsLogs = compressDiamondLogs()
-
         val outboxes = outBoxDao.getSync()
 
         val byTable: Map<String, List<String>> = outboxes
@@ -52,7 +60,7 @@ class SyncRepository @Inject constructor(
         }
 
         val syncData = TodosSync(
-            syncMetaData = SyncMetaData(dbVersion =  db.openHelper.readableDatabase.version),
+            syncMetaData = syncMetaData,
             notes = if (byTable["notes"].isNullOrEmpty()) emptyList()
                 else notesDao.getUpdates(byTable["notes"]!!).map {
                     it.toDto(personalCrypto, gson, latestUpdates[it.id])
@@ -70,67 +78,68 @@ class SyncRepository @Inject constructor(
                     it.toDto(personalCrypto, latestUpdates[it.id])
                 },
             noteToTags = if (byTable["note_to_tag"].isNullOrEmpty()) emptyList()
-                else noteToTagXRefDao.getUpdates(byTable["note_to_tag"]!!).map { it.toDto(latestUpdates[it.id]) },
+                else noteToTagXRefDao.getUpdates(byTable["note_to_tag"]!!).map {
+                    it.toDto(latestUpdates[it.id])
+                },
             diamondLogs = diamondsLogs.map { it.toDto() }
         )
 
-        Log.wtf("SYNC DATA", syncData.toString())
-
-        val result = startServerSync(syncData)
-
-        if (result.isSuccess) {
-            val severData = result.getOrThrow()
-            Log.wtf("SERVER DATA", severData.toString())
-            db.withTransaction {
-                if (!severData.notes.isNullOrEmpty()) notesDao.setUpdates(
-                    severData.notes.map { it.toEntity(personalCrypto, gson) })
-                if (!severData.notesInHistory.isNullOrEmpty()) notesInHistoryDao.setUpdates(
-                    severData.notesInHistory.map { it.toEntity(personalCrypto) })
-                if (!severData.notesLists.isNullOrEmpty()) noteListsDao.setUpdates(
-                    severData.notesLists.map { it.toEntity(personalCrypto) })
-                if (!severData.noteTags.isNullOrEmpty()) tagsDao.setUpdates(
-                    severData.noteTags.map { it.toEntity(personalCrypto) })
-                if (!severData.noteToTags.isNullOrEmpty()) noteToTagXRefDao.setUpdates(
-                    severData.noteToTags.map { it.toEntity() })
-            }
-
-            val finishResult = finishServerSync(SyncMetaData(dbVersion =  db.openHelper.readableDatabase.version))
-
-            if (finishResult.isSuccess) {
-                db.withTransaction {
-                    Log.wtf("OUTBOXES", outboxes.toString())
-                    outBoxDao.clearSync(outboxes)
-                    //применяются только после успешного /finish, чтобы избежать дублей
-                    if (!severData.diamondLogs.isNullOrEmpty()) diamondsCountDao.setUpdates(
-                        severData.diamondLogs.map { it.toEntity() })
-                    diamondsLogDao.clear(
-                        syncData.diamondLogs.map { it.toEntity() })
-                }
-
-                Log.wtf("SUCCESS", "SUCCESS")
-            }
-            Log.wtf("wtf", finishResult.toString())
-        } else {
-            Log.wtf("RESULT IS NOT SUCCESS", result.toString())
+        Log.i(TAG, "Starting sync syncId=${syncMetaData.syncId}")
+        val serverData = startServerSync(syncData)
+        check(serverData.syncMetaData.syncId == syncMetaData.syncId) {
+            "Server response syncId does not match request"
         }
+
+        db.withTransaction {
+            if (serverData.notes.isNotEmpty()) notesDao.setUpdates(
+                serverData.notes.map { it.toEntity(personalCrypto, gson) })
+            if (serverData.notesInHistory.isNotEmpty()) notesInHistoryDao.setUpdates(
+                serverData.notesInHistory.map { it.toEntity(personalCrypto) })
+            if (serverData.notesLists.isNotEmpty()) noteListsDao.setUpdates(
+                serverData.notesLists.map { it.toEntity(personalCrypto) })
+            if (serverData.noteTags.isNotEmpty()) tagsDao.setUpdates(
+                serverData.noteTags.map { it.toEntity(personalCrypto) })
+            if (serverData.noteToTags.isNotEmpty()) noteToTagXRefDao.setUpdates(
+                serverData.noteToTags.map { it.toEntity() })
+        }
+
+        finishServerSync(syncMetaData)
+
+        db.withTransaction {
+            outBoxDao.clearSync(outboxes)
+            // Apply only after /finish succeeds, so unacknowledged data is retained.
+            if (serverData.diamondLogs.isNotEmpty()) diamondsCountDao.setUpdates(
+                serverData.diamondLogs.map { it.toEntity() })
+            diamondsLogDao.clear(syncData.diamondLogs.map { it.toEntity() })
+        }
+        Log.i(TAG, "Finished sync syncId=${syncMetaData.syncId}")
     }
 
-    private suspend fun startServerSync(payload: TodosSync): Result<TodosSync> = runCatching {
-        val resp = apiService.syncStart(payload)
-        if (resp.isSuccessful) {
-            resp.body() ?: error("Empty body")
-        } else {
-            error("HTTP ${resp.code()}: ${resp.errorBody()?.string().orEmpty()}")
+    private suspend fun startServerSync(payload: TodosSync): TodosSync {
+        val response = apiService.syncStart(payload)
+        if (!response.isSuccessful) {
+            throw apiException(response.code(), response.errorBody()?.string())
         }
+        return response.body() ?: error("Empty body")
     }
 
-    private suspend fun finishServerSync(payload: SyncMetaData): Result<Boolean> = runCatching {
-        val resp = apiService.syncFinish(payload)
-        if (resp.isSuccessful) {
-            resp.body() ?: error("Empty body")
-        } else {
-            error("HTTP ${resp.code()}: ${resp.errorBody()?.string().orEmpty()}")
+    private suspend fun finishServerSync(payload: SyncMetaData) {
+        val response = apiService.syncFinish(payload)
+        if (!response.isSuccessful) {
+            throw apiException(response.code(), response.errorBody()?.string())
         }
+        check(response.body() == true) { "Server did not confirm sync finish" }
+    }
+
+    private fun apiException(httpStatus: Int, body: String?): SyncApiException {
+        val error = body?.let {
+            runCatching { gson.fromJson(it, SyncApiErrorResponse::class.java) }.getOrNull()
+        }
+        return SyncApiException(
+            httpStatus = httpStatus,
+            errorCode = error?.code,
+            minimumSyncProtocolVersion = error?.minimumSyncProtocolVersion
+        )
     }
 
     suspend fun compressDiamondLogs() : List<DiamondsLog> {

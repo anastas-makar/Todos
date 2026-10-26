@@ -1,9 +1,9 @@
-package pro.progr.todos.api.mapper
+package pro.progr.todos.api.v1.mapper
 
 import com.google.gson.Gson
-import pro.progr.todos.api.model.NoteDto
-import pro.progr.todos.api.model.ScheduleDayDto
-import pro.progr.todos.api.model.SublistChainDto
+import pro.progr.todos.api.v1.model.NoteDto
+import pro.progr.todos.api.v1.model.ScheduleDayDto
+import pro.progr.todos.api.v1.model.SublistChainDto
 import pro.progr.todos.db.Note
 import pro.progr.todos.db.ColorStyleConverter
 import pro.progr.personalcrypto.PersonalCrypto

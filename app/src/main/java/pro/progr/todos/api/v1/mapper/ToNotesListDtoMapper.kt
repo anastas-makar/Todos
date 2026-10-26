@@ -1,7 +1,7 @@
-package pro.progr.todos.api.mapper
+package pro.progr.todos.api.v1.mapper
 
-import pro.progr.todos.api.model.NotesListDto
-import pro.progr.todos.api.model.SublistChainDto
+import pro.progr.todos.api.v1.model.NotesListDto
+import pro.progr.todos.api.v1.model.SublistChainDto
 import pro.progr.todos.db.NotesList
 import pro.progr.personalcrypto.PersonalCrypto
 

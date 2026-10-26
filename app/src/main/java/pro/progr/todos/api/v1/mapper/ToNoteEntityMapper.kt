@@ -1,8 +1,8 @@
-package pro.progr.todos.api.mapper
+package pro.progr.todos.api.v1.mapper
 
 import com.google.gson.Gson
 import pro.progr.diamondsandberries.db.Schedule
-import pro.progr.todos.api.model.NoteDto
+import pro.progr.todos.api.v1.model.NoteDto
 import pro.progr.todos.brightcards.model.TodoStatus
 import pro.progr.todos.datefilters.FilterType
 import pro.progr.todos.db.Note

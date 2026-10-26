@@ -1,6 +1,6 @@
-package pro.progr.todos.api.mapper
+package pro.progr.todos.api.v1.mapper
 
-import pro.progr.todos.api.model.NoteTagDto
+import pro.progr.todos.api.v1.model.NoteTagDto
 import pro.progr.todos.db.NoteTag
 import pro.progr.personalcrypto.PersonalCrypto
 

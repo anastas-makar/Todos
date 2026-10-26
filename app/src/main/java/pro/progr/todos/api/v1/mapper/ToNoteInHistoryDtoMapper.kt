@@ -1,8 +1,8 @@
-package pro.progr.todos.api.mapper
+package pro.progr.todos.api.v1.mapper
 
 import com.google.gson.Gson
-import pro.progr.todos.api.model.NoteInHistoryDto
-import pro.progr.todos.api.model.SublistChainDto
+import pro.progr.todos.api.v1.model.NoteInHistoryDto
+import pro.progr.todos.api.v1.model.SublistChainDto
 import pro.progr.todos.db.ColorStyleConverter
 import pro.progr.todos.db.NoteInHistory
 import pro.progr.personalcrypto.PersonalCrypto
