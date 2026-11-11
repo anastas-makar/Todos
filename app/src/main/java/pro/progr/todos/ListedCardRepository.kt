@@ -8,13 +8,15 @@ import pro.progr.todos.datefilters.FilterType
 import pro.progr.todos.db.NoteAndHistoryDao
 import pro.progr.todos.db.NoteInHistory
 import pro.progr.todos.db.NoteWithData
+import pro.progr.todos.db.applySchedule
+import pro.progr.todos.db.toSchedule
 import java.time.LocalDate
 
 class ListedCardRepository(private val noteAndHistoryDao: NoteAndHistoryDao, private val note: NoteWithData) : ListedCardRepositoryInterface {
 
     override suspend fun setCardDone(cardContent: CardContent) {
 
-        val convertedNote = NoteConverter.toNote(cardContent, note.note.schedule)
+        val convertedNote = NoteConverter.toNote(cardContent, note.note.toSchedule())
         convertedNote.sublistChain = note.note.sublistChain
 
         val currentDate = LocalDate.now().toEpochDay()
@@ -28,7 +30,6 @@ class ListedCardRepository(private val noteAndHistoryDao: NoteAndHistoryDao, pri
             title = convertedNote.title,
             description = convertedNote.description,
             sublistChain = convertedNote.sublistChain,
-            schedule = convertedNote.schedule,
             style = convertedNote.style,
             reward = convertedNote.reward,
             fillTitleBackground = convertedNote.fillTitleBackground,
@@ -41,7 +42,7 @@ class ListedCardRepository(private val noteAndHistoryDao: NoteAndHistoryDao, pri
 
     override suspend fun addCardToHistory(cardContent: CardContent, date: LocalDate) {
 
-        val convertedNote = NoteConverter.toNote(cardContent, note.note.schedule)
+        val convertedNote = NoteConverter.toNote(cardContent, note.note.toSchedule())
         convertedNote.sublistChain = note.note.sublistChain
 
         val historyNote = NoteInHistory(
@@ -51,7 +52,6 @@ class ListedCardRepository(private val noteAndHistoryDao: NoteAndHistoryDao, pri
             title = convertedNote.title,
             description = convertedNote.description,
             sublistChain = convertedNote.sublistChain,
-            schedule = convertedNote.schedule,
             style = convertedNote.style,
             reward = convertedNote.reward,
             fillTitleBackground = convertedNote.fillTitleBackground,
@@ -64,26 +64,26 @@ class ListedCardRepository(private val noteAndHistoryDao: NoteAndHistoryDao, pri
 
     override suspend fun addCardForDay(cardContent: CardContent, date: LocalDate) {
 
-        val convertedNote = NoteConverter.toNote(cardContent, note.note.schedule)
+        val convertedNote = NoteConverter.toNote(cardContent, note.note.toSchedule())
         convertedNote.sublistChain = note.note.sublistChain
 
-        convertedNote.schedule = Schedule(
+        convertedNote.applySchedule(Schedule(
             Schedule.Pattern(
             days = LinkedHashMap(),
             type = FilterType.DATE
         ),
-            dates = Schedule.Dates(addedDates = arrayOf(date.toEpochDay())))
+            dates = Schedule.Dates(addedDates = arrayOf(date.toEpochDay()))))
 
         noteAndHistoryDao.update(convertedNote)
     }
 
     override suspend fun setNoteInHistoryDone(cardContent: CardContent, date: LocalDate) {
-        noteAndHistoryDao.setCardDone(NoteConverter.toNote(cardContent, note.note.schedule), date.toEpochDay())
+        noteAndHistoryDao.setCardDone(NoteConverter.toNote(cardContent, note.note.toSchedule()), date.toEpochDay())
     }
 
     override suspend fun setCardNotDone(cardContent: CardContent) {
 
-        val convertedNote = NoteConverter.toNote(cardContent, note.note.schedule)
+        val convertedNote = NoteConverter.toNote(cardContent, note.note.toSchedule())
         convertedNote.sublistChain = note.note.sublistChain
 
         convertedNote.todo = TodoStatus.TODO
@@ -97,7 +97,6 @@ class ListedCardRepository(private val noteAndHistoryDao: NoteAndHistoryDao, pri
             title = convertedNote.title,
             description = convertedNote.description,
             sublistChain = convertedNote.sublistChain,
-            schedule = convertedNote.schedule,
             style = convertedNote.style,
             reward = convertedNote.reward,
             fillTitleBackground = convertedNote.fillTitleBackground,

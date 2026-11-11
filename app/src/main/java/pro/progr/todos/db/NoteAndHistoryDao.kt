@@ -3,9 +3,8 @@ package pro.progr.todos.db
 import androidx.room.*
 import pro.progr.todos.brightcards.colors.ColorStyle
 import pro.progr.todos.brightcards.model.TodoStatus
-import pro.progr.diamondsandberries.db.Schedule
-import pro.progr.diamondsandberries.db.ScheduleConverter
 import pro.progr.todos.NoteConverter
+import pro.progr.todos.datefilters.FilterType
 import java.time.LocalDate
 
 @Dao
@@ -32,14 +31,13 @@ interface NoteAndHistoryDao {
         description = :description, 
         reward = :reward, 
         sublist_chain = :sublistChain, 
-        schedule = :schedule, 
         style = :style, 
         fillTitleBackground = :fillTitleBackground, 
         fillTextBackground = :fillTextBackground, 
         todo = :todo 
     WHERE noteId = :noteId AND date = :date
 """)
-    @TypeConverters(ScheduleConverter::class, SublistChainConverter::class)
+    @TypeConverters(SublistChainConverter::class)
     fun updateNoteInHistory(
         noteId: String,
         date: Long,
@@ -47,7 +45,6 @@ interface NoteAndHistoryDao {
         description: String,
         reward: Int,
         sublistChain: SublistChain,
-        schedule: Schedule,
         style: ColorStyle,
         fillTitleBackground: Boolean,
         fillTextBackground: Boolean,
@@ -76,7 +73,6 @@ interface NoteAndHistoryDao {
                 description = historyNote.description,
                 reward = historyNote.reward,
                 sublistChain = historyNote.sublistChain,
-                schedule = historyNote.schedule,
                 style = historyNote.style,
                 fillTitleBackground = historyNote.fillTitleBackground,
                 fillTextBackground = historyNote.fillTextBackground,
@@ -119,13 +115,15 @@ interface NoteAndHistoryDao {
         val date = LocalDate.now().toEpochDay()
         val noteInHistory = getNoteInHistory(noteId = note.id, date)
 
-        if (!note.schedule.pattern.type.datesFilter.isActual(note.schedule, LocalDate.now())
+        val schedule = note.toSchedule()
+        val filterType = note.patternType ?: FilterType.NO_TERMS
+        if (!filterType.datesFilter.isActual(schedule, LocalDate.now())
             && noteInHistory != null
         ) {
             remoCardForDay(date, note.id)
         }
 
-        if (note.schedule.pattern.type.datesFilter.isActual(note.schedule, LocalDate.now())
+        if (filterType.datesFilter.isActual(schedule, LocalDate.now())
             && noteInHistory == null) {
             insert(NoteConverter.toNoteInHistory(note, date))
         }

@@ -10,13 +10,14 @@ import pro.progr.todos.brightcards.model.CardContent
 import pro.progr.todos.brightcards.model.CardRepository
 import pro.progr.todos.brightcards.model.TodoStatus
 import pro.progr.diamondsandberries.db.Schedule
-import pro.progr.todos.db.ArrayPOJO
 import pro.progr.todos.db.NoteAndHistoryDao
 import pro.progr.todos.db.NoteInHistory
 import pro.progr.todos.db.NoteTag
 import pro.progr.todos.db.NoteWithData
 import pro.progr.todos.db.NoteWithDataDao
 import pro.progr.todos.db.SublistChain
+import pro.progr.todos.db.applySchedule
+import pro.progr.todos.db.toSchedule
 import pro.progr.todos.db.TagsDao
 import java.time.LocalDate
 import javax.inject.Inject
@@ -105,8 +106,8 @@ class CardRepository @Inject constructor(
         note.note.reward = cardContent.reward
         note.note.latestDone = cardContent.latestDone
 
-        if (note.note.schedule.pattern.type.datesFilter.isActual(
-                note.note.schedule,
+        if ((note.note.patternType ?: pro.progr.todos.datefilters.FilterType.NO_TERMS).datesFilter.isActual(
+                note.note.toSchedule(),
                 LocalDate.now()
             )) {
             val historyNote = NoteConverter.toNoteInHistory(note = note.note, LocalDate.now().toEpochDay())
@@ -119,8 +120,8 @@ class CardRepository @Inject constructor(
     suspend fun updateList(sublistChain : SublistChain) {
         note.note.sublistChain = sublistChain
 
-        if (note.note.schedule.pattern.type.datesFilter.isActual(
-                note.note.schedule,
+        if ((note.note.patternType ?: pro.progr.todos.datefilters.FilterType.NO_TERMS).datesFilter.isActual(
+                note.note.toSchedule(),
                 LocalDate.now()
             )) {
             val historyNote = NoteConverter.toNoteInHistory(note = note.note, LocalDate.now().toEpochDay())
@@ -143,12 +144,7 @@ class CardRepository @Inject constructor(
 
     fun setSchedule(schedule: Schedule) {
         if (scheduleSetForId != note.note.id) {
-            note.note.dateTill = schedule.dates?.till
-            note.note.dateSince = schedule.dates?.since
-            note.note.patternType = schedule.pattern.type
-            note.note.patterDates = schedule.pattern.days
-            note.note.cancelledDates = ArrayPOJO(schedule.dates?.cancelledDates)
-            note.note.addedDates = ArrayPOJO(schedule.dates?.addedDates)
+            note.note.applySchedule(schedule)
             scheduleSetForId = note.note.id
         }
 
@@ -156,7 +152,7 @@ class CardRepository @Inject constructor(
     }
 
     fun getSchedule() : Schedule {
-        return note.note.schedule
+        return note.note.toSchedule()
     }
 
     fun getScheduleDescription(): String =
@@ -165,7 +161,7 @@ class CardRepository @Inject constructor(
     fun getNoTagsText(): String = context.getString(R.string.no_tags)
 
     override suspend fun setCardDone(cardContent: CardContent) {
-        val note = NoteConverter.toNote(cardContent, note.note.schedule)
+        val note = NoteConverter.toNote(cardContent, note.note.toSchedule())
 
         val currentDate = LocalDate.now().toEpochDay()
 
@@ -178,7 +174,6 @@ class CardRepository @Inject constructor(
             title = note.title,
             description = note.description,
             sublistChain = note.sublistChain,
-            schedule = note.schedule,
             style = note.style,
             reward = note.reward,
             fillTitleBackground = note.fillTitleBackground,

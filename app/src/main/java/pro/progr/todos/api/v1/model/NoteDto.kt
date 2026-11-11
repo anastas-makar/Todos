@@ -19,6 +19,5 @@ data class NoteDto(
     val todo: String,
     val latestDone: Long?,
     val deleted: Boolean,
-    val schedule: String? = null,
     val latestUpdate: Long?
 )

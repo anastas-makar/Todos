@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import pro.progr.todos.brightcards.colors.ColorStyle
 import pro.progr.todos.brightcards.model.CardContent
-import pro.progr.todos.brightcards.model.StringAnnotation
+import pro.progr.todos.brightcards.model.CardAction
 import pro.progr.todos.brightcards.vm.CardViewModel
 import java.time.LocalDate
 
@@ -28,12 +28,11 @@ class EditCardInHistoryViewModel private constructor(
         return cardContent.value.id
     }
 
-    // Функция для вызова при клике на аннотацию
-    override fun onAnnotationClicked(annotation: StringAnnotation) {
+    override fun onCardActionClicked(action: CardAction) {
 
     }
 
-    override fun onAnnotationClickFired() {
+    override fun onCardActionClickFired() {
 
     }
 

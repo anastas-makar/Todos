@@ -14,13 +14,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import pro.progr.todos.brightcards.composable.DiamondSelector
-import pro.progr.todos.brightcards.model.StringAnnotation
+import pro.progr.todos.brightcards.model.CardAction
 import pro.progr.todos.brightcards.vm.CardViewModel
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun AnnotatedClickableText(cardViewModel: CardViewModel) {
-    val annotations = cardViewModel.getCardContent().value.stringAnnotations
+fun CardMetadataActions(cardViewModel: CardViewModel) {
+    val content = cardViewModel.getCardContent().value
     FlowRow(
         modifier = Modifier.padding(horizontal = 11.dp),
     ) {
@@ -29,7 +29,11 @@ fun AnnotatedClickableText(cardViewModel: CardViewModel) {
             DiamondSelector(cardViewModel)
         }
 
-        annotations.forEach { annotation ->
+        listOf(
+            content.scheduleLabel to CardAction.EDIT_SCHEDULE,
+            content.listLabel to CardAction.SELECT_LIST,
+            content.tagsLabel to CardAction.SELECT_TAGS
+        ).filter { (label, _) -> label.isNotBlank() }.forEach { (label, action) ->
             val borderColor = if (cardViewModel.getCardContent().value.fillTextBackground)
                 Color(cardViewModel.getCardContent().value.style.secondaryElementsColor())
             else
@@ -42,20 +46,17 @@ fun AnnotatedClickableText(cardViewModel: CardViewModel) {
             else
                 MaterialTheme.colors.onSurface
 
-            // Используйте Box для создания фона и отступов вокруг текста
             Box(
                 modifier = Modifier
-                    .padding(4.dp) // Отступ между "кнопками"
-                    //.background(Color.Transparent, shape = RoundedCornerShape(4.dp)) // Фон и скругление углов
+                    .padding(4.dp)
                     .border(1.dp, borderColor, RoundedCornerShape(4.dp))
                     .clickable {
-                        // Обработка нажатия на "кнопку"
-                        cardViewModel.onAnnotationClicked(StringAnnotation(tag = annotation.tag, text = annotation.text))
+                        cardViewModel.onCardActionClicked(action)
                     }
-                    .padding(4.dp) // Внутренний отступ текста внутри "кнопки"
+                    .padding(4.dp)
             ) {
                 Text(
-                    text = annotation.text,
+                    text = label,
                     color = textColor
                 )
             }

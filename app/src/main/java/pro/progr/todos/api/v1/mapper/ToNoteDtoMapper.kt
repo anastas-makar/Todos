@@ -1,6 +1,5 @@
 package pro.progr.todos.api.v1.mapper
 
-import com.google.gson.Gson
 import pro.progr.todos.api.v1.model.NoteDto
 import pro.progr.todos.api.v1.model.ScheduleDayDto
 import pro.progr.todos.api.v1.model.SublistChainDto
@@ -10,7 +9,6 @@ import pro.progr.personalcrypto.PersonalCrypto
 
 fun Note.toDto(
     personalCrypto: PersonalCrypto,
-    gson: Gson = Gson(),
     latestUpdate: Long?
 ): NoteDto {
     val styleString = ColorStyleConverter().fromColorStyle(style)
@@ -39,7 +37,6 @@ fun Note.toDto(
         todo = todo.name,
         latestDone = latestDone,
         deleted = deleted,
-        schedule = gson.toJson(schedule), // сериализуем schedule в JSON-строку
         latestUpdate = latestUpdate
     )
 }

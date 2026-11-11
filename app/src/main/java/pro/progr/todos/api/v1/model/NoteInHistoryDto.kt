@@ -8,7 +8,6 @@ data class NoteInHistoryDto(
     val description: String,
     val reward: Int,
     val sublistChain: SublistChainDto,
-    val schedule: String,              // строка (json), как на сервере
     val style: String,                 // ColorStyle → строка через конвертер
     val fillTitleBackground: Boolean,
     val fillTextBackground: Boolean,

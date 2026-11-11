@@ -65,7 +65,7 @@ class NotesRepository @Inject constructor(
                         noteInHistory.noteInHistory.date
                     }.mapValues { (_, notes) ->
                         notes.map { note ->
-                            NoteInHistoryConverter.toCardContent(note, context)
+                            NoteInHistoryConverter.toCardContent(note)
                         }
                     }
                 }
@@ -77,7 +77,7 @@ class NotesRepository @Inject constructor(
                         noteInHistory.noteInHistory.date
                     }.mapValues { (_, notes) ->
                         notes.map { note ->
-                            NoteInHistoryConverter.toCardContent(note, context)
+                            NoteInHistoryConverter.toCardContent(note)
                         }
                     }
                 }
@@ -121,8 +121,8 @@ class NotesRepository @Inject constructor(
                 notesInHistory.addAll(
 
                     notesList.filter { note ->
-                        note.note.schedule.pattern.type.datesFilter.isActual(
-                            note.note.schedule,
+                        (note.note.patternType ?: pro.progr.todos.datefilters.FilterType.NO_TERMS).datesFilter.isActual(
+                            note.note.toSchedule(),
                             LocalDate.ofEpochDay(date)
                         )
                     }.map {

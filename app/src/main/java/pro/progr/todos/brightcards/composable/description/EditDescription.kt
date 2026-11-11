@@ -53,7 +53,7 @@ fun ColumnScope.EditDescription(cardViewModel: CardViewModel,
         )
 
         //if (cardViewModel.getCardContent().value.text.isNotEmpty() || cardViewModel.getCardContent().value.title.isNotEmpty()) {
-            AnnotatedClickableText(cardViewModel)
+            CardMetadataActions(cardViewModel)
         //}
     }
 }

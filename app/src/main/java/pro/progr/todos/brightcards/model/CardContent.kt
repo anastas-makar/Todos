@@ -14,7 +14,9 @@ data class CardContent(
     var imageUrls: List<String> = emptyList(),
     var tags: List<CardTag> = emptyList(),
     var todo: TodoStatus = TodoStatus.NOT_ACTIVE,
-    var stringAnnotations: List<StringAnnotation> = emptyList(),
+    var scheduleLabel: String = "",
+    var listLabel: String = "",
+    var tagsLabel: String = "",
     val reward : Int = 10,
     var latestDone: Long? = null,
     var menuItems: List<MenuItem> = emptyList()

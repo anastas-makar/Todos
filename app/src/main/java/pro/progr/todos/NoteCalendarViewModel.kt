@@ -11,6 +11,8 @@ import pro.progr.diamondsandberries.db.Schedule
 import pro.progr.todos.datefilters.FilterType
 import pro.progr.todos.db.ArrayPOJO
 import pro.progr.todos.db.Note
+import pro.progr.todos.db.applySchedule
+import pro.progr.todos.db.toSchedule
 import pro.progr.flow.vm.CalendarViewModel
 import java.time.LocalDate
 import javax.inject.Inject
@@ -30,7 +32,7 @@ class NoteCalendarViewModel @Inject constructor(
 
                 note?.let {
                     if (_note.value == null) {
-                        note.schedule.dates?.addedDates?.let { longDateVals ->
+                        note.addedDates?.longArray?.let { longDateVals ->
                             datesGridRepository.selectedDates.addAll(longDateVals.map { longDateVal ->
                                 LocalDate.ofEpochDay(longDateVal)
                             })
@@ -38,7 +40,7 @@ class NoteCalendarViewModel @Inject constructor(
                     }
 
                     _note.value = note
-                    filterTypeState.value = note.schedule.pattern.type
+                    filterTypeState.value = note.patternType ?: FilterType.NO_TERMS
                 }
             }
         }
@@ -47,9 +49,8 @@ class NoteCalendarViewModel @Inject constructor(
     fun selectFilterType(type: FilterType) {
         _note.value?.let { note ->
             viewModelScope.launch(Dispatchers.Default) {
-                if (note.schedule.pattern.type != type) {
-
-                    note.schedule = Schedule(Schedule.Pattern(days = LinkedHashMap(), type = type))
+                if (note.patternType != type) {
+                    note.applySchedule(Schedule(Schedule.Pattern(days = LinkedHashMap(), type = type)))
 
                     datesGridRepository.updateNote(note)
                 }
@@ -77,7 +78,7 @@ class NoteCalendarViewModel @Inject constructor(
                     else
                         null
 
-                note.schedule.dates?.addedDates?.let { addedDates ->
+                note.addedDates?.longArray?.let { addedDates ->
                     if (note.todo != TodoStatus.NOT_ACTIVE && addedDates.isNotEmpty()) {
                         val max = addedDates.max()
                         if (max > LocalDate.now().toEpochDay()
@@ -96,14 +97,14 @@ class NoteCalendarViewModel @Inject constructor(
 
     override fun isDateSelected(date: LocalDate): Boolean {
         return _note.value?.let { note ->
-            note.schedule.pattern.type.datesFilter.isActual(note.schedule, date)
+            (note.patternType ?: FilterType.NO_TERMS).datesFilter.isActual(note.toSchedule(), date)
         } ?: false
     }
 
     fun toggleDayOfWeek(dayNum: Long) {
         _note.value?.let { note ->
 
-            if (note.schedule.pattern.days.containsKey(dayNum)) {
+            if (note.patterDates?.containsKey(dayNum) == true) {
                 cancelDayOfWeek(dayNum)
             } else {
                 selectDayOfWeek(dayNum)
@@ -113,10 +114,12 @@ class NoteCalendarViewModel @Inject constructor(
 
     fun selectDayOfWeek(dayNum: Long) {
         _note.value?.let { note ->
-            note.schedule.pattern.days.put(
+            val days = note.patterDates ?: LinkedHashMap()
+            days.put(
                 dayNum,
                 Schedule.Day(dayNum, true)
             )
+            note.patterDates = days
 
             viewModelScope.launch(Dispatchers.Default) {
                 datesGridRepository.updateNote(note)
@@ -126,9 +129,7 @@ class NoteCalendarViewModel @Inject constructor(
 
     fun cancelDayOfWeek(dayNum: Long) {
         _note.value?.let { note ->
-            note.schedule.pattern.days.remove(
-                dayNum
-            )
+            note.patterDates?.remove(dayNum)
 
             viewModelScope.launch(Dispatchers.Default) {
                 datesGridRepository.updateNote(note)
@@ -137,7 +138,7 @@ class NoteCalendarViewModel @Inject constructor(
     }
 
     fun isDayOfWeekSelected(dayNum: Long): Boolean {
-        return _note.value?.schedule?.pattern?.days?.containsKey(dayNum) ?: false
+        return _note.value?.patterDates?.containsKey(dayNum) ?: false
     }
 
     fun setSequence(executeDays: Long, skipDays: Long) {
@@ -222,6 +223,6 @@ class NoteCalendarViewModel @Inject constructor(
     }
 
     fun getSchedule(): Schedule? {
-        return _note.value?.schedule
+        return _note.value?.toSchedule()
     }
 }

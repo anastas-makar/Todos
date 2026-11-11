@@ -1,6 +1,5 @@
 package pro.progr.todos.api.v1.mapper
 
-import com.google.gson.Gson
 import pro.progr.diamondsandberries.db.Schedule
 import pro.progr.todos.api.v1.model.NoteDto
 import pro.progr.todos.brightcards.model.TodoStatus
@@ -11,7 +10,7 @@ import pro.progr.todos.db.ColorStyleConverter
 import java.util.LinkedHashMap
 import pro.progr.personalcrypto.PersonalCrypto
 
-fun NoteDto.toEntity(personalCrypto: PersonalCrypto, gson: Gson = Gson()): Note {
+fun NoteDto.toEntity(personalCrypto: PersonalCrypto): Note {
     val styleObj = ColorStyleConverter().toColorStyle(style)
 
     // восстановление patternDates
@@ -41,11 +40,6 @@ fun NoteDto.toEntity(personalCrypto: PersonalCrypto, gson: Gson = Gson()): Note 
         latestDone = latestDone,
         deleted = deleted
     )
-
-    // schedule из JSON-строки, если есть
-    schedule?.let {
-        entity.schedule = gson.fromJson(it, Schedule::class.java)
-    }
 
     return entity
 }

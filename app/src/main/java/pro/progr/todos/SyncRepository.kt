@@ -63,7 +63,7 @@ class SyncRepository @Inject constructor(
             syncMetaData = syncMetaData,
             notes = if (byTable["notes"].isNullOrEmpty()) emptyList()
                 else notesDao.getUpdates(byTable["notes"]!!).map {
-                    it.toDto(personalCrypto, gson, latestUpdates[it.id])
+                    it.toDto(personalCrypto, latestUpdates[it.id])
                 },
             notesInHistory = if (byTable["notes_in_history"].isNullOrEmpty()) emptyList()
                 else notesInHistoryDao.getUpdates(byTable["notes_in_history"]!!).map {
@@ -92,7 +92,7 @@ class SyncRepository @Inject constructor(
 
         db.withTransaction {
             if (serverData.notes.isNotEmpty()) notesDao.setUpdates(
-                serverData.notes.map { it.toEntity(personalCrypto, gson) })
+                serverData.notes.map { it.toEntity(personalCrypto) })
             if (serverData.notesInHistory.isNotEmpty()) notesInHistoryDao.setUpdates(
                 serverData.notesInHistory.map { it.toEntity(personalCrypto) })
             if (serverData.notesLists.isNotEmpty()) noteListsDao.setUpdates(

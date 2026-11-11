@@ -1,7 +1,5 @@
 package pro.progr.todos.api.v1.mapper
 
-import com.google.gson.Gson
-import pro.progr.diamondsandberries.db.Schedule
 import pro.progr.todos.api.v1.model.NoteInHistoryDto
 import pro.progr.todos.brightcards.model.TodoStatus
 import pro.progr.todos.db.ColorStyleConverter
@@ -18,7 +16,6 @@ fun NoteInHistoryDto.toEntity(personalCrypto: PersonalCrypto): NoteInHistory {
         description = personalCrypto.decryptTodosValue(description),
         reward = reward,
         sublistChain = SublistChain(sublistChain.sublistsString),
-        schedule = Gson().fromJson(schedule, Schedule::class.java),
         style = ColorStyleConverter().toColorStyle(style),
         fillTitleBackground = fillTitleBackground,
         fillTextBackground = fillTextBackground,

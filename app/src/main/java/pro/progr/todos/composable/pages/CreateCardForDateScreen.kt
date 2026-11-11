@@ -36,7 +36,7 @@ fun CreateCardForDateScreen(cardViewModel: CardViewModel,
                             epochDay: Long
 ) {
 
-    val annotation = cardViewModel.annotationClicked.collectAsState(initial = null)
+    val cardAction = cardViewModel.cardActionClicked.collectAsState(initial = null)
 
     if (listsViewModel.selectedListState.value != null) {
 
@@ -62,14 +62,12 @@ fun CreateCardForDateScreen(cardViewModel: CardViewModel,
 
     }
 
-    annotation.value?.let {
-        cardViewModel.onAnnotationClickFired()
-        if (it.tag == "schedule") {
-            navController.navigate("taskSchedule/${cardViewModel.getCardId()}")
-        } else if (it.tag == "list") {
-            listsViewModel.sheetMode.value = ListsViewModel.SheetMode.SHOW
-        }  else if (it.tag == "tags") {
-            tagsViewModel.showTagsSheet.value = !tagsViewModel.showTagsSheet.value
+    cardAction.value?.let { action ->
+        cardViewModel.onCardActionClickFired()
+        when (action) {
+            pro.progr.todos.brightcards.model.CardAction.EDIT_SCHEDULE -> navController.navigate("taskSchedule/${cardViewModel.getCardId()}")
+            pro.progr.todos.brightcards.model.CardAction.SELECT_LIST -> listsViewModel.sheetMode.value = ListsViewModel.SheetMode.SHOW
+            pro.progr.todos.brightcards.model.CardAction.SELECT_TAGS -> tagsViewModel.showTagsSheet.value = !tagsViewModel.showTagsSheet.value
         }
     }
 

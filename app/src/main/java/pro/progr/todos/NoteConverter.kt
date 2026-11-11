@@ -4,13 +4,14 @@ import android.content.Context
 import pro.progr.todos.brightcards.MenuItem
 import pro.progr.todos.brightcards.model.CardContent
 import pro.progr.todos.brightcards.model.CardTag
-import pro.progr.todos.brightcards.model.StringAnnotation
 import pro.progr.todos.brightcards.model.TodoStatus
 import pro.progr.diamondsandberries.db.Schedule
 import pro.progr.todos.datefilters.FilterType
 import pro.progr.todos.db.Note
 import pro.progr.todos.db.NoteInHistory
 import pro.progr.todos.db.NoteWithData
+import pro.progr.todos.db.applySchedule
+import pro.progr.todos.db.toSchedule
 import java.time.LocalDate
 import java.util.*
 import kotlin.collections.LinkedHashMap
@@ -32,7 +33,7 @@ class NoteConverter {
                 latestDone = cardContent.latestDone
             )
 
-            note.schedule = schedule
+            note.applySchedule(schedule)
 
             cardContent.id?.let {
                 note.id = it
@@ -48,8 +49,8 @@ class NoteConverter {
 
             //todo: Эту всю логику нужно в filtertype куда-то
             var datesExpired = false
-            note.note.schedule.dates?.addedDates?.let {addedDates ->
-                datesExpired = note.note.schedule.pattern.type == FilterType.DATE
+            note.note.addedDates?.longArray?.let { addedDates ->
+                datesExpired = note.note.patternType == FilterType.DATE
                         && addedDates.size > 0
                         && addedDates.max() < LocalDate.now().toEpochDay()
             }
@@ -64,10 +65,10 @@ class NoteConverter {
 
                 todo = if (datesExpired) TodoStatus.DONE else note.note.todo,
                 reward = note.note.reward,
-                stringAnnotations = listOf(
-                    StringAnnotation("schedule", note.note.schedule.pattern.type.datesFilter.getDescription(note.note.schedule, context)),
-                    StringAnnotation("list", listName)
-                ),
+                scheduleLabel = note.note.toSchedule().let { schedule ->
+                    schedule.pattern.type.datesFilter.getDescription(schedule, context)
+                },
+                listLabel = listName,
                 latestDone = note.note.latestDone,
                 menuItems = menuItems,
                 tags = note.tags.map { noteTag -> CardTag(noteTag.id, noteTag.title) }
@@ -95,7 +96,6 @@ class NoteConverter {
                 title = note.title,
                 reward = note.reward,
                 sublistChain = note.sublistChain,
-                schedule = note.schedule,
                 style = note.style,
                 fillTitleBackground = note.fillTitleBackground,
                 fillTextBackground = note.fillTextBackground,

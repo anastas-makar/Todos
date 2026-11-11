@@ -6,7 +6,6 @@ import pro.progr.todos.brightcards.model.TodoStatus
 import pro.progr.diamondsandberries.db.FilterTypeConverter
 import pro.progr.diamondsandberries.db.PatternDatesConverter
 import pro.progr.diamondsandberries.db.Schedule
-import pro.progr.diamondsandberries.db.ScheduleConverter
 import pro.progr.todos.datefilters.FilterType
 import java.util.UUID
 
@@ -63,36 +62,28 @@ data class Note(
 
     @ColumnInfo(defaultValue = "0")
     var deleted : Boolean = false
-) {
+)
 
-
-    @TypeConverters(ScheduleConverter::class)
-    var schedule: Schedule = Schedule(
-        dates = Schedule.Dates(
-            since = dateSince,
-            till = dateTill,
-            cancelledDates = cancelledDates?.longArray ?: emptyArray(),
-            addedDates = addedDates?.longArray ?: emptyArray()
-        ),
-        pattern = Schedule.Pattern(days = patterDates ?: LinkedHashMap(), type = patternType ?: FilterType.NO_TERMS)
+/** Builds the calendar UI model from the persisted, typed schedule columns. */
+fun Note.toSchedule(): Schedule = Schedule(
+    dates = Schedule.Dates(
+        since = dateSince,
+        till = dateTill,
+        cancelledDates = cancelledDates?.longArray ?: emptyArray(),
+        addedDates = addedDates?.longArray ?: emptyArray()
+    ),
+    pattern = Schedule.Pattern(
+        days = patterDates ?: LinkedHashMap(),
+        type = patternType ?: FilterType.NO_TERMS
     )
-        get () =
-            Schedule(
-                dates = Schedule.Dates(
-                    since = dateSince,
-                    till = dateTill,
-                    cancelledDates = cancelledDates?.longArray ?: emptyArray(),
-                    addedDates = addedDates?.longArray ?: emptyArray()
-                ),
-                pattern = Schedule.Pattern(days = patterDates ?: LinkedHashMap(), type = patternType ?: FilterType.NO_TERMS)
-            )
-        set (value) {
-            field = value
-            addedDates = ArrayPOJO(value.dates?.addedDates ?: emptyArray())
-            cancelledDates = ArrayPOJO(value.dates?.cancelledDates ?: emptyArray())
-            patterDates = value.pattern.days
-            patternType = value.pattern.type
-            dateSince = value.dates?.since
-            dateTill = value.dates?.till
-        }
+)
+
+/** Copies a schedule selected in the UI into the persisted, typed columns. */
+fun Note.applySchedule(schedule: Schedule) {
+    addedDates = ArrayPOJO(schedule.dates?.addedDates ?: emptyArray())
+    cancelledDates = ArrayPOJO(schedule.dates?.cancelledDates ?: emptyArray())
+    patterDates = schedule.pattern.days
+    patternType = schedule.pattern.type
+    dateSince = schedule.dates?.since
+    dateTill = schedule.dates?.till
 }

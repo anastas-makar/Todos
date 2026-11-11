@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 import pro.progr.todos.brightcards.colors.ColorStyle
 import pro.progr.todos.brightcards.model.CardContent
 import pro.progr.todos.brightcards.model.CardTag
-import pro.progr.todos.brightcards.model.StringAnnotation
+import pro.progr.todos.brightcards.model.CardAction
 import pro.progr.todos.brightcards.vm.CardViewModel
 import pro.progr.diamondsandberries.db.Schedule
 import pro.progr.todos.db.NoteTag
@@ -28,21 +28,20 @@ class CardViewModel private constructor(
 
     internal val cardContent: MutableState<CardContent> = mutableStateOf(_cardContent.value)
 
-    // MutableStateFlow для хранения актуальной аннотации
-    private val _annotationClicked = MutableStateFlow<StringAnnotation?>(null)
-    val annotationClicked: Flow<StringAnnotation?> = _annotationClicked
+    // Action emitted when a card metadata control is tapped.
+    private val _cardActionClicked = MutableStateFlow<CardAction?>(null)
+    val cardActionClicked: Flow<CardAction?> = _cardActionClicked
 
     override fun getCardId() : String? {
         return cardContent.value.id
     }
 
-    // Функция для вызова при клике на аннотацию
-    override fun onAnnotationClicked(annotation: StringAnnotation) {
-        _annotationClicked.value = annotation
+    override fun onCardActionClicked(action: CardAction) {
+        _cardActionClicked.value = action
     }
 
-    override fun onAnnotationClickFired() {
-        _annotationClicked.value = null
+    override fun onCardActionClickFired() {
+        _cardActionClicked.value = null
     }
 
     constructor(repository: CardRepository, style: ColorStyle) : this(
@@ -110,27 +109,17 @@ class CardViewModel private constructor(
         }
     }
 
-    private fun updateStringAnnotations(listName : String) {
+    private fun updateCardLabels(listName : String) {
         updateCard(_cardContent.value.copy(
-            stringAnnotations = listOf(
-                StringAnnotation(
-                    "schedule",
-                    repository.getScheduleDescription()
-                ),
-                StringAnnotation(
-                    "list",
-                    listName
-                ),
-                StringAnnotation(
-                    "tags",
-                    if (cardContent.value.tags.isEmpty()) repository.getNoTagsText() else cardContent.value.tags.fastJoinToString(separator = " #", prefix = "#")
-                )
-            )
+            scheduleLabel = repository.getScheduleDescription(),
+            listLabel = listName,
+            tagsLabel = if (cardContent.value.tags.isEmpty()) repository.getNoTagsText()
+                else cardContent.value.tags.fastJoinToString(separator = " #", prefix = "#")
         ))
     }
 
     fun updateList(list : NList) {
-        updateStringAnnotations(list.getName())
+        updateCardLabels(list.getName())
 
         viewModelScope.launch (Dispatchers.Default) {
             repository.updateList(list.sublistChain)

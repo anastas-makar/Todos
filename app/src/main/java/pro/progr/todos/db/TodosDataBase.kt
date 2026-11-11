@@ -9,7 +9,6 @@ import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
 import pro.progr.diamondsandberries.db.FilterTypeConverter
 import pro.progr.diamondsandberries.db.PatternDatesConverter
-import pro.progr.diamondsandberries.db.ScheduleDatesConverter
 //import pro.progr.todos.util.DeviceIdProvider
 import java.util.UUID
 
@@ -23,13 +22,12 @@ import java.util.UUID
         DiamondsCount::class,
         DiamondsLog::class,
         Outbox::class,
-        AppMeta::class], version = 4
+        AppMeta::class], version = 5
 )
 @TypeConverters(
     SublistChainConverter::class,
     ColorStyleConverter::class,
     LongArrayConverter::class,
-    ScheduleDatesConverter::class,
     PatternDatesConverter::class,
     FilterTypeConverter::class
 )
@@ -61,7 +59,8 @@ abstract class TodosDataBase : RoomDatabase() {
                     TodosDataBase::class.java,
                     "todos_database"
                 )
-                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_1_3, MIGRATION_1_4, MIGRATION_2_4, MIGRATION_3_4)
+                // This pre-release, single-user database is intentionally reset for schema v5.
+                .fallbackToDestructiveMigration()
                     .addCallback(object : RoomDatabase.Callback() {
                         override fun onCreate(db: SupportSQLiteDatabase) {
                             super.onCreate(db)

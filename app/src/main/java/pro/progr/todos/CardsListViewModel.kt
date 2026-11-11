@@ -19,6 +19,7 @@ import pro.progr.todos.db.NoteTag
 import pro.progr.todos.db.NoteWithData
 import pro.progr.todos.db.NotesRepository
 import pro.progr.todos.db.SublistChain
+import pro.progr.todos.db.toSchedule
 import java.time.LocalDate
 import javax.inject.Inject
 
@@ -84,8 +85,8 @@ class CardsListViewModel @Inject constructor(
                 notesRepository.notesListFlow.collectLatest { notesList ->
                     listsFlow.value = notesList
                         .filter { note ->
-                            note.note.schedule.pattern.type.datesFilter.isActual(
-                                note.note.schedule,
+                            (note.note.patternType ?: FilterType.NO_TERMS).datesFilter.isActual(
+                                note.note.toSchedule(),
                                 date
                             )
                         }.map { note ->
