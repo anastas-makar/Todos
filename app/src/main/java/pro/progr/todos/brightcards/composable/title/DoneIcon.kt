@@ -13,15 +13,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import pro.progr.todos.brightcards.vm.ListedCardViewModel
+import pro.progr.todos.CardRow
 
 @Composable
-fun DoneIcon(viewModel: ListedCardViewModel) {
+fun DoneIcon(row: CardRow) {
     Icon(
         imageVector = Icons.Outlined.Done,
         contentDescription = stringResource(R.string.done),
-        tint = if (viewModel.card.value.fillTitleBackground)
-                    Color(viewModel.card.value.style.textColor())
+        tint = if (row.content.value.fillTitleBackground)
+                    Color(row.content.value.style.textColor())
                 else
                     MaterialTheme.colors.onSurface,
         modifier = Modifier.padding(5.dp).size(16.dp)

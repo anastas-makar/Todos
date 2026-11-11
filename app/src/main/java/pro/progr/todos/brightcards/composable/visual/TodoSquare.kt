@@ -12,10 +12,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import pro.progr.todos.brightcards.vm.ListedCardViewModel
+import pro.progr.todos.CardRow
 
 @Composable
-fun TodoSquare(viewModel: ListedCardViewModel,
+fun TodoSquare(row: CardRow,
                onDoneClick: () -> Unit) {
     Box(
         modifier = Modifier
@@ -23,7 +23,7 @@ fun TodoSquare(viewModel: ListedCardViewModel,
             .padding(5.dp)
             .border(
                 1.dp,
-                if (viewModel.card.value.fillTitleBackground) Color(viewModel.card.value.style.secondaryElementsColor())
+                if (row.content.value.fillTitleBackground) Color(row.content.value.style.secondaryElementsColor())
                 else MaterialTheme.colors.onSurface, shape = RoundedCornerShape(4.dp)
             )
             .background(Color(0x44ffffff), shape = RoundedCornerShape(4.dp))
@@ -32,4 +32,3 @@ fun TodoSquare(viewModel: ListedCardViewModel,
             }
     )
 }
-//todo: от listedcardviewmodel в итоге нужно избавиться, в cardviewmodel уже есть все её методы

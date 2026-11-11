@@ -7,8 +7,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -18,7 +16,6 @@ import pro.progr.diamondapi.GetDiamondsCountInterface
 import pro.progr.todos.composable.pages.EditCardScreen
 import pro.progr.lists.ListsViewModel
 import pro.progr.todos.brightcards.colors.ColorsProvider
-import pro.progr.todos.brightcards.vm.ListedCardViewModel
 import pro.progr.todos.brightcards.vm.PaletteViewModel
 import pro.progr.todos.composable.pages.CalendarScreen
 import pro.progr.todos.composable.pages.CreateCardForDateScreen
@@ -46,7 +43,6 @@ fun TodosNavigation(
     val drawerState = rememberDrawerState(DrawerValue.Closed)
 
     val daggerViewModelFactory = component.daggerViewModelFactory()
-    val listedCardViewModelFactory = component.listedCardViewModelFactory()
     val cardViewModelFactory: CardViewModelFactory = component.cardViewModelFactory()
     val noteCalendarViewModelFactory: NoteCalendarViewModelFactory = component.noteCalendarViewModelFactory()
     val listsViewModelFactory: ListsViewModelFactory = component.listsViewModelFactory()
@@ -57,17 +53,6 @@ fun TodosNavigation(
 
     val paletteViewModelState = remember { mutableStateOf(paletteViewModel) }
     val historyState = cardsListViewModel.getHistoryFlow().collectAsState(null)
-
-    val viewModelStoreOwner = LocalViewModelStoreOwner.current!!
-
-    cardsListViewModel.setViewModelCreator { row ->
-        listedCardViewModelFactory
-            .createForRow(row)
-
-        val cardViewModel = ViewModelProvider(viewModelStoreOwner, listedCardViewModelFactory)
-            .get(row.key.viewModelStoreKey(), ListedCardViewModel::class.java)
-        listedCardViewModelFactory.updateExisting(cardViewModel, row)
-    }
 
     val navController = rememberNavController()
 

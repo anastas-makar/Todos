@@ -13,14 +13,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import pro.progr.todos.brightcards.vm.ListedCardViewModel
+import pro.progr.todos.CardRow
 
 @Composable
-fun NotDoneIcon(viewModel: ListedCardViewModel) {
+fun NotDoneIcon(row: CardRow) {
     Icon(
         imageVector = Icons.Filled.Close,
         contentDescription = stringResource(R.string.not_done),
-        tint = if (viewModel.card.value.fillTitleBackground) Color(viewModel.card.value.style.textColor())
+        tint = if (row.content.value.fillTitleBackground) Color(row.content.value.style.textColor())
                     else MaterialTheme.colors.onSurface,
         modifier = Modifier.padding(5.dp).size(16.dp)
 

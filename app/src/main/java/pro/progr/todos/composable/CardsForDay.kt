@@ -25,7 +25,7 @@ fun CardsForDay(
         val activeCards = cardsListViewModel.getCardsForDate(date).collectAsState()
         Column {
             activeCards.value.forEach { cardVm ->
-                key(cardVm.rowKey) {
+                key(cardVm.key) {
                 val handleAction: (Destinations) -> Unit = { action ->
                     cardsListViewModel.handleCardAction(
                         card = cardVm,
@@ -37,13 +37,13 @@ fun CardsForDay(
                 }
 
                 BrightCard(
-                    viewModel = cardVm,
+                    row = cardVm,
                     menuItems = cardsListViewModel.menuItems(cardVm, date, handleAction),
                     onDoneClick = { handleAction(Destinations.MARK_DONE) },
                     onTagClick = { cardTag ->
                         cardsListViewModel.updateTag(NoteTag(cardTag.id, cardTag.title))
                     },
-                    onclick = { /** navController.navigate("editCard/${cardVm.card.value.id}") */ }
+                    onclick = { /** navController.navigate("editCard/${cardVm.content.value.id}") */ }
                 )
                 }
             }

@@ -18,17 +18,17 @@ import pro.progr.todos.brightcards.composable.description.Description
 import pro.progr.todos.brightcards.composable.title.Title
 import pro.progr.todos.brightcards.MenuItem
 import pro.progr.todos.brightcards.model.CardTag
-import pro.progr.todos.brightcards.vm.ListedCardViewModel
+import pro.progr.todos.CardRow
 
 @Composable
 fun BrightCard(
-    viewModel: ListedCardViewModel,
+    row: CardRow,
     menuItems: List<MenuItem>,
     onDoneClick: () -> Unit,
     onclick: () -> Unit = {},
     onTagClick: (CardTag) -> Unit
 ) {
-    val style = remember(viewModel.card) { CardStyle(viewModel.card) }
+    val style = remember(row.content) { CardStyle(row.content) }
     Column(
         modifier = Modifier
             .padding(horizontal = 15.dp, vertical = 5.dp)
@@ -40,16 +40,16 @@ fun BrightCard(
             )
             .border(
                 1.dp,
-                Color(viewModel.card.value.style.backgroundColor()),
+                Color(row.content.value.style.backgroundColor()),
                 RoundedCornerShape(5.dp)
             ) // Добавление границы
             .clickable(onClick = onclick)
     ) {
 
 
-        Title(viewModel = viewModel, menuItems = menuItems, onDoneClick = onDoneClick, style = style)
+        Title(row = row, menuItems = menuItems, onDoneClick = onDoneClick, style = style)
 
-        Description(viewModel = viewModel, style = style, onTagClick = onTagClick)
+        Description(row = row, style = style, onTagClick = onTagClick)
 
     }
 }

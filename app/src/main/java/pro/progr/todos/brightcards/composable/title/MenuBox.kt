@@ -26,18 +26,18 @@ import androidx.compose.ui.unit.dp
 import pro.progr.todos.R
 import pro.progr.todos.brightcards.CardStyle
 import pro.progr.todos.brightcards.MenuItem
-import pro.progr.todos.brightcards.vm.ListedCardViewModel
+import pro.progr.todos.CardRow
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 
 @Composable
-fun MenuBox(viewModel: ListedCardViewModel,
+fun MenuBox(row: CardRow,
             menuItems: List<MenuItem>,
             style: CardStyle
 ) {
-    var menuOn by remember(viewModel.rowKey) { mutableStateOf(false) }
+    var menuOn by remember(row.key) { mutableStateOf(false) }
     Box(
         modifier = Modifier
             .background(

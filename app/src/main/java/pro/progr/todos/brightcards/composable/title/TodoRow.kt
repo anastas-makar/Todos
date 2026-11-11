@@ -25,19 +25,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import pro.progr.todos.brightcards.CardStyle
 import pro.progr.todos.brightcards.MenuItem
-import pro.progr.todos.brightcards.vm.ListedCardViewModel
+import pro.progr.todos.CardRow
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 
 @Composable
-fun BoxScope.TodoRow(viewModel: ListedCardViewModel,
+fun BoxScope.TodoRow(row: CardRow,
                      menuItems: List<MenuItem>,
                      onDoneClick: () -> Unit,
                      style: CardStyle
 ) {
-    var menuOn by remember(viewModel.rowKey) { mutableStateOf(false) }
+    var menuOn by remember(row.key) { mutableStateOf(false) }
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -45,7 +45,7 @@ fun BoxScope.TodoRow(viewModel: ListedCardViewModel,
                 shape = RoundedCornerShape(topStart = 5.dp, topEnd = 5.dp))
             .align(Alignment.TopStart)
     ) {
-        TodoIcon(viewModel = viewModel, onDoneClick = onDoneClick)
+        TodoIcon(row = row, onDoneClick = onDoneClick)
 
         IconButton(onClick = { menuOn = !menuOn }, modifier = Modifier
             .size(32.dp)

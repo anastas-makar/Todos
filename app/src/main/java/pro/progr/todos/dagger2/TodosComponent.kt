@@ -30,8 +30,6 @@ interface TodosComponent {
 
     fun daggerViewModelFactory(): DaggerViewModelFactory
 
-    fun listedCardViewModelFactory(): ListedCardViewModelFactory
-
     fun noteCalendarViewModelFactory(): NoteCalendarViewModelFactory
 
     fun paletteViewModelFactory(): PaletteViewModelFactory

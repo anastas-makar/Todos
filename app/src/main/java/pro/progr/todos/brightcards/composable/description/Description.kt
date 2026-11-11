@@ -4,17 +4,17 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.runtime.Composable
 import pro.progr.todos.brightcards.CardStyle
 import pro.progr.todos.brightcards.model.CardTag
-import pro.progr.todos.brightcards.vm.ListedCardViewModel
+import pro.progr.todos.CardRow
 
 @Composable
 fun ColumnScope.Description(
-    viewModel: ListedCardViewModel,
+    row: CardRow,
     style: CardStyle,
     onTagClick: (CardTag) -> Unit
 ) {
     when {
-        viewModel.card.value.text.isEmpty()
-                && viewModel.card.value.tags.isEmpty() -> EmptyText(viewModel = viewModel)
-        else -> Text(viewModel = viewModel, style = style, onTagClick = onTagClick)
+        row.content.value.text.isEmpty()
+                && row.content.value.tags.isEmpty() -> EmptyText(row = row)
+        else -> Text(row = row, style = style, onTagClick = onTagClick)
     }
 }

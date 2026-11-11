@@ -1,7 +1,6 @@
 package pro.progr.todos
 
 import pro.progr.todos.brightcards.model.CardContent
-import pro.progr.todos.brightcards.model.ListedCardRepositoryInterface
 import pro.progr.todos.brightcards.model.TodoStatus
 import pro.progr.diamondsandberries.db.Schedule
 import pro.progr.todos.datefilters.FilterType
@@ -12,9 +11,9 @@ import pro.progr.todos.db.applySchedule
 import pro.progr.todos.db.toSchedule
 import java.time.LocalDate
 
-class ListedCardRepository(private val noteAndHistoryDao: NoteAndHistoryDao, private val note: NoteWithData) : ListedCardRepositoryInterface {
+class CardRowRepository(private val noteAndHistoryDao: NoteAndHistoryDao, private val note: NoteWithData) {
 
-    override suspend fun setCardDone(cardContent: CardContent) {
+    suspend fun setCardDone(cardContent: CardContent) {
 
         val convertedNote = NoteConverter.toNote(cardContent, note.note.toSchedule())
         convertedNote.sublistChain = note.note.sublistChain
@@ -40,7 +39,7 @@ class ListedCardRepository(private val noteAndHistoryDao: NoteAndHistoryDao, pri
         noteAndHistoryDao.setCardDoneAndUpdateHistory(convertedNote, historyNote, currentDate)
     }
 
-    override suspend fun addCardToHistory(cardContent: CardContent, date: LocalDate) {
+    suspend fun addCardToHistory(cardContent: CardContent, date: LocalDate) {
 
         val convertedNote = NoteConverter.toNote(cardContent, note.note.toSchedule())
         convertedNote.sublistChain = note.note.sublistChain
@@ -62,7 +61,7 @@ class ListedCardRepository(private val noteAndHistoryDao: NoteAndHistoryDao, pri
         noteAndHistoryDao.insert(historyNote)
     }
 
-    override suspend fun addCardForDay(cardContent: CardContent, date: LocalDate) {
+    suspend fun addCardForDay(cardContent: CardContent, date: LocalDate) {
 
         val convertedNote = NoteConverter.toNote(cardContent, note.note.toSchedule())
         convertedNote.sublistChain = note.note.sublistChain
@@ -77,11 +76,11 @@ class ListedCardRepository(private val noteAndHistoryDao: NoteAndHistoryDao, pri
         noteAndHistoryDao.update(convertedNote)
     }
 
-    override suspend fun setNoteInHistoryDone(cardContent: CardContent, date: LocalDate) {
+    suspend fun setNoteInHistoryDone(cardContent: CardContent, date: LocalDate) {
         noteAndHistoryDao.setCardDone(NoteConverter.toNote(cardContent, note.note.toSchedule()), date.toEpochDay())
     }
 
-    override suspend fun setCardNotDone(cardContent: CardContent) {
+    suspend fun setCardNotDone(cardContent: CardContent) {
 
         val convertedNote = NoteConverter.toNote(cardContent, note.note.toSchedule())
         convertedNote.sublistChain = note.note.sublistChain
@@ -106,7 +105,7 @@ class ListedCardRepository(private val noteAndHistoryDao: NoteAndHistoryDao, pri
 
         noteAndHistoryDao.setCardNotDoneAndUpdateHistory(convertedNote, historyNote, LocalDate.now().toEpochDay())
     }
-    override suspend fun removeForDay(date: LocalDate, noteId: String) {
+    suspend fun removeForDay(date: LocalDate, noteId: String) {
         noteAndHistoryDao.remoCardForDay(date.toEpochDay(), noteId)
     }
 }

@@ -90,7 +90,7 @@ fun CalendarScreen(
                                             diamondViewModel = diamondViewModel,
                                             navController = navController,
                                             date = date,
-                                            cardsForDate = cardsListViewModel.getHistoryViewModels(
+                                            cardsForDate = cardsListViewModel.getHistoryRows(
                                                 historyState.value?.get(date.toEpochDay())
                                                     ?: emptyList(), date)
                                         ) {
@@ -113,7 +113,7 @@ fun CalendarScreen(
                                             diamondViewModel = diamondViewModel,
                                             navController = navController,
                                             date = date,
-                                            cardsForDate = cardsListViewModel.getHistoryViewModels(
+                                            cardsForDate = cardsListViewModel.getHistoryRows(
                                                 historyState.value?.get(date.toEpochDay())
                                                     ?: emptyList(), date)
                                         )

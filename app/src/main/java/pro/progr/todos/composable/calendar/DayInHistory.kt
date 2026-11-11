@@ -24,7 +24,7 @@ import androidx.navigation.NavHostController
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import pro.progr.todos.R
 import pro.progr.todos.brightcards.composable.BrightCard
-import pro.progr.todos.brightcards.vm.ListedCardViewModel
+import pro.progr.todos.CardRow
 import pro.progr.todos.CardsListViewModel
 import pro.progr.todos.DiamondViewModel
 import pro.progr.todos.brightcards.vm.Destinations
@@ -41,7 +41,7 @@ fun DayInHistory(
     diamondViewModel : DiamondViewModel,
     navController: NavHostController,
     date: LocalDate,
-    cardsForDate:  List<ListedCardViewModel>) {
+    cardsForDate:  List<CardRow>) {
 
     val formatter = DateTimeFormatter.ofPattern("E dd MMMM yyy", Locale.getDefault())
 
@@ -90,7 +90,7 @@ fun DayInHistory(
 
         Column {
             cardsForDate.forEach { cardVm ->
-                key(cardVm.rowKey) {
+                key(cardVm.key) {
                 val handleAction: (Destinations) -> Unit = { action ->
                     cardsListViewModel.handleCardAction(
                         card = cardVm,
@@ -102,13 +102,13 @@ fun DayInHistory(
                 }
 
                 BrightCard(
-                    viewModel = cardVm,
+                    row = cardVm,
                     menuItems = cardsListViewModel.menuItems(cardVm, date, handleAction),
                     onDoneClick = { handleAction(Destinations.MARK_DONE) },
                     onTagClick = { cardTag ->
                         cardsListViewModel.updateTag(NoteTag(cardTag.id, cardTag.title))
                     },
-                    onclick = { /** navController.navigate("editCard/${cardVm.card.value.id}") */ }
+                    onclick = { /** navController.navigate("editCard/${cardVm.content.value.id}") */ }
                 )
                 }
             }

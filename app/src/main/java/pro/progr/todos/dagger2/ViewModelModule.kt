@@ -22,8 +22,4 @@ class ViewModelModule {
         return NoteCalendarViewModelFactory(repository)
     }
 
-    @Provides
-    fun provideListedCardViewModelFactory(): ListedCardViewModelFactory {
-        return ListedCardViewModelFactory()
-    }
 }

@@ -17,7 +17,6 @@ import pro.progr.todos.brightcards.model.CardRowKey
 import pro.progr.todos.brightcards.model.TodoStatus
 import pro.progr.todos.brightcards.vm.CardMenuItems
 import pro.progr.todos.brightcards.vm.Destinations
-import pro.progr.todos.brightcards.vm.ListedCardViewModel
 import pro.progr.todos.brightcards.vm.UndatedCardMenuItems
 import pro.progr.todos.datefilters.FilterType
 import pro.progr.todos.db.NoteTag
@@ -36,19 +35,13 @@ class CardsListViewModel @Inject constructor(
     private val noteAndHistoryDao: NoteAndHistoryDao
 ) : ViewModel() {
 
-    val cardsList: MutableState<List<ListedCardViewModel>> = mutableStateOf(emptyList())
+    val cardsList: MutableState<List<CardRow>> = mutableStateOf(emptyList())
 
     val selectedTag: MutableState<NoteTag?> = mutableStateOf(null)
 
     val notifications: MutableStateFlow<List<String>> = MutableStateFlow(emptyList())
 
-    val cardsForDates: HashMap<LocalDate, MutableStateFlow<List<ListedCardViewModel>>> = HashMap()
-
-    private lateinit var viewModelCreator: (CardRow) -> ListedCardViewModel
-
-    fun setViewModelCreator(creator: (CardRow) -> ListedCardViewModel) {
-        viewModelCreator = creator
-    }
+    val cardsForDates: HashMap<LocalDate, MutableStateFlow<List<CardRow>>> = HashMap()
 
     init {
         observeCards()
@@ -68,16 +61,16 @@ class CardsListViewModel @Inject constructor(
                         cardContent.todo = TodoStatus.DONE
                     }
 
-                    viewModelCreator(CardRow(CardRowKey(note.note.id, null), note, cardContent))
+                    CardRow(CardRowKey(note.note.id, null), note, mutableStateOf(cardContent))
                 }
             }
         }
 
     }
 
-    fun getCardsForDate(date: LocalDate): MutableStateFlow<List<ListedCardViewModel>> {
+    fun getCardsForDate(date: LocalDate): MutableStateFlow<List<CardRow>> {
         if (!cardsForDates.containsKey(date)) {
-            val listsFlow = MutableStateFlow(emptyList<ListedCardViewModel>())
+            val listsFlow = MutableStateFlow(emptyList<CardRow>())
 
             cardsForDates.put(
                 date,
@@ -107,8 +100,10 @@ class CardsListViewModel @Inject constructor(
                                 }
                             }
 
-                            viewModelCreator(
-                                CardRow(CardRowKey(note.note.id, date.toEpochDay()), note, cardContent)
+                            CardRow(
+                                CardRowKey(note.note.id, date.toEpochDay()),
+                                note,
+                                mutableStateOf(cardContent)
                             )
                         }
                 }
@@ -125,7 +120,7 @@ class CardsListViewModel @Inject constructor(
         return notesRepository.notesInHistoryFlow
     }
 
-    fun getHistoryViewModels(cards: List<CardContent>, date: LocalDate): List<ListedCardViewModel> {
+    fun getHistoryRows(cards: List<CardContent>, date: LocalDate): List<CardRow> {
 
         /**
          * TODO:
@@ -138,19 +133,20 @@ class CardsListViewModel @Inject constructor(
             saveTodaysNotes()
         }
 
-        return cards.map { cardContent ->
-            if (TodoStatus.TODO.equals(cardContent.todo) && date.isBefore(LocalDate.now())) cardContent.todo = TodoStatus.FAIL
-
+        return cards.map { sourceContent ->
+            val cardContent = if (sourceContent.todo == TodoStatus.TODO && date.isBefore(LocalDate.now())) {
+                sourceContent.copy(todo = TodoStatus.FAIL)
+            } else {
+                sourceContent
+            }
             val note = NoteWithData(
-                    note = NoteConverter.toNote(cardContent),
-                    tags = cardContent.tags.map { tag -> NoteTag(tag.id, tag.title) }
+                note = NoteConverter.toNote(cardContent),
+                tags = cardContent.tags.map { tag -> NoteTag(tag.id, tag.title) }
             )
-            viewModelCreator(
-                CardRow(
-                    CardRowKey(cardContent.id ?: error("History card is missing noteId"), date.toEpochDay()),
-                    note,
-                    cardContent
-                )
+            CardRow(
+                CardRowKey(cardContent.id ?: error("History card is missing noteId"), date.toEpochDay()),
+                note,
+                mutableStateOf(cardContent)
             )
         }
     }
@@ -170,24 +166,24 @@ class CardsListViewModel @Inject constructor(
     }
 
     fun menuItems(
-        card: ListedCardViewModel,
+        card: CardRow,
         date: LocalDate?,
         onAction: (Destinations) -> Unit
     ): List<MenuItem> = if (date == null) {
-        UndatedCardMenuItems(context, card.card.value.todo, onAction)
+        UndatedCardMenuItems(context, card.content.value.todo, onAction)
     } else {
-        CardMenuItems(context, date, card.card.value.todo, onAction)
+        CardMenuItems(context, date, card.content.value.todo, onAction)
     }
 
     fun handleCardAction(
-        card: ListedCardViewModel,
+        card: CardRow,
         action: Destinations,
         date: LocalDate,
         navigate: (String) -> Unit,
         updateReward: (Int, LocalDate) -> Unit
     ) {
-        val content = card.card.value
-        val repository = ListedCardRepository(noteAndHistoryDao, card.note)
+        val content = card.content.value
+        val repository = CardRowRepository(noteAndHistoryDao, card.note)
 
         when (action) {
             Destinations.DO_TODAY -> viewModelScope.launch(Dispatchers.IO) {
@@ -200,19 +196,19 @@ class CardsListViewModel @Inject constructor(
             }
             Destinations.MARK_DONE -> {
                 val doneContent = content.copy(todo = TodoStatus.DONE)
-                card.card.value = doneContent
+                card.content.value = doneContent
                 viewModelScope.launch(Dispatchers.IO) { repository.setCardDone(doneContent) }
                 updateReward(content.reward, LocalDate.now())
             }
             Destinations.MARK_NOT_DONE -> {
                 val notDoneContent = content.copy(todo = TodoStatus.TODO)
-                card.card.value = notDoneContent
+                card.content.value = notDoneContent
                 viewModelScope.launch(Dispatchers.IO) { repository.setCardNotDone(notDoneContent) }
                 updateReward(-content.reward, LocalDate.now())
             }
             Destinations.MARK_NOTE_IN_HISTORY_DONE -> {
                 val doneContent = content.copy(todo = TodoStatus.DONE)
-                card.card.value = doneContent
+                card.content.value = doneContent
                 viewModelScope.launch(Dispatchers.IO) {
                     repository.setNoteInHistoryDone(doneContent, date)
                 }

@@ -12,15 +12,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import pro.progr.todos.brightcards.model.CardTag
-import pro.progr.todos.brightcards.vm.ListedCardViewModel
+import pro.progr.todos.CardRow
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun Tags(viewModel: ListedCardViewModel, onTagClick: (CardTag) -> Unit) {
+fun Tags(row: CardRow, onTagClick: (CardTag) -> Unit) {
 
 
-    val textColor = if (viewModel.card.value.fillTextBackground)
-        Color(viewModel.card.value.style.textColor())
+    val textColor = if (row.content.value.fillTextBackground)
+        Color(row.content.value.style.textColor())
     else
         MaterialTheme.colors.onSurface
 
@@ -28,7 +28,7 @@ fun Tags(viewModel: ListedCardViewModel, onTagClick: (CardTag) -> Unit) {
         modifier = Modifier
             .padding(start = 0.dp, top = 20.dp)
     ) {
-        viewModel.card.value.tags.forEach { tag ->
+        row.content.value.tags.forEach { tag ->
 
             // Используйте Box для создания фона и отступов вокруг текста
             Box(

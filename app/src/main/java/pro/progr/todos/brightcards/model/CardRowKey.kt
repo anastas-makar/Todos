@@ -9,7 +9,7 @@ data class CardRowKey(
         require(noteId.isNotBlank()) { "noteId must not be blank" }
     }
 
-    /** ViewModelStore keys are strings, so length-prefix the ID to avoid ambiguity. */
-    fun viewModelStoreKey(): String =
-        "listed-card:${noteId.length}:$noteId:${epochDay?.toString() ?: "undated"}"
+    /** A unique, Bundle-saveable key for Compose lists. */
+    fun stableStringKey(): String =
+        "card-row:${noteId.length}:$noteId:${epochDay?.toString() ?: "undated"}"
 }

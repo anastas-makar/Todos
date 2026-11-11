@@ -10,15 +10,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import pro.progr.todos.brightcards.vm.ListedCardViewModel
+import pro.progr.todos.CardRow
 
 @Composable
-fun EmptyText(viewModel: ListedCardViewModel) {
+fun EmptyText(row: CardRow) {
     Box(
         modifier = Modifier
             .background(
-                if (viewModel.card.value.fillTitleBackground)
-                    Color(viewModel.card.value.style.backgroundColor())
+                if (row.content.value.fillTitleBackground)
+                    Color(row.content.value.style.backgroundColor())
                 else
                     Color.Transparent,
                 shape = RoundedCornerShape(bottomStart = 5.dp, bottomEnd = 5.dp)

@@ -32,15 +32,15 @@ import pro.progr.todos.brightcards.MenuItem
 import pro.progr.todos.R
 import pro.progr.todos.brightcards.CardStyle
 import pro.progr.todos.brightcards.model.TodoStatus
-import pro.progr.todos.brightcards.vm.ListedCardViewModel
+import pro.progr.todos.CardRow
 
 @Composable
-fun Title(viewModel: ListedCardViewModel,
+fun Title(row: CardRow,
           menuItems: List<MenuItem>,
           onDoneClick: () -> Unit,
           style: CardStyle) {
     Box {
-        if (viewModel.card.value.title.isNotEmpty()) {
+        if (row.content.value.title.isNotEmpty()) {
             Text(
                 modifier = Modifier
                     .background(
@@ -50,7 +50,7 @@ fun Title(viewModel: ListedCardViewModel,
                     .padding(20.dp, bottom = 10.dp, top = 45.dp)
                     .fillMaxWidth()
                     .wrapContentHeight(),
-                text = viewModel.card.value.title,
+                text = row.content.value.title,
                 style = MaterialTheme.typography.h6,
                 color = style.titleTextColor,
                 textAlign = TextAlign.Start // Выравнивание текста по центру
@@ -58,17 +58,17 @@ fun Title(viewModel: ListedCardViewModel,
 
         }
 
-        if (viewModel.card.value.todo == TodoStatus.NOT_ACTIVE) {
-            MenuBox(viewModel = viewModel, menuItems = menuItems, style = style)
+        if (row.content.value.todo == TodoStatus.NOT_ACTIVE) {
+            MenuBox(row = row, menuItems = menuItems, style = style)
         } else {
-            TodoRow(viewModel, menuItems, onDoneClick, style)
+            TodoRow(row, menuItems, onDoneClick, style)
         }
 
         Row(modifier = Modifier
             .wrapContentWidth()
             .align(Alignment.TopEnd)
             .padding(end = 5.dp, top = 1.dp)) {
-            Text(text = viewModel.card.value.reward.toString(), color = style.titleTextColor,
+            Text(text = row.content.value.reward.toString(), color = style.titleTextColor,
                 modifier = Modifier
                     .height(24.dp)
                     .padding(4.dp))

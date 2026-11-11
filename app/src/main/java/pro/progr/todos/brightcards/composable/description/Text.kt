@@ -15,11 +15,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import pro.progr.todos.brightcards.CardStyle
 import pro.progr.todos.brightcards.model.CardTag
-import pro.progr.todos.brightcards.vm.ListedCardViewModel
+import pro.progr.todos.CardRow
 
 @Composable
 fun ColumnScope.Text(
-    viewModel: ListedCardViewModel,
+    row: CardRow,
     style: CardStyle,
     onTagClick: (CardTag) -> Unit
 ) {
@@ -34,12 +34,12 @@ fun ColumnScope.Text(
             .wrapContentHeight()
             .align(Alignment.Start)) {
         Text(
-            text = viewModel.card.value.text,
+            text = row.content.value.text,
             color = style.descriptionTextColor,
             textAlign = TextAlign.Start
         )
 
-        Tags(viewModel = viewModel, onTagClick = onTagClick)
+        Tags(row = row, onTagClick = onTagClick)
 
     }
 }

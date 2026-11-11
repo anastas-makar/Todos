@@ -39,7 +39,7 @@ fun CardsList(cardsListViewModel: CardsListViewModel,
         .clip(shape) // чтобы ripple/клик тоже был со скруглением
         .padding(vertical = 25.dp)
         .fillMaxHeight()) {
-        items(cardsListViewModel.cardsList.value, key = { cardVm -> cardVm.rowKey.viewModelStoreKey() }) { cardVm ->
+        items(cardsListViewModel.cardsList.value, key = { cardVm -> cardVm.key.stableStringKey() }) { cardVm ->
             val handleAction: (Destinations) -> Unit = { action ->
                 cardsListViewModel.handleCardAction(
                     card = cardVm,
@@ -51,14 +51,14 @@ fun CardsList(cardsListViewModel: CardsListViewModel,
             }
 
             BrightCard(
-                viewModel = cardVm,
+                row = cardVm,
                 menuItems = cardsListViewModel.menuItems(cardVm, null, handleAction),
                 onDoneClick = { handleAction(Destinations.MARK_DONE) },
                 onTagClick = { cardTag ->
                     cardsListViewModel.updateTag(NoteTag(cardTag.id, cardTag.title))
                 },
                 onclick = {
-                    //navController.navigate("editCard/${cardVm.card.value.id}")
+                    //navController.navigate("editCard/${cardVm.content.value.id}")
                 })
 
         }
