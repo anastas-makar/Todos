@@ -21,7 +21,7 @@ import pro.progr.todos.brightcards.vm.ListedCardViewModel
 
 @Composable
 fun BrightCard(viewModel: ListedCardViewModel, diamondViewModel: DiamondViewModel, onclick: () -> Unit = {}) {
-    val style = remember { CardStyle(viewModel.card) }
+    val style = remember(viewModel.card) { CardStyle(viewModel.card) }
     Column(
         modifier = Modifier
             .padding(horizontal = 15.dp, vertical = 5.dp)

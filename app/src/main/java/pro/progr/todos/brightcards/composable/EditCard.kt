@@ -20,7 +20,8 @@ import pro.progr.todos.brightcards.vm.CardViewModel
 
 @Composable
 fun EditCard(cardViewModel: CardViewModel) {
-    val style = remember { CardStyle(cardViewModel.getCardContent()) }
+    val cardContent = cardViewModel.getCardContent()
+    val style = remember(cardContent) { CardStyle(cardContent) }
 
     Column(
         modifier = Modifier
