@@ -23,15 +23,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import pro.progr.todos.DiamondViewModel
 import pro.progr.todos.R
 import pro.progr.todos.brightcards.CardStyle
+import pro.progr.todos.brightcards.MenuItem
 import pro.progr.todos.brightcards.vm.ListedCardViewModel
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 
 @Composable
 fun MenuBox(viewModel: ListedCardViewModel,
+            menuItems: List<MenuItem>,
             style: CardStyle
 ) {
+    var menuOn by remember(viewModel.rowKey) { mutableStateOf(false) }
     Box(
         modifier = Modifier
             .background(
@@ -41,7 +47,7 @@ fun MenuBox(viewModel: ListedCardViewModel,
             .fillMaxWidth()
             .wrapContentHeight()
     ) {
-        IconButton(onClick = { viewModel.menuOn.value = !viewModel.menuOn.value }, modifier = Modifier
+        IconButton(onClick = { menuOn = !menuOn }, modifier = Modifier
             .size(40.dp)
             .border(width = 0.dp, color = Color.Transparent)
             .padding(bottom = 15.dp)
@@ -56,12 +62,12 @@ fun MenuBox(viewModel: ListedCardViewModel,
         }
 
         DropdownMenu(
-            expanded = viewModel.menuOn.value,
-            onDismissRequest = { viewModel.menuOn.value = false },
+            expanded = menuOn,
+            onDismissRequest = { menuOn = false },
         ) {
-            viewModel.card.value.menuItems.forEach { option ->
+            menuItems.forEach { option ->
                 DropdownMenuItem(onClick = {
-                    viewModel.menuOn.value = false
+                    menuOn = false
 
                     option.onClick()
                 }) {

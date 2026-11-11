@@ -1,12 +1,10 @@
 package pro.progr.todos.dagger2
 
-import android.content.Context
 import dagger.Module
 import dagger.Provides
 import pro.progr.todos.CardRepository
 import pro.progr.todos.DatesGridRepository
 import pro.progr.todos.ListRepository
-import pro.progr.todos.db.NoteAndHistoryDao
 @Module
 class ViewModelModule {
     @Provides
@@ -25,7 +23,7 @@ class ViewModelModule {
     }
 
     @Provides
-    fun provideListedCardViewModelFactory(noteAndHistoryDao: NoteAndHistoryDao, context: Context): ListedCardViewModelFactory {
-        return ListedCardViewModelFactory(noteAndHistoryDao, context)
+    fun provideListedCardViewModelFactory(): ListedCardViewModelFactory {
+        return ListedCardViewModelFactory()
     }
 }

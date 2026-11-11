@@ -12,14 +12,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import pro.progr.todos.DiamondViewModel
-import pro.progr.todos.brightcards.vm.CardViewModel
 import pro.progr.todos.brightcards.vm.ListedCardViewModel
-import java.time.LocalDate
 
 @Composable
 fun TodoSquare(viewModel: ListedCardViewModel,
-               diamondViewModel: DiamondViewModel) {
+               onDoneClick: () -> Unit) {
     Box(
         modifier = Modifier
             .size(32.dp)
@@ -31,8 +28,7 @@ fun TodoSquare(viewModel: ListedCardViewModel,
             )
             .background(Color(0x44ffffff), shape = RoundedCornerShape(4.dp))
             .clickable {
-                viewModel.setDone()
-                diamondViewModel.updateCount(viewModel.card.value.reward, LocalDate.now())
+                onDoneClick()
             }
     )
 }

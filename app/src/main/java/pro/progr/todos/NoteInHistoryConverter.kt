@@ -1,6 +1,5 @@
 package pro.progr.todos
 
-import pro.progr.todos.brightcards.MenuItem
 import pro.progr.todos.brightcards.model.CardContent
 import pro.progr.todos.brightcards.model.CardTag
 import pro.progr.todos.db.NoteInHistory
@@ -10,7 +9,7 @@ import pro.progr.todos.db.NoteTag
 class NoteInHistoryConverter {
     companion object {
 
-        fun toCardContent(note: NoteInHistoryWithData, menuItems: List<MenuItem> = emptyList()) : CardContent {
+        fun toCardContent(note: NoteInHistoryWithData) : CardContent {
 
             return CardContent(
                 id = note.noteInHistory.noteId.toString(),
@@ -21,7 +20,6 @@ class NoteInHistoryConverter {
                 fillTextBackground = note.noteInHistory.fillTextBackground,
                 todo = note.noteInHistory.todo,
                 reward = note.noteInHistory.reward,
-                menuItems = menuItems,
                 tags = note.tags.map { noteTag: NoteTag ->  CardTag(noteTag.id, noteTag.title)}
             )
         }

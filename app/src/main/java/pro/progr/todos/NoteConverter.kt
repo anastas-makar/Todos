@@ -1,7 +1,6 @@
 package pro.progr.todos
 
 import android.content.Context
-import pro.progr.todos.brightcards.MenuItem
 import pro.progr.todos.brightcards.model.CardContent
 import pro.progr.todos.brightcards.model.CardTag
 import pro.progr.todos.brightcards.model.TodoStatus
@@ -44,8 +43,7 @@ class NoteConverter {
 
         fun toCardContent(note: NoteWithData,
                           context: Context,
-                          listName: String = context.getString(R.string.list),
-                          menuItems: List<MenuItem> = listOf()) : CardContent {
+                          listName: String = context.getString(R.string.list)) : CardContent {
 
             //todo: Эту всю логику нужно в filtertype куда-то
             var datesExpired = false
@@ -70,7 +68,6 @@ class NoteConverter {
                 },
                 listLabel = listName,
                 latestDone = note.note.latestDone,
-                menuItems = menuItems,
                 tags = note.tags.map { noteTag -> CardTag(noteTag.id, noteTag.title) }
             )
         }

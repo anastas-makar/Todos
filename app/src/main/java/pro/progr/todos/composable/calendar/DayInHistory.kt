@@ -27,7 +27,7 @@ import pro.progr.todos.brightcards.composable.BrightCard
 import pro.progr.todos.brightcards.vm.ListedCardViewModel
 import pro.progr.todos.CardsListViewModel
 import pro.progr.todos.DiamondViewModel
-import pro.progr.todos.composable.ResolveDestinations
+import pro.progr.todos.brightcards.vm.Destinations
 import pro.progr.todos.composable.dashedBorder
 import pro.progr.todos.db.NoteTag
 import java.time.LocalDate
@@ -91,18 +91,20 @@ fun DayInHistory(
         Column {
             cardsForDate.forEach { cardVm ->
                 key(cardVm.rowKey) {
-                cardVm.setMenu(date)
-
-                ResolveDestinations(
-                    cardViewModel = cardVm,
-                    navHostController = navController,
-                    date = date,
-                    diamondViewModel = diamondViewModel
-                )
+                val handleAction: (Destinations) -> Unit = { action ->
+                    cardsListViewModel.handleCardAction(
+                        card = cardVm,
+                        action = action,
+                        date = date,
+                        navigate = { route -> navController.navigate(route) },
+                        updateReward = { amount, rewardDate -> diamondViewModel.updateCount(amount, rewardDate) }
+                    )
+                }
 
                 BrightCard(
                     viewModel = cardVm,
-                    diamondViewModel = diamondViewModel,
+                    menuItems = cardsListViewModel.menuItems(cardVm, date, handleAction),
+                    onDoneClick = { handleAction(Destinations.MARK_DONE) },
                     onTagClick = { cardTag ->
                         cardsListViewModel.updateTag(NoteTag(cardTag.id, cardTag.title))
                     },

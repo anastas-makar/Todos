@@ -11,12 +11,17 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import pro.progr.todos.brightcards.MenuItem
 import pro.progr.todos.brightcards.model.CardContent
 import pro.progr.todos.brightcards.model.CardRowKey
 import pro.progr.todos.brightcards.model.TodoStatus
+import pro.progr.todos.brightcards.vm.CardMenuItems
+import pro.progr.todos.brightcards.vm.Destinations
 import pro.progr.todos.brightcards.vm.ListedCardViewModel
+import pro.progr.todos.brightcards.vm.UndatedCardMenuItems
 import pro.progr.todos.datefilters.FilterType
 import pro.progr.todos.db.NoteTag
+import pro.progr.todos.db.NoteAndHistoryDao
 import pro.progr.todos.db.NoteWithData
 import pro.progr.todos.db.NotesRepository
 import pro.progr.todos.db.SublistChain
@@ -27,7 +32,8 @@ import javax.inject.Inject
 @ExperimentalCoroutinesApi
 class CardsListViewModel @Inject constructor(
     private val context: Context,
-    private val notesRepository: NotesRepository
+    private val notesRepository: NotesRepository,
+    private val noteAndHistoryDao: NoteAndHistoryDao
 ) : ViewModel() {
 
     val cardsList: MutableState<List<ListedCardViewModel>> = mutableStateOf(emptyList())
@@ -161,6 +167,66 @@ class CardsListViewModel @Inject constructor(
     fun clearTags() {
         selectedTag.value = null
         notesRepository.updateQuery(notesRepository.getQueryBuilder().withTags(hashSetOf()))
+    }
+
+    fun menuItems(
+        card: ListedCardViewModel,
+        date: LocalDate?,
+        onAction: (Destinations) -> Unit
+    ): List<MenuItem> = if (date == null) {
+        UndatedCardMenuItems(context, card.card.value.todo, onAction)
+    } else {
+        CardMenuItems(context, date, card.card.value.todo, onAction)
+    }
+
+    fun handleCardAction(
+        card: ListedCardViewModel,
+        action: Destinations,
+        date: LocalDate,
+        navigate: (String) -> Unit,
+        updateReward: (Int, LocalDate) -> Unit
+    ) {
+        val content = card.card.value
+        val repository = ListedCardRepository(noteAndHistoryDao, card.note)
+
+        when (action) {
+            Destinations.DO_TODAY -> viewModelScope.launch(Dispatchers.IO) {
+                val today = LocalDate.now()
+                repository.addCardForDay(content, today)
+                repository.addCardToHistory(content, today)
+            }
+            Destinations.DO_TOMORROW -> viewModelScope.launch(Dispatchers.IO) {
+                repository.addCardForDay(content, LocalDate.now().plusDays(1))
+            }
+            Destinations.MARK_DONE -> {
+                val doneContent = content.copy(todo = TodoStatus.DONE)
+                card.card.value = doneContent
+                viewModelScope.launch(Dispatchers.IO) { repository.setCardDone(doneContent) }
+                updateReward(content.reward, LocalDate.now())
+            }
+            Destinations.MARK_NOT_DONE -> {
+                val notDoneContent = content.copy(todo = TodoStatus.TODO)
+                card.card.value = notDoneContent
+                viewModelScope.launch(Dispatchers.IO) { repository.setCardNotDone(notDoneContent) }
+                updateReward(-content.reward, LocalDate.now())
+            }
+            Destinations.MARK_NOTE_IN_HISTORY_DONE -> {
+                val doneContent = content.copy(todo = TodoStatus.DONE)
+                card.card.value = doneContent
+                viewModelScope.launch(Dispatchers.IO) {
+                    repository.setNoteInHistoryDone(doneContent, date)
+                }
+                updateReward(content.reward, date)
+            }
+            Destinations.REMOVE_FOR_DAY -> content.id?.let { noteId ->
+                viewModelScope.launch(Dispatchers.IO) { repository.removeForDay(date, noteId) }
+            }
+            Destinations.TO_EDIT_CARD -> content.id?.let { navigate("editCard/$it") }
+            Destinations.TO_EDIT_NOTE_IN_HISTORY -> content.id?.let { noteId ->
+                navigate("editNoteInHistory/$noteId/date/${date.toEpochDay()}")
+            }
+            Destinations.NONE -> Unit
+        }
     }
 
     fun useList(sublistChain: SublistChain) {

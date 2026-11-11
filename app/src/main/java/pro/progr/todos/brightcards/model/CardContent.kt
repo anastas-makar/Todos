@@ -1,6 +1,5 @@
 package pro.progr.todos.brightcards.model
 
-import pro.progr.todos.brightcards.MenuItem
 import pro.progr.todos.brightcards.colors.ColorStyle
 import pro.progr.todos.brightcards.colors.GouachePalette
 
@@ -18,6 +17,5 @@ data class CardContent(
     var listLabel: String = "",
     var tagsLabel: String = "",
     val reward : Int = 10,
-    var latestDone: Long? = null,
-    var menuItems: List<MenuItem> = emptyList()
+    var latestDone: Long? = null
 )

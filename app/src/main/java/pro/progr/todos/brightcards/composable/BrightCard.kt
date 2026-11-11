@@ -13,17 +13,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import pro.progr.todos.DiamondViewModel
 import pro.progr.todos.brightcards.CardStyle
 import pro.progr.todos.brightcards.composable.description.Description
 import pro.progr.todos.brightcards.composable.title.Title
+import pro.progr.todos.brightcards.MenuItem
 import pro.progr.todos.brightcards.model.CardTag
 import pro.progr.todos.brightcards.vm.ListedCardViewModel
 
 @Composable
 fun BrightCard(
     viewModel: ListedCardViewModel,
-    diamondViewModel: DiamondViewModel,
+    menuItems: List<MenuItem>,
+    onDoneClick: () -> Unit,
     onclick: () -> Unit = {},
     onTagClick: (CardTag) -> Unit
 ) {
@@ -46,9 +47,7 @@ fun BrightCard(
     ) {
 
 
-        Title(viewModel = viewModel,
-            diamondViewModel = diamondViewModel,
-            style = style)
+        Title(viewModel = viewModel, menuItems = menuItems, onDoneClick = onDoneClick, style = style)
 
         Description(viewModel = viewModel, style = style, onTagClick = onTagClick)
 

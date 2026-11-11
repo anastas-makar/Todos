@@ -16,6 +16,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import pro.progr.todos.brightcards.composable.BrightCard
 import pro.progr.todos.CardsListViewModel
 import pro.progr.todos.DiamondViewModel
+import pro.progr.todos.brightcards.vm.Destinations
 import pro.progr.todos.db.NoteTag
 import java.time.LocalDate
 
@@ -39,18 +40,20 @@ fun CardsList(cardsListViewModel: CardsListViewModel,
         .padding(vertical = 25.dp)
         .fillMaxHeight()) {
         items(cardsListViewModel.cardsList.value, key = { cardVm -> cardVm.rowKey.viewModelStoreKey() }) { cardVm ->
-            cardVm.setMenu()
-
-            ResolveDestinations(
-                cardViewModel = cardVm,
-                navHostController = navController,
-                date = LocalDate.now(),
-                diamondViewModel = diamondViewModel
-            )
+            val handleAction: (Destinations) -> Unit = { action ->
+                cardsListViewModel.handleCardAction(
+                    card = cardVm,
+                    action = action,
+                    date = LocalDate.now(),
+                    navigate = { route -> navController.navigate(route) },
+                    updateReward = { amount, date -> diamondViewModel.updateCount(amount, date) }
+                )
+            }
 
             BrightCard(
-                cardVm,
-                diamondViewModel = diamondViewModel,
+                viewModel = cardVm,
+                menuItems = cardsListViewModel.menuItems(cardVm, null, handleAction),
+                onDoneClick = { handleAction(Destinations.MARK_DONE) },
                 onTagClick = { cardTag ->
                     cardsListViewModel.updateTag(NoteTag(cardTag.id, cardTag.title))
                 },

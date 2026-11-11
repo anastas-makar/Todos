@@ -28,7 +28,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import pro.progr.todos.DiamondViewModel
+import pro.progr.todos.brightcards.MenuItem
 import pro.progr.todos.R
 import pro.progr.todos.brightcards.CardStyle
 import pro.progr.todos.brightcards.model.TodoStatus
@@ -36,7 +36,8 @@ import pro.progr.todos.brightcards.vm.ListedCardViewModel
 
 @Composable
 fun Title(viewModel: ListedCardViewModel,
-          diamondViewModel: DiamondViewModel,
+          menuItems: List<MenuItem>,
+          onDoneClick: () -> Unit,
           style: CardStyle) {
     Box {
         if (viewModel.card.value.title.isNotEmpty()) {
@@ -58,9 +59,9 @@ fun Title(viewModel: ListedCardViewModel,
         }
 
         if (viewModel.card.value.todo == TodoStatus.NOT_ACTIVE) {
-            MenuBox(viewModel = viewModel, style = style)
+            MenuBox(viewModel = viewModel, menuItems = menuItems, style = style)
         } else {
-            TodoRow(viewModel, diamondViewModel, style)
+            TodoRow(viewModel, menuItems, onDoneClick, style)
         }
 
         Row(modifier = Modifier

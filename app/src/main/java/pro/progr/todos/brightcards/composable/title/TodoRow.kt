@@ -23,15 +23,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import pro.progr.todos.DiamondViewModel
 import pro.progr.todos.brightcards.CardStyle
+import pro.progr.todos.brightcards.MenuItem
 import pro.progr.todos.brightcards.vm.ListedCardViewModel
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 
 @Composable
 fun BoxScope.TodoRow(viewModel: ListedCardViewModel,
-                     diamondViewModel: DiamondViewModel,
+                     menuItems: List<MenuItem>,
+                     onDoneClick: () -> Unit,
                      style: CardStyle
 ) {
+    var menuOn by remember(viewModel.rowKey) { mutableStateOf(false) }
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -39,9 +45,9 @@ fun BoxScope.TodoRow(viewModel: ListedCardViewModel,
                 shape = RoundedCornerShape(topStart = 5.dp, topEnd = 5.dp))
             .align(Alignment.TopStart)
     ) {
-        TodoIcon(viewModel = viewModel, diamondViewModel = diamondViewModel)
+        TodoIcon(viewModel = viewModel, onDoneClick = onDoneClick)
 
-        IconButton(onClick = { viewModel.menuOn.value = !viewModel.menuOn.value }, modifier = Modifier
+        IconButton(onClick = { menuOn = !menuOn }, modifier = Modifier
             .size(32.dp)
             .padding(vertical = 5.dp, horizontal = 0.dp)) {
 
@@ -54,12 +60,12 @@ fun BoxScope.TodoRow(viewModel: ListedCardViewModel,
         }
 
         DropdownMenu(
-            expanded = viewModel.menuOn.value,
-            onDismissRequest = { viewModel.menuOn.value = false },
+            expanded = menuOn,
+            onDismissRequest = { menuOn = false },
         ) {
-            viewModel.card.value.menuItems.forEach { option ->
+            menuItems.forEach { option ->
                 DropdownMenuItem(onClick = {
-                    viewModel.menuOn.value = false
+                    menuOn = false
 
                     option.onClick()
                 }) {
