@@ -34,16 +34,12 @@ fun CardsForDay(
                     diamondViewModel = diamondViewModel
                 )
 
-                if (cardVm.tagState.value != null) {
-                    cardVm.tagState.value?.let { cardTag ->
-                        cardsListViewModel.updateTag(NoteTag(cardTag.id, cardTag.title))
-                    }
-
-                }
-
                 BrightCard(
                     viewModel = cardVm,
                     diamondViewModel = diamondViewModel,
+                    onTagClick = { cardTag ->
+                        cardsListViewModel.updateTag(NoteTag(cardTag.id, cardTag.title))
+                    },
                     onclick = { /** navController.navigate("editCard/${cardVm.card.value.id}") */ }
                 )
                 }

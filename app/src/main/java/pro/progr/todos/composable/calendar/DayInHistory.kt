@@ -93,13 +93,6 @@ fun DayInHistory(
                 key(cardVm.rowKey) {
                 cardVm.setMenu(date)
 
-                if (cardVm.tagState.value != null) {
-                    cardVm.tagState.value?.let { cardTag ->
-                        cardsListViewModel.updateTag(NoteTag(cardTag.id, cardTag.title))
-                    }
-
-                }
-
                 ResolveDestinations(
                     cardViewModel = cardVm,
                     navHostController = navController,
@@ -110,6 +103,9 @@ fun DayInHistory(
                 BrightCard(
                     viewModel = cardVm,
                     diamondViewModel = diamondViewModel,
+                    onTagClick = { cardTag ->
+                        cardsListViewModel.updateTag(NoteTag(cardTag.id, cardTag.title))
+                    },
                     onclick = { /** navController.navigate("editCard/${cardVm.card.value.id}") */ }
                 )
                 }

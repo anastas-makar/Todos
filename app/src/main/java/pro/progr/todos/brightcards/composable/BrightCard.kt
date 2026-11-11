@@ -17,10 +17,16 @@ import pro.progr.todos.DiamondViewModel
 import pro.progr.todos.brightcards.CardStyle
 import pro.progr.todos.brightcards.composable.description.Description
 import pro.progr.todos.brightcards.composable.title.Title
+import pro.progr.todos.brightcards.model.CardTag
 import pro.progr.todos.brightcards.vm.ListedCardViewModel
 
 @Composable
-fun BrightCard(viewModel: ListedCardViewModel, diamondViewModel: DiamondViewModel, onclick: () -> Unit = {}) {
+fun BrightCard(
+    viewModel: ListedCardViewModel,
+    diamondViewModel: DiamondViewModel,
+    onclick: () -> Unit = {},
+    onTagClick: (CardTag) -> Unit
+) {
     val style = remember(viewModel.card) { CardStyle(viewModel.card) }
     Column(
         modifier = Modifier
@@ -44,7 +50,7 @@ fun BrightCard(viewModel: ListedCardViewModel, diamondViewModel: DiamondViewMode
             diamondViewModel = diamondViewModel,
             style = style)
 
-        Description(viewModel = viewModel, style = style)
+        Description(viewModel = viewModel, style = style, onTagClick = onTagClick)
 
     }
 }

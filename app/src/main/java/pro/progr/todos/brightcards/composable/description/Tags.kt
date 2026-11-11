@@ -11,11 +11,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import pro.progr.todos.brightcards.model.CardTag
 import pro.progr.todos.brightcards.vm.ListedCardViewModel
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun Tags(viewModel: ListedCardViewModel) {
+fun Tags(viewModel: ListedCardViewModel, onTagClick: (CardTag) -> Unit) {
 
 
     val textColor = if (viewModel.card.value.fillTextBackground)
@@ -35,7 +36,7 @@ fun Tags(viewModel: ListedCardViewModel) {
                     .padding(start = 0.dp, end = 4.dp) // Отступ между "кнопками"
                     //.background(Color.Transparent, shape = RoundedCornerShape(4.dp)) // Фон и скругление углов
                     .clickable {
-                        viewModel.onCardTagClicked(tag)
+                        onTagClick(tag)
 
                     }
                     .padding(start = 0.dp) // Внутренний отступ текста внутри "кнопки"

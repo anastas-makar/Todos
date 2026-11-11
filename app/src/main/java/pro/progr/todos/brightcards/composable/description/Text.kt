@@ -14,10 +14,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import pro.progr.todos.brightcards.CardStyle
+import pro.progr.todos.brightcards.model.CardTag
 import pro.progr.todos.brightcards.vm.ListedCardViewModel
 
 @Composable
-fun ColumnScope.Text(viewModel: ListedCardViewModel, style: CardStyle) {
+fun ColumnScope.Text(
+    viewModel: ListedCardViewModel,
+    style: CardStyle,
+    onTagClick: (CardTag) -> Unit
+) {
     Column(
         modifier = Modifier
             .background(
@@ -34,7 +39,7 @@ fun ColumnScope.Text(viewModel: ListedCardViewModel, style: CardStyle) {
             textAlign = TextAlign.Start
         )
 
-        Tags(viewModel = viewModel)
+        Tags(viewModel = viewModel, onTagClick = onTagClick)
 
     }
 }

@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import pro.progr.todos.brightcards.model.CardContent
-import pro.progr.todos.brightcards.model.CardTag
 import pro.progr.todos.brightcards.model.CardRowKey
 import pro.progr.todos.brightcards.model.ListedCardRepositoryInterface
 import pro.progr.todos.brightcards.model.TodoStatus
@@ -26,8 +25,6 @@ class ListedCardViewModel(
     val menuOn = mutableStateOf(false)
 
     val destination = mutableStateOf(Destinations.NONE)
-
-    val tagState = mutableStateOf<CardTag?>(null)
 
     fun updateRowData(
         rowKey: CardRowKey,
@@ -92,10 +89,6 @@ class ListedCardViewModel(
             repository.addCardForDay(cardContent = card.value,
                 date = LocalDate.now().plusDays(1L))
         }
-    }
-
-    fun onCardTagClicked(tag: CardTag) {
-        tagState.value = tag
     }
 
 }
