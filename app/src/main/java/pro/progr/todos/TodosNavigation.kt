@@ -60,12 +60,13 @@ fun TodosNavigation(
 
     val viewModelStoreOwner = LocalViewModelStoreOwner.current!!
 
-    cardsListViewModel.setViewModelCreator { note, cardContent, date ->
+    cardsListViewModel.setViewModelCreator { row ->
         listedCardViewModelFactory
-            .createWithCardContent(cardContent)
-            .createWithNote(note)
+            .createForRow(row)
 
-        ViewModelProvider(viewModelStoreOwner, listedCardViewModelFactory).get(note.toString() + date?.toString(), ListedCardViewModel::class.java)
+        val cardViewModel = ViewModelProvider(viewModelStoreOwner, listedCardViewModelFactory)
+            .get(row.key.viewModelStoreKey(), ListedCardViewModel::class.java)
+        listedCardViewModelFactory.updateExisting(cardViewModel, row)
     }
 
     val navController = rememberNavController()

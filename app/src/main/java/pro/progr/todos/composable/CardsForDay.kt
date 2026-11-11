@@ -24,6 +24,7 @@ fun CardsForDay(
         val activeCards = cardsListViewModel.getCardsForDate(date).collectAsState()
         Column {
             activeCards.value.forEach { cardVm ->
+                key(cardVm.rowKey) {
                 cardVm.setMenu(date)
 
                 ResolveDestinations(
@@ -45,6 +46,7 @@ fun CardsForDay(
                     diamondViewModel = diamondViewModel,
                     onclick = { /** navController.navigate("editCard/${cardVm.card.value.id}") */ }
                 )
+                }
             }
         }
 

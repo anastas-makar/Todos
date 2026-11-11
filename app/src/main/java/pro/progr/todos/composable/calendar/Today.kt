@@ -15,6 +15,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -90,6 +91,7 @@ fun Today(
 
         Column {
             cardsForDate.forEach { cardVm ->
+                key(cardVm.rowKey) {
                 /** navController.navigate("editCard/${cardVm.card.value.id}") */
                 /** navController.navigate("editCard/${cardVm.card.value.id}") */
 
@@ -114,6 +116,7 @@ fun Today(
                     diamondViewModel = diamondViewModel,
                     onclick = { /** navController.navigate("editCard/${cardVm.card.value.id}") */ }
                 )
+                }
             }
         }
     }

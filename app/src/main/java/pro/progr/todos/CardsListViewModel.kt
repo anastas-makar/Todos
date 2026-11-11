@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import pro.progr.todos.brightcards.model.CardContent
+import pro.progr.todos.brightcards.model.CardRowKey
 import pro.progr.todos.brightcards.model.TodoStatus
 import pro.progr.todos.brightcards.vm.ListedCardViewModel
 import pro.progr.todos.datefilters.FilterType
@@ -37,9 +38,9 @@ class CardsListViewModel @Inject constructor(
 
     val cardsForDates: HashMap<LocalDate, MutableStateFlow<List<ListedCardViewModel>>> = HashMap()
 
-    private lateinit var viewModelCreator: (NoteWithData, CardContent, LocalDate?) -> ListedCardViewModel
+    private lateinit var viewModelCreator: (CardRow) -> ListedCardViewModel
 
-    fun setViewModelCreator(creator: (NoteWithData, CardContent, LocalDate?) -> ListedCardViewModel) {
+    fun setViewModelCreator(creator: (CardRow) -> ListedCardViewModel) {
         viewModelCreator = creator
     }
 
@@ -61,11 +62,7 @@ class CardsListViewModel @Inject constructor(
                         cardContent.todo = TodoStatus.DONE
                     }
 
-                    viewModelCreator(
-                        note,
-                        cardContent,
-                        null
-                    )
+                    viewModelCreator(CardRow(CardRowKey(note.note.id, null), note, cardContent))
                 }
             }
         }
@@ -105,9 +102,7 @@ class CardsListViewModel @Inject constructor(
                             }
 
                             viewModelCreator(
-                                note,
-                                cardContent,
-                                date
+                                CardRow(CardRowKey(note.note.id, date.toEpochDay()), note, cardContent)
                             )
                         }
                 }
@@ -140,13 +135,16 @@ class CardsListViewModel @Inject constructor(
         return cards.map { cardContent ->
             if (TodoStatus.TODO.equals(cardContent.todo) && date.isBefore(LocalDate.now())) cardContent.todo = TodoStatus.FAIL
 
-            viewModelCreator(
-                NoteWithData(
+            val note = NoteWithData(
                     note = NoteConverter.toNote(cardContent),
                     tags = cardContent.tags.map { tag -> NoteTag(tag.id, tag.title) }
-                ),
-                cardContent,
-                date
+            )
+            viewModelCreator(
+                CardRow(
+                    CardRowKey(cardContent.id ?: error("History card is missing noteId"), date.toEpochDay()),
+                    note,
+                    cardContent
+                )
             )
         }
     }

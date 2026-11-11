@@ -8,18 +8,36 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import pro.progr.todos.brightcards.model.CardContent
 import pro.progr.todos.brightcards.model.CardTag
+import pro.progr.todos.brightcards.model.CardRowKey
 import pro.progr.todos.brightcards.model.ListedCardRepositoryInterface
 import pro.progr.todos.brightcards.model.TodoStatus
 import java.time.LocalDate
 
-class ListedCardViewModel(cardContent: CardContent, val repository: ListedCardRepositoryInterface, private val context: Context) : ViewModel() {
+class ListedCardViewModel(
+    val rowKey: CardRowKey,
+    cardContent: CardContent,
+    repository: ListedCardRepositoryInterface,
+    private val context: Context
+) : ViewModel() {
     val card = mutableStateOf(cardContent)
+    var repository: ListedCardRepositoryInterface = repository
+        private set
 
     val menuOn = mutableStateOf(false)
 
     val destination = mutableStateOf(Destinations.NONE)
 
     val tagState = mutableStateOf<CardTag?>(null)
+
+    fun updateRowData(
+        rowKey: CardRowKey,
+        cardContent: CardContent,
+        repository: ListedCardRepositoryInterface
+    ) {
+        require(this.rowKey == rowKey) { "Cannot change a ListedCardViewModel row identity" }
+        card.value = cardContent
+        this.repository = repository
+    }
 
     fun setDone() {
         card.value = card.value.copy(todo = TodoStatus.DONE)

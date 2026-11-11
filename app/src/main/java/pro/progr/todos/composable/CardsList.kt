@@ -4,7 +4,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -38,7 +38,7 @@ fun CardsList(cardsListViewModel: CardsListViewModel,
         .clip(shape) // чтобы ripple/клик тоже был со скруглением
         .padding(vertical = 25.dp)
         .fillMaxHeight()) {
-        itemsIndexed(cardsListViewModel.cardsList.value) { index, cardVm ->
+        items(cardsListViewModel.cardsList.value, key = { cardVm -> cardVm.rowKey.viewModelStoreKey() }) { cardVm ->
             cardVm.setMenu()
 
             ResolveDestinations(
