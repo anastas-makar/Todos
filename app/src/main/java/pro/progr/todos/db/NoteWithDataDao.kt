@@ -29,6 +29,28 @@ interface NoteWithDataDao {
     @Update
     fun update(note: Note)
 
+    @Query("UPDATE notes SET title = :title WHERE id = :noteId")
+    suspend fun updateTitle(noteId: String, title: String)
+
+    @Query("UPDATE notes SET description = :description WHERE id = :noteId")
+    suspend fun updateDescription(noteId: String, description: String)
+
+    @Query("UPDATE notes SET style = :style WHERE id = :noteId")
+    @TypeConverters(ColorStyleConverter::class)
+    suspend fun updateStyle(noteId: String, style: pro.progr.todos.brightcards.colors.ColorStyle)
+
+    @Query("UPDATE notes SET fillTitleBackground = :filled WHERE id = :noteId")
+    suspend fun updateTitleBackground(noteId: String, filled: Boolean)
+
+    @Query("UPDATE notes SET fillTextBackground = :filled WHERE id = :noteId")
+    suspend fun updateDescriptionBackground(noteId: String, filled: Boolean)
+
+    @Query("UPDATE notes SET reward = :reward WHERE id = :noteId")
+    suspend fun updateReward(noteId: String, reward: Int)
+
+    @Query("UPDATE notes SET todo = :todo WHERE id = :noteId")
+    suspend fun updateTodo(noteId: String, todo: pro.progr.todos.brightcards.model.TodoStatus)
+
     @Transaction
     fun update(note: NoteWithData) {
         update(note.note)

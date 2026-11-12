@@ -5,9 +5,7 @@ import pro.progr.todos.R
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
@@ -21,7 +19,8 @@ import pro.progr.todos.brightcards.vm.CardViewModel
 
 @Composable
 fun ColumnScope.EditDescription(cardViewModel: CardViewModel,
-                                style: CardStyle) {
+                                style: CardStyle,
+                                showMetadataActions: Boolean = true) {
     Column(
         modifier = Modifier
             .background(
@@ -32,7 +31,6 @@ fun ColumnScope.EditDescription(cardViewModel: CardViewModel,
             .fillMaxHeight()
             .align(Alignment.CenterHorizontally)
             .padding(10.dp)
-            .verticalScroll(rememberScrollState())
     ) {
         TextField(
             modifier = Modifier
@@ -53,7 +51,7 @@ fun ColumnScope.EditDescription(cardViewModel: CardViewModel,
         )
 
         //if (cardViewModel.getCardContent().value.text.isNotEmpty() || cardViewModel.getCardContent().value.title.isNotEmpty()) {
-            CardMetadataActions(cardViewModel)
+            if (showMetadataActions) CardMetadataActions(cardViewModel)
         //}
     }
 }

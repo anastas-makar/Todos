@@ -2,14 +2,18 @@ package pro.progr.todos.composable.pages
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Scaffold
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import pro.progr.todos.brightcards.composable.colorpicker.CardEditorWithColorPicker
@@ -30,51 +34,45 @@ fun CreateCardScreen(cardViewModel: CardViewModel,
                      paletteViewModelState: MutableState<PaletteViewModel>,
                      navController: NavHostController) {
     val cardAction = cardViewModel.cardActionClicked.collectAsState(initial = null)
+    val cardId = cardViewModel.getCardId()
+    val selectedList = listsViewModel.selectedListState.value as? NList
 
-    if (listsViewModel.selectedListState.value != null) {
-
-        cardViewModel.getCardId()?.also { gotCardId ->
-            listsViewModel.bindListToEntity(
-                (listsViewModel.selectedListState.value as NList).sublistChain.toString(),
-                gotCardId
-            )
-            cardViewModel.updateList(listsViewModel.selectedListState.value as NList)
+    LaunchedEffect(cardId, selectedList?.sublistChain?.toString()) {
+        if (cardId != null && selectedList != null
+            && selectedList.sublistChain != cardViewModel.getSublistChane()
+        ) {
+            listsViewModel.bindListToEntity(selectedList.sublistChain.toString(), cardId)
+            cardViewModel.updateList(selectedList)
         }
-
     }
 
-    if (listsViewModel.selectedListState.value != null) {
-
-        cardViewModel.getCardId()?.also { cardId ->
-            listsViewModel.bindListToEntity(
-                (listsViewModel.selectedListState.value as NList).sublistChain.toString(),
-                cardId
-            )
+    if (cardId == null) {
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator()
         }
-
-    }
-
-    AddTagsScreen(tagsViewModel, cardViewModel) {
-        Scaffold(
-            topBar = {
-                Box(modifier = Modifier.statusBarsPadding()) {
-                    NoteBar(navController, cardViewModel)
-                }
-            },
-            content = { innerPadding ->
-                Box(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxHeight()
-                        .navigationBarsPadding()
-                ) {
-                    ListedContentFrame(listsViewModel = listsViewModel) {
-                        CardEditorWithColorPicker(cardViewModel, paletteViewModelState.value)
+    } else {
+        AddTagsScreen(tagsViewModel, cardViewModel) {
+            Scaffold(
+                topBar = {
+                    Box(modifier = Modifier.statusBarsPadding()) {
+                        NoteBar(navController, cardViewModel)
+                    }
+                },
+                content = { innerPadding ->
+                    Box(
+                        modifier = Modifier
+                            .padding(innerPadding)
+                            .fillMaxHeight()
+                            .navigationBarsPadding()
+                    ) {
+                        ListedContentFrame(listsViewModel = listsViewModel) {
+                            CardEditorWithColorPicker(cardViewModel, paletteViewModelState.value)
+                        }
                     }
                 }
-            }
-        )
+            )
 
+        }
     }
 
     cardAction.value?.let { action ->

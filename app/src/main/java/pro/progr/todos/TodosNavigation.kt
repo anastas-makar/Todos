@@ -94,12 +94,11 @@ fun TodosNavigation(
             cardViewModelFactory.cardId = cardId
             val cardViewModel: CardViewModel = viewModel(factory = cardViewModelFactory)
             val tagsViewModel: TagsViewModel = viewModel(factory = daggerViewModelFactory)
-            cardViewModel.getCard(cardId!!)
 
             val listsViewModel: ListsViewModel =
                 viewModel(factory = listsViewModelFactory, key = "editCard${cardId}")
 
-            if (cardViewModel.cardContent.value.id != null) {
+            if (cardId != null && cardViewModel.cardContent.value.id != null) {
                 EditCardScreen(
                     cardViewModel = cardViewModel,
                     tagsViewModel = tagsViewModel,

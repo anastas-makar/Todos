@@ -2,7 +2,6 @@ package pro.progr.todos.db
 
 import androidx.room.*
 import pro.progr.todos.brightcards.colors.ColorStyle
-import pro.progr.todos.brightcards.model.TodoStatus
 import pro.progr.todos.NoteConverter
 import pro.progr.todos.datefilters.FilterType
 import java.time.LocalDate
@@ -25,6 +24,7 @@ interface NoteAndHistoryDao {
     fun setNoteInHistoryNotDone(noteId: String, day: Long) : Int
 
     //todo: нужно заменить это на update, т.к. при изменении карточки она и на сегодня должна меняться
+    // Completion status belongs to the dated history entry; template edits must not reset it.
     @Query("""
     UPDATE notes_in_history 
     SET title = :title, 
@@ -33,8 +33,7 @@ interface NoteAndHistoryDao {
         sublist_chain = :sublistChain, 
         style = :style, 
         fillTitleBackground = :fillTitleBackground, 
-        fillTextBackground = :fillTextBackground, 
-        todo = :todo 
+        fillTextBackground = :fillTextBackground 
     WHERE noteId = :noteId AND date = :date
 """)
     @TypeConverters(SublistChainConverter::class)
@@ -47,8 +46,7 @@ interface NoteAndHistoryDao {
         sublistChain: SublistChain,
         style: ColorStyle,
         fillTitleBackground: Boolean,
-        fillTextBackground: Boolean,
-        todo: TodoStatus
+        fillTextBackground: Boolean
     ): Int
 
     @Query("""
@@ -75,8 +73,7 @@ interface NoteAndHistoryDao {
                 sublistChain = historyNote.sublistChain,
                 style = historyNote.style,
                 fillTitleBackground = historyNote.fillTitleBackground,
-                fillTextBackground = historyNote.fillTextBackground,
-                todo = historyNote.todo
+                fillTextBackground = historyNote.fillTextBackground
             ) == 0) {
             insert(noteInHistory = historyNote)
         }

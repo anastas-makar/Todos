@@ -4,8 +4,12 @@ import android.content.Context
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import pro.progr.todos.brightcards.model.CardContent
 import pro.progr.todos.brightcards.model.CardRepository
 import pro.progr.todos.brightcards.model.TodoStatus
@@ -19,6 +23,7 @@ import pro.progr.todos.db.SublistChain
 import pro.progr.todos.db.applySchedule
 import pro.progr.todos.db.toSchedule
 import pro.progr.todos.db.TagsDao
+import pro.progr.todos.datefilters.FilterType
 import java.time.LocalDate
 import javax.inject.Inject
 
@@ -31,18 +36,89 @@ class CardRepository @Inject constructor(
 
     lateinit var note: NoteWithData
 
-    private val parentJob = Job()
-    private val coroutineScope = CoroutineScope(Dispatchers.Default + parentJob)
-
     private var scheduleSetForId : String? = null
+    private val templateEditMutex = Mutex()
+    private val templateEditScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    private val templateEditQueue = Channel<TemplateEditRequest>(Channel.UNLIMITED)
+
+    init {
+        templateEditScope.launch {
+            for (request in templateEditQueue) {
+                try {
+                    request.update()
+                    request.completed.complete(Unit)
+                } catch (failure: Exception) {
+                    request.completed.completeExceptionally(failure)
+                }
+            }
+        }
+    }
 
     override suspend fun getCard(id: String): CardContent {
-        observeNoteFromBase(id)
-
         note = notesWithDataDao.getNote(id)
 
         //todo
         return NoteConverter.toCardContent(note, context)
+    }
+
+    /** Persist one editor field without replacing unrelated values from a stale snapshot. */
+    suspend fun updateTemplateTitle(noteId: String, title: String) = persistTemplateEdit(noteId) {
+        notesWithDataDao.updateTitle(noteId, title)
+    }
+
+    suspend fun updateTemplateDescription(noteId: String, description: String) = persistTemplateEdit(noteId) {
+        notesWithDataDao.updateDescription(noteId, description)
+    }
+
+    suspend fun updateTemplateStyle(noteId: String, style: pro.progr.todos.brightcards.colors.ColorStyle) = persistTemplateEdit(noteId) {
+        notesWithDataDao.updateStyle(noteId, style)
+    }
+
+    suspend fun updateTemplateTitleBackground(noteId: String, filled: Boolean) = persistTemplateEdit(noteId) {
+        notesWithDataDao.updateTitleBackground(noteId, filled)
+    }
+
+    suspend fun updateTemplateDescriptionBackground(noteId: String, filled: Boolean) = persistTemplateEdit(noteId) {
+        notesWithDataDao.updateDescriptionBackground(noteId, filled)
+    }
+
+    suspend fun updateTemplateReward(noteId: String, reward: Int) = persistTemplateEdit(noteId) {
+        notesWithDataDao.updateReward(noteId, reward)
+    }
+
+    suspend fun updateTemplateTodo(noteId: String, todo: TodoStatus) = persistTemplateEdit(noteId) {
+        notesWithDataDao.updateTodo(noteId, todo)
+    }
+
+    /** The edit survives navigation clearing the screen ViewModel. */
+    fun enqueueTemplateEdit(update: suspend () -> Unit): Job {
+        val completed = CompletableDeferred<Unit>()
+        val request = TemplateEditRequest(update, completed)
+        val result = templateEditQueue.trySend(request)
+        if (result.isFailure) {
+            completed.completeExceptionally(result.exceptionOrNull() ?: IllegalStateException("template edit queue is closed"))
+        }
+        return templateEditScope.launch { completed.await() }
+    }
+
+    private data class TemplateEditRequest(
+        val update: suspend () -> Unit,
+        val completed: CompletableDeferred<Unit>
+    )
+
+    private suspend fun persistTemplateEdit(noteId: String, update: suspend () -> Unit) {
+        templateEditMutex.withLock {
+            update()
+            val freshNote = notesWithDataDao.getNote(noteId)
+            note = freshNote
+            val today = LocalDate.now()
+            val schedule = freshNote.note.toSchedule()
+            val type = freshNote.note.patternType ?: FilterType.NO_TERMS
+            if (type.datesFilter.isActual(schedule, today)) {
+                val history = NoteConverter.toNoteInHistory(freshNote.note, today.toEpochDay())
+                noteAndHistoryDao.updateDaysNoteHistoryIfNotEdited(history, history.date)
+            }
+        }
     }
 
     fun getCardInHistory(id: String, epochDay: Long): CardContent? {
@@ -68,20 +144,6 @@ class CardRepository @Inject constructor(
             noteId = noteId,
             epochDay = epochDay
             )
-    }
-
-    fun observeNoteFromBase(id : String) {
-        coroutineScope.launch {
-            notesWithDataDao.getNoteFlow(id).collectLatest { noteFromBase ->
-                noteFromBase?.let {
-                    if (this@CardRepository::note.isInitialized && note.note.id == noteFromBase.note.id) {
-                        note = noteFromBase
-
-                    }
-
-                }
-            }
-        }
     }
 
     override suspend fun saveCard(cardContent: CardContent) : CardContent {

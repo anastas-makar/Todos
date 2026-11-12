@@ -28,7 +28,11 @@ import pro.progr.todos.brightcards.vm.PaletteViewModel
 
 @ExperimentalMaterialApi
 @Composable
-fun CardEditorWithColorPicker(cardViewModel: CardViewModel, paletteViewModel: PaletteViewModel) {
+fun CardEditorWithColorPicker(
+    cardViewModel: CardViewModel,
+    paletteViewModel: PaletteViewModel,
+    controlsAtTop: Boolean = false
+) {
 
     val coroutineScope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState(
@@ -67,16 +71,29 @@ fun CardEditorWithColorPicker(cardViewModel: CardViewModel, paletteViewModel: Pa
         sheetBackgroundColor = MaterialTheme.colors.background
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
-            EditCard(
-                cardViewModel = cardViewModel
-            )
-            Row(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(start = 16.dp, bottom = 16.dp, end = 5.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-
+            if (controlsAtTop) {
+                androidx.compose.foundation.layout.Column(modifier = Modifier.fillMaxSize()) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 15.dp, vertical = 2.dp),
+                        horizontalArrangement = androidx.compose.foundation.layout.Arrangement.End,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        ColorPickerButton(onClick = {
+                            coroutineScope.launch {
+                                if (sheetState.isVisible) sheetState.hide() else sheetState.show()
+                            }
+                        }, cardViewModel = cardViewModel)
+                    }
+                    EditCard(cardViewModel = cardViewModel, metadataAtTop = true)
+                }
+            } else {
+                EditCard(cardViewModel = cardViewModel)
+                Row(
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(start = 16.dp, bottom = 16.dp, end = 5.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                 ColorPickerButton(onClick = {
                     coroutineScope.launch {
                         if (sheetState.isVisible) {
@@ -86,6 +103,7 @@ fun CardEditorWithColorPicker(cardViewModel: CardViewModel, paletteViewModel: Pa
                         }
                     }
                 }, cardViewModel = cardViewModel)
+                }
             }
         }
     }

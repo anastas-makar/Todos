@@ -15,11 +15,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import pro.progr.todos.brightcards.CardStyle
 import pro.progr.todos.brightcards.composable.description.EditDescription
+import pro.progr.todos.brightcards.composable.description.CardMetadataActions
 import pro.progr.todos.brightcards.composable.title.EditTitle
 import pro.progr.todos.brightcards.vm.CardViewModel
 
 @Composable
-fun EditCard(cardViewModel: CardViewModel) {
+fun EditCard(cardViewModel: CardViewModel, metadataAtTop: Boolean = false) {
     val cardContent = cardViewModel.getCardContent()
     val style = remember(cardContent) { CardStyle(cardContent) }
 
@@ -40,9 +41,15 @@ fun EditCard(cardViewModel: CardViewModel) {
             .fillMaxHeight()
     ) {
 
+        if (metadataAtTop) CardMetadataActions(cardViewModel)
+
         EditTitle(cardViewModel = cardViewModel, style = style)
 
-        EditDescription(cardViewModel = cardViewModel, style = style)
+        EditDescription(
+            cardViewModel = cardViewModel,
+            style = style,
+            showMetadataActions = !metadataAtTop
+        )
 
     }
 }
