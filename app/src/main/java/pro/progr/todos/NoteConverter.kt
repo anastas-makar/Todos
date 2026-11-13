@@ -67,6 +67,8 @@ class NoteConverter {
                     schedule.pattern.type.datesFilter.getDescription(schedule, context)
                 },
                 listLabel = listName,
+                tagsLabel = if (note.tags.isEmpty()) context.getString(R.string.no_tags)
+                    else note.tags.joinToString(separator = " #", prefix = "#") { it.title },
                 latestDone = note.note.latestDone,
                 tags = note.tags.map { noteTag -> CardTag(noteTag.id, noteTag.title) }
             )

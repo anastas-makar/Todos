@@ -16,9 +16,15 @@ import androidx.navigation.NavHostController
 import pro.progr.todos.CardViewModel
 
 @Composable
-fun NoteBar(navController : NavHostController, viewModel: CardViewModel) {
+fun NoteBar(
+    navController: NavHostController,
+    viewModel: CardViewModel,
+    isNewCard: Boolean = true
+) {
     TopAppBar(
-        title = { Text(text = stringResource(R.string.new_entry)) },
+        title = {
+            Text(text = stringResource(if (isNewCard) R.string.new_entry else R.string.edit_note))
+        },
         navigationIcon = {
             IconButton(onClick = { navController.popBackStack() }) {
                 Icon(Icons.Filled.ArrowBack, contentDescription = stringResource(R.string.back))

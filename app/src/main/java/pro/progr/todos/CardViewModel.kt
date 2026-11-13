@@ -9,10 +9,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.joinAll
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import pro.progr.todos.brightcards.colors.ColorStyle
 import pro.progr.todos.brightcards.model.CardContent
@@ -27,7 +26,7 @@ import java.util.concurrent.CopyOnWriteArrayList
 class CardViewModel private constructor(
     private val repository: CardRepository,
     private val _cardContent: MutableStateFlow<CardContent>,
-    private val updateTemplateByField: Boolean
+    private val isNewCard: Boolean
 ) : ViewModel(), CardViewModel {
 
     internal val cardContent: MutableState<CardContent> = mutableStateOf(_cardContent.value)
@@ -35,7 +34,6 @@ class CardViewModel private constructor(
     // Action emitted when a card metadata control is tapped.
     private val _cardActionClicked = MutableStateFlow<CardAction?>(null)
     val cardActionClicked: Flow<CardAction?> = _cardActionClicked
-    private var skipInitialContentEmission = true
     @Volatile private var pendingTitle: String? = null
     @Volatile private var pendingDescription: String? = null
     private var titleSaveJob: Job? = null
@@ -57,20 +55,17 @@ class CardViewModel private constructor(
     constructor(repository: CardRepository, style: ColorStyle) : this(
         repository,
         MutableStateFlow(CardContent(style = style)),
-        false
+        true
     ) {
-        saveCard(_cardContent.value).invokeOnCompletion {
-            observeCard()
-        }
+        saveCard(_cardContent.value)
     }
 
     constructor(repository: CardRepository, id: String) : this(
         repository,
         MutableStateFlow(CardContent()),
-        true
+        false
     ) {
-        // Existing template editing uses the loaded form state as its source of truth.
-        // Database emissions must not replace text currently being edited.
+        // Load the note once. The editor keeps its own state and does not collect DB emissions.
         getCard(id)
     }
 
@@ -92,6 +87,7 @@ class CardViewModel private constructor(
         return viewModelScope.launch(Dispatchers.Default) {
             repository.saveCard(content).also { savedCardContent ->
                 _cardContent.value = savedCardContent
+                cardContent.value = savedCardContent
             }
         }
     }
@@ -102,20 +98,20 @@ class CardViewModel private constructor(
         cardContent.value = content
         _cardContent.value = content
 
-        if (!updateTemplateByField || content.id == null) return
+        if (content.id == null) return
         val id = content.id ?: return
 
         if (previous.title != content.title) queueTitleSave(id, content.title)
         if (previous.text != content.text) queueDescriptionSave(id, content.text)
-        if (previous.style != content.style) persist { repository.updateTemplateStyle(id, content.style) }
+        if (previous.style != content.style) persist { repository.updateCardStyle(id, content.style, isNewCard) }
         if (previous.fillTitleBackground != content.fillTitleBackground) {
-            persist { repository.updateTemplateTitleBackground(id, content.fillTitleBackground) }
+            persist { repository.updateCardTitleBackground(id, content.fillTitleBackground, isNewCard) }
         }
         if (previous.fillTextBackground != content.fillTextBackground) {
-            persist { repository.updateTemplateDescriptionBackground(id, content.fillTextBackground) }
+            persist { repository.updateCardDescriptionBackground(id, content.fillTextBackground, isNewCard) }
         }
-        if (previous.reward != content.reward) persist { repository.updateTemplateReward(id, content.reward) }
-        if (previous.todo != content.todo) persist { repository.updateTemplateTodo(id, content.todo) }
+        if (previous.reward != content.reward) persist { repository.updateCardReward(id, content.reward, isNewCard) }
+        if (previous.todo != content.todo) persist { repository.updateCardTodo(id, content.todo, isNewCard) }
     }
 
     private fun queueTitleSave(noteId: String, title: String) {
@@ -123,7 +119,7 @@ class CardViewModel private constructor(
         titleSaveJob?.cancel()
         titleSaveJob = viewModelScope.launch(Dispatchers.IO) {
             delay(TEXT_SAVE_DEBOUNCE_MS)
-            repository.enqueueTemplateEdit { repository.updateTemplateTitle(noteId, title) }.join()
+            repository.enqueueTemplateEdit { repository.updateCardTitle(noteId, title, isNewCard) }.join()
             if (pendingTitle == title) pendingTitle = null
         }
     }
@@ -133,7 +129,7 @@ class CardViewModel private constructor(
         descriptionSaveJob?.cancel()
         descriptionSaveJob = viewModelScope.launch(Dispatchers.IO) {
             delay(TEXT_SAVE_DEBOUNCE_MS)
-            repository.enqueueTemplateEdit { repository.updateTemplateDescription(noteId, description) }.join()
+            repository.enqueueTemplateEdit { repository.updateCardDescription(noteId, description, isNewCard) }.join()
             if (pendingDescription == description) pendingDescription = null
         }
     }
@@ -145,8 +141,7 @@ class CardViewModel private constructor(
         return job
     }
 
-    fun flushPendingTemplateEdits() {
-        if (!updateTemplateByField) return
+    fun flushPendingCardEdits() {
         val id = _cardContent.value.id ?: return
         val title = pendingTitle
         val description = pendingDescription
@@ -158,14 +153,14 @@ class CardViewModel private constructor(
         pendingDescription = null
         if (title != null || description != null) {
             persist {
-                if (title != null) repository.updateTemplateTitle(id, title)
-                if (description != null) repository.updateTemplateDescription(id, description)
+                if (title != null) repository.updateCardTitle(id, title, isNewCard)
+                if (description != null) repository.updateCardDescription(id, description, isNewCard)
             }
         }
     }
 
-    suspend fun flushAndAwaitTemplateEdits() {
-        flushPendingTemplateEdits()
+    suspend fun flushAndAwaitCardEdits() {
+        flushPendingCardEdits()
         templateWriteJobs.toList().joinAll()
     }
 
@@ -179,11 +174,15 @@ class CardViewModel private constructor(
 
     fun setSchedule(schedule: Schedule) {
         viewModelScope.launch {
-            flushAndAwaitTemplateEdits()
-            kotlinx.coroutines.withContext(Dispatchers.IO) {
-                repository.setSchedule(schedule = schedule)
-                repository.updateNote()
-            }
+            setScheduleAndAwait(schedule)
+        }
+    }
+
+    suspend fun setScheduleAndAwait(schedule: Schedule) {
+        flushAndAwaitCardEdits()
+        withContext(Dispatchers.IO) {
+            repository.setSchedule(schedule = schedule)
+            repository.updateNote()
         }
     }
 
@@ -200,27 +199,11 @@ class CardViewModel private constructor(
         updateCardLabels(list.getName())
 
         viewModelScope.launch {
-            flushAndAwaitTemplateEdits()
-            kotlinx.coroutines.withContext(Dispatchers.IO) {
+            flushAndAwaitCardEdits()
+            withContext(Dispatchers.IO) {
                 repository.updateList(list.sublistChain)
             }
         }
-    }
-
-    private fun observeCard() {
-        _cardContent.onEach { content ->
-            if (content.id != null) {
-                cardContent.value = content
-                if (skipInitialContentEmission) {
-                    // Loading an existing note (or the just-created note) is not an edit.
-                    skipInitialContentEmission = false
-                } else {
-                    viewModelScope.launch(Dispatchers.Default) {
-                        repository.updateCard(content)
-                    }
-                }
-            }
-        }.launchIn(viewModelScope)
     }
 
     override fun setDone() {

@@ -50,6 +50,32 @@ interface NoteAndHistoryDao {
     ): Int
 
     @Query("""
+    UPDATE notes_in_history
+    SET title = :title,
+        description = :description,
+        reward = :reward,
+        sublist_chain = :sublistChain,
+        style = :style,
+        fillTitleBackground = :fillTitleBackground,
+        fillTextBackground = :fillTextBackground,
+        todo = :todo
+    WHERE noteId = :noteId AND date = :date
+    """)
+    @TypeConverters(SublistChainConverter::class)
+    fun updateNewCardInHistory(
+        noteId: String,
+        date: Long,
+        title: String,
+        description: String,
+        reward: Int,
+        sublistChain: SublistChain,
+        style: ColorStyle,
+        fillTitleBackground: Boolean,
+        fillTextBackground: Boolean,
+        todo: pro.progr.todos.brightcards.model.TodoStatus
+    ): Int
+
+    @Query("""
     UPDATE notes_in_history 
     SET title = :title, 
         description = :description,
@@ -60,27 +86,41 @@ interface NoteAndHistoryDao {
 
     @Transaction
     suspend fun updateDaysNoteHistoryIfNotEdited(historyNote: NoteInHistory, day: Long) {
-        //Если задача в истории уже редактировалась, не меняем её
-        if (findNotEdited(historyNote.noteId, day) == 0) {
-            return
+        val existing = getHistoryEntryIncludingDeleted(historyNote.noteId, day)
+        if (existing?.edited == true || existing?.deleted == true) return
+        if (existing == null) {
+            insert(historyNote)
+        } else {
+            // A template edit must preserve the completion state of this dated entry.
+            updateNoteInHistory(
+                historyNote.noteId, day, historyNote.title, historyNote.description,
+                historyNote.reward, historyNote.sublistChain, historyNote.style,
+                historyNote.fillTitleBackground, historyNote.fillTextBackground
+            )
         }
+    }
 
-        if (updateNoteInHistory(noteId = historyNote.noteId,
-                date = day,
-                title = historyNote.title,
-                description = historyNote.description,
-                reward = historyNote.reward,
-                sublistChain = historyNote.sublistChain,
-                style = historyNote.style,
-                fillTitleBackground = historyNote.fillTitleBackground,
-                fillTextBackground = historyNote.fillTextBackground
-            ) == 0) {
-            insert(noteInHistory = historyNote)
+    @Transaction
+    suspend fun updateNewCardHistoryIfNotEdited(historyNote: NoteInHistory, day: Long) {
+        val existing = getHistoryEntryIncludingDeleted(historyNote.noteId, day)
+        if (existing?.edited == true || existing?.deleted == true) return
+        if (existing == null) {
+            insert(historyNote)
+        } else {
+            // During initial creation, the dated entry must receive the chosen card kind/status.
+            updateNewCardInHistory(
+                historyNote.noteId, day, historyNote.title, historyNote.description,
+                historyNote.reward, historyNote.sublistChain, historyNote.style,
+                historyNote.fillTitleBackground, historyNote.fillTextBackground, historyNote.todo
+            )
         }
     }
 
     @Query("SELECT COUNT(*) FROM notes_in_history WHERE noteId=:noteId AND date=:day AND edited=0 AND deleted = 0")
     suspend fun findNotEdited(noteId: String, day: Long): Int
+
+    @Query("SELECT * FROM notes_in_history WHERE noteId = :noteId AND date = :day")
+    suspend fun getHistoryEntryIncludingDeleted(noteId: String, day: Long): NoteInHistory?
 
     @Transaction
     suspend fun setCardDoneAndUpdateHistory(note: Note, historyNote: NoteInHistory, day: Long) {

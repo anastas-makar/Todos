@@ -13,13 +13,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import pro.progr.diamondapi.GetDiamondsCountInterface
-import pro.progr.todos.composable.pages.EditCardScreen
+import pro.progr.todos.composable.pages.CardEditorScreen
 import pro.progr.lists.ListsViewModel
 import pro.progr.todos.brightcards.colors.ColorsProvider
 import pro.progr.todos.brightcards.vm.PaletteViewModel
 import pro.progr.todos.composable.pages.CalendarScreen
-import pro.progr.todos.composable.pages.CreateCardForDateScreen
-import pro.progr.todos.composable.pages.CreateCardScreen
 import pro.progr.todos.composable.pages.EditNoteInHistoryScreen
 import pro.progr.todos.composable.pages.ListScreen
 import pro.progr.todos.composable.pages.SchedulePage
@@ -98,14 +96,14 @@ fun TodosNavigation(
             val listsViewModel: ListsViewModel =
                 viewModel(factory = listsViewModelFactory, key = "editCard${cardId}")
 
-            if (cardId != null && cardViewModel.cardContent.value.id != null) {
-                EditCardScreen(
+            if (cardId != null) {
+                CardEditorScreen(
                     cardViewModel = cardViewModel,
                     tagsViewModel = tagsViewModel,
                     listsViewModel = listsViewModel,
-                    cardId = cardId,
                     paletteViewModelState = paletteViewModelState,
-                    navController = navController
+                    navController = navController,
+                    isNewCard = false
                 )
 
             }
@@ -122,12 +120,13 @@ fun TodosNavigation(
             val listsViewModel: ListsViewModel =
                 viewModel(factory = listsViewModelFactory, key = "createCard")
 
-            CreateCardScreen(
+            CardEditorScreen(
                 cardViewModel = cardViewModel,
                 tagsViewModel = tagsViewModel,
                 listsViewModel = listsViewModel,
                 paletteViewModelState = paletteViewModelState,
-                navController = navController
+                navController = navController,
+                isNewCard = true
             )
 
         }
@@ -143,14 +142,14 @@ fun TodosNavigation(
             val listsViewModel: ListsViewModel =
                 viewModel(factory = listsViewModelFactory, key = "createCard${epochDay}")
 
-            CreateCardForDateScreen(
+            CardEditorScreen(
                 cardViewModel = viewModel,
                 tagsViewModel = tagsViewModel,
                 listsViewModel = listsViewModel,
                 paletteViewModelState = paletteViewModelState,
                 navController = navController,
-                noteCalendarViewModelFactory = noteCalendarViewModelFactory,
-                epochDay = epochDay!!.toLong()
+                isNewCard = true,
+                initialDate = epochDay!!.toLong()
             )
         }
 

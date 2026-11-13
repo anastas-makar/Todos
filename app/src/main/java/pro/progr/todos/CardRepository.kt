@@ -62,31 +62,31 @@ class CardRepository @Inject constructor(
     }
 
     /** Persist one editor field without replacing unrelated values from a stale snapshot. */
-    suspend fun updateTemplateTitle(noteId: String, title: String) = persistTemplateEdit(noteId) {
+    suspend fun updateCardTitle(noteId: String, title: String, isNewCard: Boolean) = persistCardField(noteId, isNewCard) {
         notesWithDataDao.updateTitle(noteId, title)
     }
 
-    suspend fun updateTemplateDescription(noteId: String, description: String) = persistTemplateEdit(noteId) {
+    suspend fun updateCardDescription(noteId: String, description: String, isNewCard: Boolean) = persistCardField(noteId, isNewCard) {
         notesWithDataDao.updateDescription(noteId, description)
     }
 
-    suspend fun updateTemplateStyle(noteId: String, style: pro.progr.todos.brightcards.colors.ColorStyle) = persistTemplateEdit(noteId) {
+    suspend fun updateCardStyle(noteId: String, style: pro.progr.todos.brightcards.colors.ColorStyle, isNewCard: Boolean) = persistCardField(noteId, isNewCard) {
         notesWithDataDao.updateStyle(noteId, style)
     }
 
-    suspend fun updateTemplateTitleBackground(noteId: String, filled: Boolean) = persistTemplateEdit(noteId) {
+    suspend fun updateCardTitleBackground(noteId: String, filled: Boolean, isNewCard: Boolean) = persistCardField(noteId, isNewCard) {
         notesWithDataDao.updateTitleBackground(noteId, filled)
     }
 
-    suspend fun updateTemplateDescriptionBackground(noteId: String, filled: Boolean) = persistTemplateEdit(noteId) {
+    suspend fun updateCardDescriptionBackground(noteId: String, filled: Boolean, isNewCard: Boolean) = persistCardField(noteId, isNewCard) {
         notesWithDataDao.updateDescriptionBackground(noteId, filled)
     }
 
-    suspend fun updateTemplateReward(noteId: String, reward: Int) = persistTemplateEdit(noteId) {
+    suspend fun updateCardReward(noteId: String, reward: Int, isNewCard: Boolean) = persistCardField(noteId, isNewCard) {
         notesWithDataDao.updateReward(noteId, reward)
     }
 
-    suspend fun updateTemplateTodo(noteId: String, todo: TodoStatus) = persistTemplateEdit(noteId) {
+    suspend fun updateCardTodo(noteId: String, todo: TodoStatus, isNewCard: Boolean) = persistCardField(noteId, isNewCard) {
         notesWithDataDao.updateTodo(noteId, todo)
     }
 
@@ -106,7 +106,11 @@ class CardRepository @Inject constructor(
         val completed: CompletableDeferred<Unit>
     )
 
-    private suspend fun persistTemplateEdit(noteId: String, update: suspend () -> Unit) {
+    private suspend fun persistCardField(
+        noteId: String,
+        propagateTodoToHistory: Boolean,
+        update: suspend () -> Unit
+    ) {
         templateEditMutex.withLock {
             update()
             val freshNote = notesWithDataDao.getNote(noteId)
@@ -116,7 +120,11 @@ class CardRepository @Inject constructor(
             val type = freshNote.note.patternType ?: FilterType.NO_TERMS
             if (type.datesFilter.isActual(schedule, today)) {
                 val history = NoteConverter.toNoteInHistory(freshNote.note, today.toEpochDay())
-                noteAndHistoryDao.updateDaysNoteHistoryIfNotEdited(history, history.date)
+                if (propagateTodoToHistory) {
+                    noteAndHistoryDao.updateNewCardHistoryIfNotEdited(history, history.date)
+                } else {
+                    noteAndHistoryDao.updateDaysNoteHistoryIfNotEdited(history, history.date)
+                }
             }
         }
     }
