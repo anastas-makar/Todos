@@ -90,4 +90,6 @@
     <string name="sync_update_required_title">Update required</string>
     <string name="sync_update_required_message">Update the app to resume synchronization.</string>
     <string name="sync_update_required_dismiss">Got it</string>
+    <string name="card_load_failed">Could not load this card.</string>
+    <string name="retry">Retry</string>
 </resources>

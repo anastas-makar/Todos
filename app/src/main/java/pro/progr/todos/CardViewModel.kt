@@ -1,17 +1,20 @@
 package pro.progr.todos
 
+import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.util.fastJoinToString
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import pro.progr.todos.brightcards.colors.ColorStyle
 import pro.progr.todos.brightcards.model.CardContent
@@ -26,10 +29,16 @@ import java.util.concurrent.CopyOnWriteArrayList
 class CardViewModel private constructor(
     private val repository: CardRepository,
     private val _cardContent: MutableStateFlow<CardContent>,
-    private val isNewCard: Boolean
+    private val isNewCard: Boolean,
+    initialCardId: String? = null
 ) : ViewModel(), CardViewModel {
 
-    internal val cardContent: MutableState<CardContent> = mutableStateOf(_cardContent.value)
+    internal val cardContent: MutableState<CardContent> = mutableStateOf(_cardContent.value.copy(id = initialCardId))
+    private val _cardLoadState = MutableStateFlow(CardLoadState.LOADING)
+    val cardLoadState: StateFlow<CardLoadState> = _cardLoadState
+    private var requestedCardId: String? = null
+
+    enum class CardLoadState { LOADING, READY, FAILED }
 
     // Action emitted when a card metadata control is tapped.
     private val _cardActionClicked = MutableStateFlow<CardAction?>(null)
@@ -55,7 +64,8 @@ class CardViewModel private constructor(
     constructor(repository: CardRepository, style: ColorStyle) : this(
         repository,
         MutableStateFlow(CardContent(style = style)),
-        true
+        true,
+        null
     ) {
         saveCard(_cardContent.value)
     }
@@ -63,18 +73,36 @@ class CardViewModel private constructor(
     constructor(repository: CardRepository, id: String) : this(
         repository,
         MutableStateFlow(CardContent()),
-        false
+        false,
+        id
     ) {
         // Load the note once. The editor keeps its own state and does not collect DB emissions.
+        requestedCardId = id
         getCard(id)
     }
 
     override fun getCard(id: String) : Job {
         return viewModelScope.launch (Dispatchers.Default) {
-            val loaded = repository.getCard(id)
-            _cardContent.value = loaded
-            cardContent.value = loaded
+            requestedCardId = id
+            _cardLoadState.value = CardLoadState.LOADING
+            Log.d("TodosCardEditor", "Loading card id=$id")
+            try {
+                val loaded = repository.getCard(id)
+                _cardContent.value = loaded
+                cardContent.value = loaded
+                _cardLoadState.value = CardLoadState.READY
+                Log.d("TodosCardEditor", "Loaded card id=$id")
+            } catch (e: CancellationException) {
+                throw e
+            } catch (t: Exception) {
+                Log.e("TodosCardEditor", "Failed to load card id=$id", t)
+                _cardLoadState.value = CardLoadState.FAILED
+            }
         }
+    }
+
+    fun retryCardLoad() {
+        requestedCardId?.let(::getCard)
     }
 
     override fun deleteCard() {
@@ -88,6 +116,7 @@ class CardViewModel private constructor(
             repository.saveCard(content).also { savedCardContent ->
                 _cardContent.value = savedCardContent
                 cardContent.value = savedCardContent
+                _cardLoadState.value = CardLoadState.READY
             }
         }
     }

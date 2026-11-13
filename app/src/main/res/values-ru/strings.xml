@@ -90,4 +90,6 @@
     <string name="sync_update_required_title">Требуется обновление</string>
     <string name="sync_update_required_message">Обновите приложение, чтобы продолжить синхронизацию.</string>
     <string name="sync_update_required_dismiss">Понятно</string>
+    <string name="card_load_failed">Не удалось загрузить карточку.</string>
+    <string name="retry">Повторить</string>
 </resources>

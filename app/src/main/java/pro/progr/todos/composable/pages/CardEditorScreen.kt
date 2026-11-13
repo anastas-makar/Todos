@@ -1,13 +1,16 @@
 package pro.progr.todos.composable.pages
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.material.Button
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -19,8 +22,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -51,14 +55,19 @@ fun CardEditorScreen(
 ) {
     val screenScope = rememberCoroutineScope()
     val cardId = cardViewModel.getCardId()
-    val editorReady = remember(cardViewModel, initialDate, isNewCard) { mutableStateOf(false) }
+    val cardLoadState = cardViewModel.cardLoadState.collectAsState()
+    val initialScheduleReady = remember(cardViewModel, initialDate, isNewCard) {
+        mutableStateOf(!isNewCard || initialDate == null)
+    }
 
     DisposableEffect(cardViewModel) {
         onDispose { cardViewModel.flushPendingCardEdits() }
     }
 
-    LaunchedEffect(cardId, initialDate, isNewCard) {
-        if (cardId == null) return@LaunchedEffect
+    LaunchedEffect(cardId, initialDate, isNewCard, cardLoadState.value) {
+        if (cardId == null || cardLoadState.value != CardViewModel.CardLoadState.READY) {
+            return@LaunchedEffect
+        }
 
         // A date-created card receives its schedule before the form becomes editable.
         if (isNewCard && initialDate != null) {
@@ -71,28 +80,27 @@ fun CardEditorScreen(
                     dates = Schedule.Dates(addedDates = arrayOf(initialDate))
                 )
             )
+            initialScheduleReady.value = true
         }
 
+        // List loading is independent of card loading: a slow or missing list emission
+        // must not keep the editor behind its loading indicator. Keep this work in the
+        // same coroutine so it cannot race schedule initialization above.
         val lists = snapshotFlow { listsViewModel.nestedListState.value }
             .first { it.isNotEmpty() }
         val noteList = lists.filterIsInstance<NList>()
             .firstOrNull { it.sublistChain == cardViewModel.getSublistChane() }
         val currentSelection = listsViewModel.selectedListState.value as? NList
         val initialSelection = if (isNewCard) currentSelection ?: noteList else noteList
-        if (initialSelection != null) {
-            listsViewModel.selectedListState.value = initialSelection
-        }
+        if (initialSelection == null) return@LaunchedEffect
 
+        listsViewModel.selectedListState.value = initialSelection
         var persistedSublistChain = cardViewModel.getSublistChane()
-        if (isNewCard && initialSelection != null
-            && initialSelection.sublistChain != persistedSublistChain
-        ) {
+        if (isNewCard && initialSelection.sublistChain != persistedSublistChain) {
             listsViewModel.bindListToEntity(initialSelection.sublistChain.toString(), cardId)
             cardViewModel.updateList(initialSelection)
             persistedSublistChain = initialSelection.sublistChain
         }
-
-        editorReady.value = true
 
         snapshotFlow { listsViewModel.selectedListState.value as? NList }
             .filterNotNull()
@@ -119,7 +127,21 @@ fun CardEditorScreen(
         }
     }
 
-    if (cardId == null || !editorReady.value) {
+    if (cardLoadState.value == CardViewModel.CardLoadState.FAILED) {
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(stringResource(pro.progr.todos.R.string.card_load_failed))
+                Button(
+                    modifier = Modifier.padding(top = 12.dp),
+                    onClick = { cardViewModel.retryCardLoad() }
+                ) {
+                    Text(stringResource(pro.progr.todos.R.string.retry))
+                }
+            }
+        }
+    } else if (cardLoadState.value != CardViewModel.CardLoadState.READY
+        || cardId == null || !initialScheduleReady.value
+    ) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             CircularProgressIndicator()
         }
