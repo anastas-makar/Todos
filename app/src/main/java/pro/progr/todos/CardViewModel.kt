@@ -193,18 +193,8 @@ class CardViewModel private constructor(
         templateWriteJobs.toList().joinAll()
     }
 
-    fun getSchedule() : Schedule {
-        return repository.getSchedule()
-    }
-
     fun getSublistChane() : SublistChain {
         return repository.getSublistChane()
-    }
-
-    fun setSchedule(schedule: Schedule) {
-        viewModelScope.launch {
-            setScheduleAndAwait(schedule)
-        }
     }
 
     suspend fun setScheduleAndAwait(schedule: Schedule) {
@@ -215,7 +205,7 @@ class CardViewModel private constructor(
         }
     }
 
-    private fun updateCardLabels(listName : String) {
+    fun updateCardLabels(listName : String) {
         updateCard(_cardContent.value.copy(
             scheduleLabel = repository.getScheduleDescription(),
             listLabel = listName,

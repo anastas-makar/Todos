@@ -95,6 +95,7 @@ fun CardEditorScreen(
         if (initialSelection == null) return@LaunchedEffect
 
         listsViewModel.selectedListState.value = initialSelection
+        cardViewModel.updateCardLabels(initialSelection.getName())
         var persistedSublistChain = cardViewModel.getSublistChane()
         if (isNewCard && initialSelection.sublistChain != persistedSublistChain) {
             listsViewModel.bindListToEntity(initialSelection.sublistChain.toString(), cardId)

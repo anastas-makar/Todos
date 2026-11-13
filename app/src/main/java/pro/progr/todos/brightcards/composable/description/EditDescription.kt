@@ -10,10 +10,13 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.text.input.TextFieldValue
 import pro.progr.todos.brightcards.CardStyle
 import pro.progr.todos.brightcards.vm.CardViewModel
 
@@ -21,6 +24,10 @@ import pro.progr.todos.brightcards.vm.CardViewModel
 fun ColumnScope.EditDescription(cardViewModel: CardViewModel,
                                 style: CardStyle,
                                 showMetadataActions: Boolean = true) {
+    val cardState = cardViewModel.getCardContent()
+    val descriptionInput = remember(cardState.value.id) {
+        mutableStateOf(TextFieldValue(cardState.value.text))
+    }
     Column(
         modifier = Modifier
             .background(
@@ -36,9 +43,10 @@ fun ColumnScope.EditDescription(cardViewModel: CardViewModel,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 10.dp),
-            value = cardViewModel.getCardContent().value.text,
-            onValueChange = { v: String ->
-                cardViewModel.updateCard(cardViewModel.getCardContent().value.copy(text = v))
+            value = descriptionInput.value,
+            onValueChange = { value: TextFieldValue ->
+                descriptionInput.value = value
+                cardViewModel.updateCard(cardViewModel.getCardContent().value.copy(text = value.text))
             },
             colors = TextFieldDefaults.textFieldColors(
                 textColor = style.descriptionTextColor,

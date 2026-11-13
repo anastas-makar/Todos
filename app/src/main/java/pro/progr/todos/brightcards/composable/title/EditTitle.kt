@@ -14,16 +14,23 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.text.input.TextFieldValue
 import pro.progr.todos.brightcards.CardStyle
 import pro.progr.todos.brightcards.vm.CardViewModel
 
 @Composable
 fun ColumnScope.EditTitle(cardViewModel: CardViewModel,
                           style: CardStyle) {
+    val cardState = cardViewModel.getCardContent()
+    val titleInput = remember(cardState.value.id) {
+        mutableStateOf(TextFieldValue(cardState.value.title))
+    }
     TextField(
         modifier = Modifier
             .background(
@@ -35,9 +42,12 @@ fun ColumnScope.EditTitle(cardViewModel: CardViewModel,
             .wrapContentHeight()
             .align(Alignment.CenterHorizontally),
         placeholder = { Text(text = stringResource(R.string.header), color = style.titlePlaceHolderColor) },
-        value = cardViewModel.getCardContent().value.title,
+        value = titleInput.value,
         textStyle = MaterialTheme.typography.h6,
-        onValueChange = { v : String -> cardViewModel.updateCard(cardViewModel.getCardContent().value.copy(title = v))},
+        onValueChange = { value: TextFieldValue ->
+            titleInput.value = value
+            cardViewModel.updateCard(cardViewModel.getCardContent().value.copy(title = value.text))
+        },
         colors = TextFieldDefaults.textFieldColors(
             textColor = style.titleTextColor,
             backgroundColor = Color.Transparent,
