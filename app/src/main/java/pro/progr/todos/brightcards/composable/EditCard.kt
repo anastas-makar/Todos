@@ -11,7 +11,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import pro.progr.todos.brightcards.CardStyle
 import pro.progr.todos.brightcards.composable.description.EditDescription
@@ -30,12 +29,12 @@ fun EditCard(cardViewModel: CardViewModel, metadataAtTop: Boolean = false) {
             .fillMaxWidth()
             .wrapContentHeight()
             .background(
-                color = Color.Transparent,
+                color = style.titleBackgroundColor,
                 shape = RoundedCornerShape(5.dp)
             )
             .border(
                 1.dp,
-                Color(cardViewModel.getCardContent().value.style.backgroundColor()),
+                style.titleBackgroundColor,
                 RoundedCornerShape(5.dp)
             ) // Добавление границы
             .fillMaxHeight()
