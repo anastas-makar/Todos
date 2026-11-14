@@ -22,14 +22,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.input.TextFieldValue
 import pro.progr.todos.brightcards.CardStyle
-import pro.progr.todos.brightcards.vm.CardViewModel
 
 @Composable
-fun ColumnScope.EditTitle(cardViewModel: CardViewModel,
-                          style: CardStyle) {
-    val cardState = cardViewModel.getCardContent()
-    val titleInput = remember(cardState.value.id) {
-        mutableStateOf(TextFieldValue(cardState.value.title))
+fun ColumnScope.EditTitle(
+    cardId: String?,
+    title: String,
+    style: CardStyle,
+    onTitleChange: (String) -> Unit
+) {
+    val titleInput = remember(cardId) {
+        mutableStateOf(TextFieldValue(title))
     }
     TextField(
         modifier = Modifier
@@ -46,7 +48,7 @@ fun ColumnScope.EditTitle(cardViewModel: CardViewModel,
         textStyle = MaterialTheme.typography.h6,
         onValueChange = { value: TextFieldValue ->
             titleInput.value = value
-            cardViewModel.updateCard(cardViewModel.getCardContent().value.copy(title = value.text))
+            if (title != value.text) onTitleChange(value.text)
         },
         colors = TextFieldDefaults.textFieldColors(
             textColor = style.titleTextColor,

@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.dp
 import pro.progr.todos.brightcards.carousel.CarouselPager
 import pro.progr.todos.brightcards.colors.ColorsProvider
 import pro.progr.todos.brightcards.composable.ColorItem
-import pro.progr.todos.brightcards.vm.CardViewModel
+import pro.progr.todos.CardViewModel
 import pro.progr.todos.brightcards.vm.PaletteViewModel
 
 @Composable
@@ -32,7 +32,9 @@ fun ColorPicker(cardViewModel: CardViewModel, paletteViewModel: PaletteViewModel
         Row(modifier = Modifier.padding(bottom = 10.dp)) {
             TextButton(
                 onClick = {
-                    cardViewModel.updateCard(cardViewModel.getCardContent().value.copy(fillTitleBackground = !cardViewModel.getCardContent().value.fillTitleBackground))
+                    cardViewModel.updateCardTitleBackground(
+                        !cardViewModel.getCardContent().value.fillTitleBackground
+                    )
                 },
                 shape = RoundedCornerShape(0.dp),
                 modifier = Modifier
@@ -62,7 +64,9 @@ fun ColorPicker(cardViewModel: CardViewModel, paletteViewModel: PaletteViewModel
             //Spacer(modifier = Modifier.width(5.dp))
 
             TextButton(onClick = {
-                cardViewModel.updateCard(cardViewModel.getCardContent().value.copy(fillTextBackground = !cardViewModel.getCardContent().value.fillTextBackground))
+                cardViewModel.updateCardDescriptionBackground(
+                    !cardViewModel.getCardContent().value.fillTextBackground
+                )
             },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -102,7 +106,7 @@ fun ColorPicker(cardViewModel: CardViewModel, paletteViewModel: PaletteViewModel
                             .widthIn(min = 50.dp, max = 100.dp),
                         contentAlignment = Alignment.Center) {
                             ColorItem(color = color, selectedColor = cardViewModel.getCardContent().value.style, onColorSelected = { color ->
-                                cardViewModel.updateCard(cardViewModel.getCardContent().value.copy(style = color))
+                                cardViewModel.updateCardStyle(color)
                             })
                         }
                     }

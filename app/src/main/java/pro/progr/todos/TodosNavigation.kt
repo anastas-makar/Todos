@@ -178,7 +178,6 @@ fun TodosNavigation(
                     cardViewModel = cardViewModel,
                     listsViewModel = listsViewModel,
                     epochDay = epochDay.toLong(),
-                    paletteViewModelState = paletteViewModelState,
                     navController = navController
                 )
 

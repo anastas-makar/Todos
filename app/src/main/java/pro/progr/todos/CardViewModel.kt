@@ -20,7 +20,7 @@ import pro.progr.todos.brightcards.colors.ColorStyle
 import pro.progr.todos.brightcards.model.CardContent
 import pro.progr.todos.brightcards.model.CardTag
 import pro.progr.todos.brightcards.model.CardAction
-import pro.progr.todos.brightcards.vm.CardViewModel
+import pro.progr.todos.brightcards.model.TodoStatus
 import pro.progr.diamondsandberries.db.Schedule
 import pro.progr.todos.db.NoteTag
 import pro.progr.todos.db.SublistChain
@@ -31,7 +31,7 @@ class CardViewModel private constructor(
     private val _cardContent: MutableStateFlow<CardContent>,
     private val isNewCard: Boolean,
     initialCardId: String? = null
-) : ViewModel(), CardViewModel {
+) : ViewModel() {
 
     internal val cardContent: MutableState<CardContent> = mutableStateOf(_cardContent.value.copy(id = initialCardId))
     private val _cardLoadState = MutableStateFlow(CardLoadState.LOADING)
@@ -49,15 +49,15 @@ class CardViewModel private constructor(
     private var descriptionSaveJob: Job? = null
     private val templateWriteJobs = CopyOnWriteArrayList<Job>()
 
-    override fun getCardId() : String? {
+    fun getCardId() : String? {
         return cardContent.value.id
     }
 
-    override fun onCardActionClicked(action: CardAction) {
+    fun onCardActionClicked(action: CardAction) {
         _cardActionClicked.value = action
     }
 
-    override fun onCardActionClickFired() {
+    fun onCardActionClickFired() {
         _cardActionClicked.value = null
     }
 
@@ -81,7 +81,7 @@ class CardViewModel private constructor(
         getCard(id)
     }
 
-    override fun getCard(id: String) : Job {
+    fun getCard(id: String) : Job {
         return viewModelScope.launch (Dispatchers.Default) {
             requestedCardId = id
             _cardLoadState.value = CardLoadState.LOADING
@@ -105,7 +105,7 @@ class CardViewModel private constructor(
         requestedCardId?.let(::getCard)
     }
 
-    override fun deleteCard() {
+    fun deleteCard() {
         viewModelScope.launch(Dispatchers.Default) {
             repository.deleteCard(_cardContent.value)
         }
@@ -121,26 +121,58 @@ class CardViewModel private constructor(
         }
     }
 
-    override fun updateCard(content: CardContent) {
-        val previous = _cardContent.value
-        // Update the visible form synchronously. Persist only fields that changed.
-        cardContent.value = content
-        _cardContent.value = content
+    fun updateCardTitle(title: String) {
+        val content = updateVisibleContent { it.copy(title = title) } ?: return
+        content.id?.let { queueTitleSave(it, title) }
+    }
 
-        if (content.id == null) return
-        val id = content.id ?: return
+    fun updateCardDescription(description: String) {
+        val content = updateVisibleContent { it.copy(text = description) } ?: return
+        content.id?.let { queueDescriptionSave(it, description) }
+    }
 
-        if (previous.title != content.title) queueTitleSave(id, content.title)
-        if (previous.text != content.text) queueDescriptionSave(id, content.text)
-        if (previous.style != content.style) persist { repository.updateCardStyle(id, content.style, isNewCard) }
-        if (previous.fillTitleBackground != content.fillTitleBackground) {
-            persist { repository.updateCardTitleBackground(id, content.fillTitleBackground, isNewCard) }
+    fun updateCardStyle(style: ColorStyle) {
+        val content = updateVisibleContent { it.copy(style = style) } ?: return
+        content.id?.let { id ->
+            persist { repository.updateCardStyle(id, style, isNewCard) }
         }
-        if (previous.fillTextBackground != content.fillTextBackground) {
-            persist { repository.updateCardDescriptionBackground(id, content.fillTextBackground, isNewCard) }
+    }
+
+    fun updateCardTitleBackground(filled: Boolean) {
+        val content = updateVisibleContent { it.copy(fillTitleBackground = filled) } ?: return
+        content.id?.let { id ->
+            persist { repository.updateCardTitleBackground(id, filled, isNewCard) }
         }
-        if (previous.reward != content.reward) persist { repository.updateCardReward(id, content.reward, isNewCard) }
-        if (previous.todo != content.todo) persist { repository.updateCardTodo(id, content.todo, isNewCard) }
+    }
+
+    fun updateCardDescriptionBackground(filled: Boolean) {
+        val content = updateVisibleContent { it.copy(fillTextBackground = filled) } ?: return
+        content.id?.let { id ->
+            persist { repository.updateCardDescriptionBackground(id, filled, isNewCard) }
+        }
+    }
+
+    fun updateCardReward(reward: Int) {
+        val content = updateVisibleContent { it.copy(reward = reward) } ?: return
+        content.id?.let { id ->
+            persist { repository.updateCardReward(id, reward, isNewCard) }
+        }
+    }
+
+    fun updateCardTodo(todo: TodoStatus) {
+        val content = updateVisibleContent { it.copy(todo = todo) } ?: return
+        content.id?.let { id ->
+            persist { repository.updateCardTodo(id, todo, isNewCard) }
+        }
+    }
+
+    /** Update the in-memory editor snapshot and return it only when it changed. */
+    private fun updateVisibleContent(transform: (CardContent) -> CardContent): CardContent? {
+        val updated = transform(_cardContent.value)
+        if (updated == _cardContent.value) return null
+        _cardContent.value = updated
+        cardContent.value = updated
+        return updated
     }
 
     private fun queueTitleSave(noteId: String, title: String) {
@@ -206,12 +238,12 @@ class CardViewModel private constructor(
     }
 
     fun updateCardLabels(listName : String) {
-        updateCard(_cardContent.value.copy(
+        updateVisibleContent { it.copy(
             scheduleLabel = repository.getScheduleDescription(),
             listLabel = listName,
             tagsLabel = if (cardContent.value.tags.isEmpty()) repository.getNoTagsText()
                 else cardContent.value.tags.fastJoinToString(separator = " #", prefix = "#")
-        ))
+        ) }
     }
 
     fun updateList(list : NList) {
@@ -225,17 +257,17 @@ class CardViewModel private constructor(
         }
     }
 
-    override fun setDone() {
+    fun setDone() {
         viewModelScope.launch (Dispatchers.Default) {
             repository.setCardDone(_cardContent.value)
         }
     }
 
-    override fun showReward(): Boolean {
+    fun showReward(): Boolean {
         return true
     }
 
-    override fun getCardContent(): MutableState<CardContent> {
+    fun getCardContent(): MutableState<CardContent> {
         return cardContent
     }
 

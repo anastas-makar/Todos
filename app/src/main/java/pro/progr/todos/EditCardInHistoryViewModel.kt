@@ -12,29 +12,15 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import pro.progr.todos.brightcards.colors.ColorStyle
 import pro.progr.todos.brightcards.model.CardContent
-import pro.progr.todos.brightcards.model.CardAction
-import pro.progr.todos.brightcards.vm.CardViewModel
 import java.time.LocalDate
 
 class EditCardInHistoryViewModel private constructor(
     private val repository: CardRepository,
     private val _cardContent: MutableStateFlow<CardContent>,
     private val epochDay: Long
-) : ViewModel(), CardViewModel {
+) : ViewModel() {
 
     internal val cardContent: MutableState<CardContent> = mutableStateOf(_cardContent.value)
-
-    override fun getCardId() : String? {
-        return cardContent.value.id
-    }
-
-    override fun onCardActionClicked(action: CardAction) {
-
-    }
-
-    override fun onCardActionClickFired() {
-
-    }
 
     // For creating a new card
     constructor(repository: CardRepository, style: ColorStyle, epochDay: Long) : this(
@@ -58,7 +44,7 @@ class EditCardInHistoryViewModel private constructor(
         }
     }
 
-    override fun getCard(id: String) : Job {
+    private fun getCard(id: String) : Job {
         return viewModelScope.launch (Dispatchers.Default) {
             repository.getCardInHistory(id, epochDay)?.let { cardContent ->
                 _cardContent.value = cardContent
@@ -67,18 +53,19 @@ class EditCardInHistoryViewModel private constructor(
         }
     }
 
-    override fun deleteCard() {
-    }
-
     private fun saveCard(content: CardContent): Job {
         TODO()
     }
 
-    override fun updateCard(content: CardContent) {
-        _cardContent.value = content
+    fun updateCardTitle(title: String) {
+        _cardContent.value = _cardContent.value.copy(title = title)
     }
 
-    private fun updateCard() {
+    fun updateCardDescription(description: String) {
+        _cardContent.value = _cardContent.value.copy(text = description)
+    }
+
+    private fun persistCurrentHistoryText() {
         cardContent.value = _cardContent.value
 
         _cardContent.value.id?.let { cardId ->
@@ -95,19 +82,12 @@ class EditCardInHistoryViewModel private constructor(
     private fun observeCard() {
         _cardContent.onEach { content ->
             if (content.id != null) {
-                updateCard()
+                persistCurrentHistoryText()
             }
         }.launchIn(viewModelScope)
     }
 
-    override fun setDone() {
-    }
-
-    override fun showReward(): Boolean {
-        return false
-    }
-
-    override fun getCardContent(): MutableState<CardContent> {
+    fun getCardContent(): MutableState<CardContent> {
         return cardContent
     }
 

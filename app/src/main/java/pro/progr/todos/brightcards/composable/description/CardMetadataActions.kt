@@ -15,7 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import pro.progr.todos.brightcards.composable.DiamondSelector
 import pro.progr.todos.brightcards.model.CardAction
-import pro.progr.todos.brightcards.vm.CardViewModel
+import pro.progr.todos.CardViewModel
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable

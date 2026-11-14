@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import pro.progr.todos.brightcards.composable.EditCard
 import pro.progr.todos.brightcards.composable.visual.ColorPickerButton
-import pro.progr.todos.brightcards.vm.CardViewModel
+import pro.progr.todos.CardViewModel
 import pro.progr.todos.brightcards.vm.PaletteViewModel
 
 @ExperimentalMaterialApi
@@ -49,6 +49,7 @@ fun CardEditorWithColorPicker(
         scrimColor = Color.Black.copy(alpha = 0.32f),  // Установка scrim цвета
         sheetShape = RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp),
         sheetElevation = if (sheetState.isVisible) 5.dp else 0.dp,
+        sheetGesturesEnabled = sheetState.isVisible,
         sheetContent = {
             Box(
                 modifier = Modifier

@@ -22,7 +22,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import pro.progr.todos.R
 import pro.progr.todos.brightcards.model.TodoStatus
-import pro.progr.todos.brightcards.vm.CardViewModel
+import pro.progr.todos.CardViewModel
 
 @Composable
 fun SquareButton(

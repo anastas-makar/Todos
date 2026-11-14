@@ -18,15 +18,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.input.TextFieldValue
 import pro.progr.todos.brightcards.CardStyle
-import pro.progr.todos.brightcards.vm.CardViewModel
 
 @Composable
-fun ColumnScope.EditDescription(cardViewModel: CardViewModel,
-                                style: CardStyle,
-                                showMetadataActions: Boolean = true) {
-    val cardState = cardViewModel.getCardContent()
-    val descriptionInput = remember(cardState.value.id) {
-        mutableStateOf(TextFieldValue(cardState.value.text))
+fun ColumnScope.EditDescription(
+    cardId: String?,
+    description: String,
+    style: CardStyle,
+    onDescriptionChange: (String) -> Unit,
+    metadataActions: @Composable ColumnScope.() -> Unit = {}
+) {
+    val descriptionInput = remember(cardId) {
+        mutableStateOf(TextFieldValue(description))
     }
     Column(
         modifier = Modifier
@@ -46,7 +48,7 @@ fun ColumnScope.EditDescription(cardViewModel: CardViewModel,
             value = descriptionInput.value,
             onValueChange = { value: TextFieldValue ->
                 descriptionInput.value = value
-                cardViewModel.updateCard(cardViewModel.getCardContent().value.copy(text = value.text))
+                if (description != value.text) onDescriptionChange(value.text)
             },
             colors = TextFieldDefaults.textFieldColors(
                 textColor = style.descriptionTextColor,
@@ -58,8 +60,6 @@ fun ColumnScope.EditDescription(cardViewModel: CardViewModel,
             placeholder = { Text(text = stringResource(R.string.description), color = style.descriptionPlaceHolderColor) }
         )
 
-        //if (cardViewModel.getCardContent().value.text.isNotEmpty() || cardViewModel.getCardContent().value.title.isNotEmpty()) {
-            if (showMetadataActions) CardMetadataActions(cardViewModel)
-        //}
+        metadataActions()
     }
 }

@@ -46,7 +46,7 @@ fun ListedContentFrame(listsViewModel: ListsViewModel, content: @Composable () -
         scrimColor = Color.Black.copy(alpha = 0.32f),  // Установка scrim цвета
         sheetShape = RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp),
         sheetElevation = if (sheetState.isVisible) 5.dp else 0.dp,
-        sheetGesturesEnabled = true,
+        sheetGesturesEnabled = sheetState.isVisible,
         sheetContent = {
             Column(
                 modifier = Modifier

@@ -18,7 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import pro.progr.todos.R
-import pro.progr.todos.brightcards.vm.CardViewModel
+import pro.progr.todos.CardViewModel
 
 @Composable
 fun ColorPickerButton(onClick: () -> Unit, cardViewModel: CardViewModel) {

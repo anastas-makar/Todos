@@ -75,6 +75,9 @@ fun AddTagsScreen(tagsViewModel: TagsViewModel,
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
         ModalDrawer(
             drawerState = drawerState,
+            // The drawer opens from the tag action. Avoid running its swipe detector
+            // over editor controls while it is closed.
+            gesturesEnabled = drawerState.isOpen,
             drawerContent = {
                 Column(modifier = Modifier
                     .fillMaxSize()

@@ -17,7 +17,7 @@ import pro.progr.todos.brightcards.CardStyle
 import pro.progr.todos.brightcards.composable.description.EditDescription
 import pro.progr.todos.brightcards.composable.description.CardMetadataActions
 import pro.progr.todos.brightcards.composable.title.EditTitle
-import pro.progr.todos.brightcards.vm.CardViewModel
+import pro.progr.todos.CardViewModel
 
 @Composable
 fun EditCard(cardViewModel: CardViewModel, metadataAtTop: Boolean = false) {
@@ -43,12 +43,21 @@ fun EditCard(cardViewModel: CardViewModel, metadataAtTop: Boolean = false) {
 
         if (metadataAtTop) CardMetadataActions(cardViewModel)
 
-        EditTitle(cardViewModel = cardViewModel, style = style)
+        EditTitle(
+            cardId = cardContent.value.id,
+            title = cardContent.value.title,
+            style = style,
+            onTitleChange = cardViewModel::updateCardTitle
+        )
 
         EditDescription(
-            cardViewModel = cardViewModel,
+            cardId = cardContent.value.id,
+            description = cardContent.value.text,
             style = style,
-            showMetadataActions = !metadataAtTop
+            onDescriptionChange = cardViewModel::updateCardDescription,
+            metadataActions = {
+                if (!metadataAtTop) CardMetadataActions(cardViewModel)
+            }
         )
 
     }

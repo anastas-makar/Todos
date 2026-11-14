@@ -13,10 +13,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.PopupProperties
 import pro.progr.todos.R
 import pro.progr.todos.brightcards.composable.visual.SquareButton
 import pro.progr.todos.brightcards.model.TodoStatus
-import pro.progr.todos.brightcards.vm.CardViewModel
+import pro.progr.todos.CardViewModel
 
 @Composable
 fun DiamondSelector(cardViewModel: CardViewModel) {
@@ -27,23 +28,26 @@ fun DiamondSelector(cardViewModel: CardViewModel) {
     val options = listOf(100, 50, 25, 15, 10, 5, 1, noteLabel)
 
 
-    SquareButton(onClick = { expanded.value = true }, cardViewModel = cardViewModel) {
+    SquareButton(
+        onClick = { expanded.value = true },
+        cardViewModel = cardViewModel
+    ) {
 
         DropdownMenu(
             expanded = expanded.value,
             onDismissRequest = { expanded.value = false },
+            properties = PopupProperties(focusable = false),
         ) {
             options.forEach { option ->
                 DropdownMenuItem(onClick = {
 
 
-                    // Обработка выбора
-                    cardViewModel.updateCard(
-                        cardViewModel.getCardContent().value.copy(
-                            todo = if (option != noteLabel) TodoStatus.TODO else TodoStatus.NOT_ACTIVE,
-                            reward = if (option != noteLabel) (option as Int) else cardViewModel.getCardContent().value.reward
-                        )
-                    )
+                    if (option == noteLabel) {
+                        cardViewModel.updateCardTodo(TodoStatus.NOT_ACTIVE)
+                    } else {
+                        cardViewModel.updateCardTodo(TodoStatus.TODO)
+                        cardViewModel.updateCardReward(option as Int)
+                    }
 
                     expanded.value = false
                 }) {
