@@ -5,5 +5,6 @@ interface ColorStyle {
     fun textColor() : Long
     fun secondaryElementsColor() : Long
     fun iconsColor() : Long
+    fun separateIconColor() : Long
     fun placeHolderColor(): Long
 }

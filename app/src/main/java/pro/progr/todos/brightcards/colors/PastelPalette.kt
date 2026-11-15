@@ -37,4 +37,8 @@ enum class PastelPalette(val rgb: Long) : ColorStyle {
     override fun placeHolderColor(): Long {
         return 0x99000000
     }
+
+    override fun separateIconColor(): Long {
+        return 0xff000000
+    }
 }

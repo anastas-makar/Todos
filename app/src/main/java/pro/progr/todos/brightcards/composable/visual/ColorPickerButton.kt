@@ -25,29 +25,15 @@ fun ColorPickerButton(onClick: () -> Unit, cardViewModel: CardViewModel) {
     Box(
         modifier = Modifier
             .size(32.dp)
-            .border(1.dp,
-                if (cardViewModel.getCardContent().value.fillTextBackground) Color(cardViewModel.getCardContent().value.style.iconsColor())
-                else MaterialTheme.colors.onSurface
-                , shape = RoundedCornerShape(4.dp))
             .background(Color.Transparent)
             .padding(4.dp)
             .clickable(onClick = onClick),
         contentAlignment = Alignment.BottomCenter
     ) {
-        Box(
-            modifier = Modifier
-                .size(48.dp)
-                .background(
-                    if (cardViewModel.getCardContent().value.fillTextBackground) Color(cardViewModel.getCardContent().value.style.iconsColor())
-                    else MaterialTheme.colors.onSurface
-                    , shape = RoundedCornerShape(100))
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_palette),
-                contentDescription = stringResource(R.string.todo),
-                tint = if (cardViewModel.getCardContent().value.fillTextBackground) Color(cardViewModel.getCardContent().value.style.backgroundColor())
-                        else MaterialTheme.colors.background
-            )
-        }
+        Icon(
+            painter = painterResource(id = R.drawable.ic_palette),
+            contentDescription = stringResource(R.string.todo),
+            tint = Color(cardViewModel.getCardContent().value.style.separateIconColor())
+        )
     }
 }

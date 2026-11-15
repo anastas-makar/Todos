@@ -37,4 +37,8 @@ enum class GouachePalette(val rgb: Long) : ColorStyle {
     override fun placeHolderColor(): Long {
         return 0x99ffffff
     }
+
+    override fun separateIconColor(): Long {
+        return rgb
+    }
 }
