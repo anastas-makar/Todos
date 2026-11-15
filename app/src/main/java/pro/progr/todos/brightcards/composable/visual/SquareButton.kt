@@ -30,13 +30,13 @@ fun SquareButton(
     cardViewModel: CardViewModel,
     dropdownContent: @Composable () -> Unit = {}
 ) {
-    val borderColor = if (cardViewModel.getCardContent().value.fillTextBackground)
+    val borderColor = if (cardViewModel.getCardContent().value.fillTitleBackground)
         Color(cardViewModel.getCardContent().value.style.secondaryElementsColor())
     else
         MaterialTheme.colors.onSurface
 
 
-    val textColor = if (cardViewModel.getCardContent().value.fillTextBackground)
+    val textColor = if (cardViewModel.getCardContent().value.fillTitleBackground)
         Color(cardViewModel.getCardContent().value.style.textColor())
     else
         MaterialTheme.colors.onSurface
