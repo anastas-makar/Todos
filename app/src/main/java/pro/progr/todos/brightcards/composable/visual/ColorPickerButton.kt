@@ -22,11 +22,13 @@ import pro.progr.todos.CardViewModel
 
 @Composable
 fun ColorPickerButton(onClick: () -> Unit, cardViewModel: CardViewModel) {
+    val backgroundColor = Color(cardViewModel.getCardContent().value.style.separateIconBackgroundColor())
     Box(
         modifier = Modifier
             .size(32.dp)
             .background(Color.Transparent)
             .padding(4.dp)
+            .background(color = backgroundColor, shape = RoundedCornerShape(100))
             .clickable(onClick = onClick),
         contentAlignment = Alignment.BottomCenter
     ) {

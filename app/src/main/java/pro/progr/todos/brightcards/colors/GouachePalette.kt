@@ -41,4 +41,8 @@ enum class GouachePalette(val rgb: Long) : ColorStyle {
     override fun separateIconColor(): Long {
         return rgb
     }
+
+    override fun separateIconBackgroundColor(): Long {
+        return 0xffffffff
+    }
 }
