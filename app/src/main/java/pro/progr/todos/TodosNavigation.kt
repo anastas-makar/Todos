@@ -172,11 +172,9 @@ fun TodosNavigation(
 
                 val cardViewModel: EditCardInHistoryViewModel =
                     viewModel(factory = cardViewModelFactory)
-                val listsViewModel: ListsViewModel = viewModel(factory = listsViewModelFactory)
 
                 EditNoteInHistoryScreen(
                     cardViewModel = cardViewModel,
-                    listsViewModel = listsViewModel,
                     epochDay = epochDay.toLong(),
                     navController = navController
                 )

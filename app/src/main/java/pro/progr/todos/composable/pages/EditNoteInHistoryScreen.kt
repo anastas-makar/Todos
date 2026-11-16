@@ -30,7 +30,6 @@ import java.time.LocalDate
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun EditNoteInHistoryScreen(cardViewModel: EditCardInHistoryViewModel,
-                            listsViewModel: ListsViewModel,
                             epochDay: Long,
                             navController: NavHostController
 ) {
@@ -54,30 +53,28 @@ fun EditNoteInHistoryScreen(cardViewModel: EditCardInHistoryViewModel,
                     .fillMaxHeight()
                     .navigationBarsPadding()
             ) {
-                ListedContentFrame(listsViewModel = listsViewModel) {
-                    val contentState = cardViewModel.getCardContent()
-                    val content = contentState.value
-                    val style = remember(contentState) { CardStyle(contentState) }
-                    Column(
-                        modifier = Modifier
-                            .padding(horizontal = 15.dp, vertical = 5.dp)
-                            .fillMaxSize()
-                            .background(Color.Transparent, RoundedCornerShape(5.dp))
-                            .border(1.dp, Color(content.style.backgroundColor()), RoundedCornerShape(5.dp))
-                    ) {
-                        EditTitle(
-                            cardId = content.id,
-                            title = content.title,
-                            style = style,
-                            onTitleChange = cardViewModel::updateCardTitle
-                        )
-                        EditDescription(
-                            cardId = content.id,
-                            description = content.text,
-                            style = style,
-                            onDescriptionChange = cardViewModel::updateCardDescription
-                        )
-                    }
+                val contentState = cardViewModel.getCardContent()
+                val content = contentState.value
+                val style = remember(contentState) { CardStyle(contentState) }
+                Column(
+                    modifier = Modifier
+                        .padding(horizontal = 15.dp, vertical = 5.dp)
+                        .fillMaxSize()
+                        .background(Color.Transparent, RoundedCornerShape(5.dp))
+                        .border(1.dp, Color(content.style.backgroundColor()), RoundedCornerShape(5.dp))
+                ) {
+                    EditTitle(
+                        cardId = content.id,
+                        title = content.title,
+                        style = style,
+                        onTitleChange = cardViewModel::updateCardTitle
+                    )
+                    EditDescription(
+                        cardId = content.id,
+                        description = content.text,
+                        style = style,
+                        onDescriptionChange = cardViewModel::updateCardDescription
+                    )
                 }
             }
         }
