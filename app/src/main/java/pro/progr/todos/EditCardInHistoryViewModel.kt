@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import pro.progr.todos.brightcards.ColorUpdateInterface
 import pro.progr.todos.brightcards.colors.ColorStyle
 import pro.progr.todos.brightcards.model.CardContent
 import java.time.LocalDate
@@ -18,7 +19,7 @@ class EditCardInHistoryViewModel private constructor(
     private val repository: CardRepository,
     private val _cardContent: MutableStateFlow<CardContent>,
     private val epochDay: Long
-) : ViewModel() {
+) : ViewModel(), ColorUpdateInterface {
 
     internal val cardContent: MutableState<CardContent> = mutableStateOf(_cardContent.value)
 
@@ -87,8 +88,20 @@ class EditCardInHistoryViewModel private constructor(
         }.launchIn(viewModelScope)
     }
 
-    fun getCardContent(): MutableState<CardContent> {
+    override fun getCardContent(): MutableState<CardContent> {
         return cardContent
+    }
+
+    override fun updateCardTitleBackground(filled: Boolean) {
+        TODO("Not yet implemented")
+    }
+
+    override fun updateCardDescriptionBackground(filled: Boolean) {
+        TODO("Not yet implemented")
+    }
+
+    override fun updateCardStyle(style: ColorStyle) {
+        TODO("Not yet implemented")
     }
 
     fun removeForDay(date: LocalDate) {

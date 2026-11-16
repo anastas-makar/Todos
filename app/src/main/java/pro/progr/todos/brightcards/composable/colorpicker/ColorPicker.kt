@@ -1,10 +1,18 @@
 package pro.progr.todos.brightcards.composable.colorpicker
 
-import androidx.compose.ui.res.stringResource
-import pro.progr.todos.R
-
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
@@ -18,22 +26,24 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import pro.progr.todos.R
+import pro.progr.todos.brightcards.ColorUpdateInterface
 import pro.progr.todos.brightcards.carousel.CarouselPager
 import pro.progr.todos.brightcards.colors.ColorsProvider
 import pro.progr.todos.brightcards.composable.ColorItem
-import pro.progr.todos.CardViewModel
 import pro.progr.todos.brightcards.vm.PaletteViewModel
 
 @Composable
-fun ColorPicker(cardViewModel: CardViewModel, paletteViewModel: PaletteViewModel) {
+fun ColorPicker(colorUpdater: ColorUpdateInterface, paletteViewModel: PaletteViewModel) {
 
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(top = 20.dp/*, start = 25.dp, end = 25.dp*/)) {
         Row(modifier = Modifier.padding(bottom = 10.dp)) {
             TextButton(
                 onClick = {
-                    cardViewModel.updateCardTitleBackground(
-                        !cardViewModel.getCardContent().value.fillTitleBackground
+                    colorUpdater.updateCardTitleBackground(
+                        !colorUpdater.getCardContent().value.fillTitleBackground
                     )
                 },
                 shape = RoundedCornerShape(0.dp),
@@ -49,8 +59,8 @@ fun ColorPicker(cardViewModel: CardViewModel, paletteViewModel: PaletteViewModel
 
                     Box(modifier = Modifier
                         .background(
-                            color = if (cardViewModel.getCardContent().value.fillTitleBackground)
-                                Color(cardViewModel.getCardContent().value.style.backgroundColor())
+                            color = if (colorUpdater.getCardContent().value.fillTitleBackground)
+                                Color(colorUpdater.getCardContent().value.style.backgroundColor())
                             else
                                 Color.Transparent,
                             shape = CircleShape
@@ -64,8 +74,8 @@ fun ColorPicker(cardViewModel: CardViewModel, paletteViewModel: PaletteViewModel
             //Spacer(modifier = Modifier.width(5.dp))
 
             TextButton(onClick = {
-                cardViewModel.updateCardDescriptionBackground(
-                    !cardViewModel.getCardContent().value.fillTextBackground
+                colorUpdater.updateCardDescriptionBackground(
+                    !colorUpdater.getCardContent().value.fillTextBackground
                 )
             },
                 modifier = Modifier
@@ -76,8 +86,8 @@ fun ColorPicker(cardViewModel: CardViewModel, paletteViewModel: PaletteViewModel
                 Row {
                     Box(modifier = Modifier
                         .background(
-                            color = if (cardViewModel.getCardContent().value.fillTextBackground)
-                                Color(cardViewModel.getCardContent().value.style.backgroundColor())
+                            color = if (colorUpdater.getCardContent().value.fillTextBackground)
+                                Color(colorUpdater.getCardContent().value.style.backgroundColor())
                             else
                                 Color.Transparent,
                             shape = CircleShape
@@ -105,8 +115,8 @@ fun ColorPicker(cardViewModel: CardViewModel, paletteViewModel: PaletteViewModel
                             .weight(1f)
                             .widthIn(min = 50.dp, max = 100.dp),
                         contentAlignment = Alignment.Center) {
-                            ColorItem(color = color, selectedColor = cardViewModel.getCardContent().value.style, onColorSelected = { color ->
-                                cardViewModel.updateCardStyle(color)
+                            ColorItem(color = color, selectedColor = colorUpdater.getCardContent().value.style, onColorSelected = { color ->
+                                colorUpdater.updateCardStyle(color)
                             })
                         }
                     }

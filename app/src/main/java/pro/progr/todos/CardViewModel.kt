@@ -22,6 +22,7 @@ import pro.progr.todos.brightcards.model.CardTag
 import pro.progr.todos.brightcards.model.CardAction
 import pro.progr.todos.brightcards.model.TodoStatus
 import pro.progr.diamondsandberries.db.Schedule
+import pro.progr.todos.brightcards.ColorUpdateInterface
 import pro.progr.todos.db.NoteTag
 import pro.progr.todos.db.SublistChain
 import java.util.concurrent.CopyOnWriteArrayList
@@ -31,7 +32,7 @@ class CardViewModel private constructor(
     private val _cardContent: MutableStateFlow<CardContent>,
     private val isNewCard: Boolean,
     initialCardId: String? = null
-) : ViewModel() {
+) : ViewModel(), ColorUpdateInterface {
 
     internal val cardContent: MutableState<CardContent> = mutableStateOf(_cardContent.value.copy(id = initialCardId))
     private val _cardLoadState = MutableStateFlow(CardLoadState.LOADING)
@@ -131,21 +132,21 @@ class CardViewModel private constructor(
         content.id?.let { queueDescriptionSave(it, description) }
     }
 
-    fun updateCardStyle(style: ColorStyle) {
+    override fun updateCardStyle(style: ColorStyle) {
         val content = updateVisibleContent { it.copy(style = style) } ?: return
         content.id?.let { id ->
             persist { repository.updateCardStyle(id, style, isNewCard) }
         }
     }
 
-    fun updateCardTitleBackground(filled: Boolean) {
+    override fun updateCardTitleBackground(filled: Boolean) {
         val content = updateVisibleContent { it.copy(fillTitleBackground = filled) } ?: return
         content.id?.let { id ->
             persist { repository.updateCardTitleBackground(id, filled, isNewCard) }
         }
     }
 
-    fun updateCardDescriptionBackground(filled: Boolean) {
+    override fun updateCardDescriptionBackground(filled: Boolean) {
         val content = updateVisibleContent { it.copy(fillTextBackground = filled) } ?: return
         content.id?.let { id ->
             persist { repository.updateCardDescriptionBackground(id, filled, isNewCard) }
@@ -267,7 +268,7 @@ class CardViewModel private constructor(
         return true
     }
 
-    fun getCardContent(): MutableState<CardContent> {
+    override fun getCardContent(): MutableState<CardContent> {
         return cardContent
     }
 
