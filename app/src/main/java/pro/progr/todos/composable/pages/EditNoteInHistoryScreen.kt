@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -115,12 +114,11 @@ fun EditNoteInHistoryScreen(
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(40.dp)
+                                .wrapContentHeight()
                                 .background(
                                     color = style.titleBackgroundColor,
                                     shape = RoundedCornerShape(topStart = 4.dp, topEnd = 4.dp)
-                                )
-                                .padding(end = 4.dp),
+                                ),
                             contentAlignment = Alignment.CenterEnd
                         ) {
                             ColorPickerButton(
