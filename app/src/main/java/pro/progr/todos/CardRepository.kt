@@ -36,7 +36,6 @@ class CardRepository @Inject constructor(
 
     lateinit var note: NoteWithData
 
-    private var scheduleSetForId : String? = null
     private val templateEditMutex = Mutex()
     private val templateEditScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private val templateEditQueue = Channel<TemplateEditRequest>(Channel.UNLIMITED)
@@ -224,13 +223,10 @@ class CardRepository @Inject constructor(
         return note.note.sublistChain
     }
 
-    fun setSchedule(schedule: Schedule) {
-        if (scheduleSetForId != note.note.id) {
-            note.note.applySchedule(schedule)
-            scheduleSetForId = note.note.id
-        }
-
-        notesWithDataDao.update(note)
+    suspend fun updateCardSchedule(schedule: Schedule) {
+        val noteId = note.note.id
+        noteAndHistoryDao.updateScheduleAndHistory(noteId, schedule)
+        note.note.applySchedule(schedule)
     }
 
     fun getSchedule() : Schedule {

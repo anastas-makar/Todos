@@ -46,6 +46,10 @@
     <string name="dates">Dates</string>
     <string name="task_not_in_calendar">Task is not in calendar</string>
     <string name="schedule">Schedule</string>
+    <string name="no_dates_selected">No dates selected</string>
+    <string name="selected_dates_count">Selected dates: %1$d</string>
+    <string name="date_range_hint">Optional date range (YYYY-MM-DD)</string>
+    <string name="cancel">Cancel</string>
     <string name="repeat_daily">Repeat every day</string>
     <string name="every_day">Every day</string>
     <string name="every_other_day">Every other day</string>

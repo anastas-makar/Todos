@@ -25,6 +25,7 @@ import pro.progr.diamondsandberries.db.Schedule
 import pro.progr.todos.brightcards.ColorUpdateInterface
 import pro.progr.todos.db.NoteTag
 import pro.progr.todos.db.SublistChain
+import pro.progr.todos.datefilters.FilterType
 import java.util.concurrent.CopyOnWriteArrayList
 
 class CardViewModel private constructor(
@@ -35,6 +36,9 @@ class CardViewModel private constructor(
 ) : ViewModel(), ColorUpdateInterface {
 
     internal val cardContent: MutableState<CardContent> = mutableStateOf(_cardContent.value.copy(id = initialCardId))
+    val scheduleState: MutableState<Schedule> = mutableStateOf(
+        Schedule(Schedule.Pattern(linkedMapOf(), FilterType.NO_TERMS))
+    )
     private val _cardLoadState = MutableStateFlow(CardLoadState.LOADING)
     val cardLoadState: StateFlow<CardLoadState> = _cardLoadState
     private var requestedCardId: String? = null
@@ -91,6 +95,7 @@ class CardViewModel private constructor(
                 val loaded = repository.getCard(id)
                 _cardContent.value = loaded
                 cardContent.value = loaded
+                scheduleState.value = repository.getSchedule()
                 _cardLoadState.value = CardLoadState.READY
                 Log.d("TodosCardEditor", "Loaded card id=$id")
             } catch (e: CancellationException) {
@@ -117,6 +122,7 @@ class CardViewModel private constructor(
             repository.saveCard(content).also { savedCardContent ->
                 _cardContent.value = savedCardContent
                 cardContent.value = savedCardContent
+                scheduleState.value = repository.getSchedule()
                 _cardLoadState.value = CardLoadState.READY
             }
         }
@@ -233,9 +239,11 @@ class CardViewModel private constructor(
     suspend fun setScheduleAndAwait(schedule: Schedule) {
         flushAndAwaitCardEdits()
         withContext(Dispatchers.IO) {
-            repository.setSchedule(schedule = schedule)
-            repository.updateNote()
+            repository.updateCardSchedule(schedule)
         }
+        scheduleState.value = schedule
+        val description = repository.getScheduleDescription()
+        updateVisibleContent { it.copy(scheduleLabel = description) }
     }
 
     fun updateCardLabels(listName : String) {

@@ -20,10 +20,8 @@ import pro.progr.todos.brightcards.vm.PaletteViewModel
 import pro.progr.todos.composable.pages.CalendarScreen
 import pro.progr.todos.composable.pages.EditNoteInHistoryScreen
 import pro.progr.todos.composable.pages.ListScreen
-import pro.progr.todos.composable.pages.SchedulePage
 import pro.progr.todos.dagger2.CardViewModelFactory
 import pro.progr.todos.dagger2.ListsViewModelFactory
-import pro.progr.todos.dagger2.NoteCalendarViewModelFactory
 import pro.progr.todos.dagger2.TodosComponent
 
 @kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -42,7 +40,6 @@ fun TodosNavigation(
 
     val daggerViewModelFactory = component.daggerViewModelFactory()
     val cardViewModelFactory: CardViewModelFactory = component.cardViewModelFactory()
-    val noteCalendarViewModelFactory: NoteCalendarViewModelFactory = component.noteCalendarViewModelFactory()
     val listsViewModelFactory: ListsViewModelFactory = component.listsViewModelFactory()
 
     val commonListsViewModel: ListsViewModel = viewModel(factory = listsViewModelFactory)
@@ -151,14 +148,6 @@ fun TodosNavigation(
                 isNewCard = true,
                 initialDate = epochDay!!.toLong()
             )
-        }
-
-        composable("taskSchedule/{cardId}") { backStackEntry ->
-            val cardId = backStackEntry.arguments?.getString("cardId")
-            noteCalendarViewModelFactory.noteId = cardId!!
-            val viewModel: NoteCalendarViewModel = viewModel(factory = noteCalendarViewModelFactory)
-
-            SchedulePage(viewModel, navController)
         }
 
         composable("editNoteInHistory/{cardId}/date/{date}") { backStackEntry ->

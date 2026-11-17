@@ -4,7 +4,11 @@ import androidx.room.*
 import pro.progr.todos.brightcards.colors.ColorStyle
 import pro.progr.todos.NoteConverter
 import pro.progr.todos.datefilters.FilterType
+import pro.progr.diamondsandberries.db.Schedule
+import pro.progr.diamondsandberries.db.FilterTypeConverter
+import pro.progr.diamondsandberries.db.PatternDatesConverter
 import java.time.LocalDate
+import java.util.LinkedHashMap
 
 @Dao
 interface NoteAndHistoryDao {
@@ -186,6 +190,63 @@ interface NoteAndHistoryDao {
 
     @Query("SELECT * FROM notes_in_history WHERE noteId=:noteId AND date=:epochDay AND deleted = 0")
     fun getNoteInHistory(noteId: String, epochDay: Long): NoteInHistory?
+
+    @Query("SELECT * FROM notes WHERE id = :noteId")
+    suspend fun getNoteForScheduleUpdate(noteId: String): Note?
+
+    @Query("""
+        UPDATE notes SET
+            added_dates = :addedDates,
+            cancelled_dates = :cancelledDates,
+            pattern_days = :patternDays,
+            pattern_type = :patternType,
+            date_since = :dateSince,
+            date_till = :dateTill
+        WHERE id = :noteId
+    """)
+    @TypeConverters(
+        LongArrayConverter::class,
+        PatternDatesConverter::class,
+        FilterTypeConverter::class
+    )
+    suspend fun updateScheduleColumns(
+        noteId: String,
+        addedDates: ArrayPOJO?,
+        cancelledDates: ArrayPOJO?,
+        patternDays: LinkedHashMap<Long, Schedule.Day>?,
+        patternType: FilterType?,
+        dateSince: Long?,
+        dateTill: Long?
+    ): Int
+
+    /** Update only scheduling columns, then reconcile today's history from a fresh DB row. */
+    @Transaction
+    suspend fun updateScheduleAndHistory(noteId: String, schedule: Schedule) {
+        val note = getNoteForScheduleUpdate(noteId) ?: return
+        note.applySchedule(schedule)
+        if (updateScheduleColumns(
+                note.id,
+                note.addedDates,
+                note.cancelledDates,
+                note.patterDates,
+                note.patternType,
+                note.dateSince,
+                note.dateTill
+            ) == 0
+        ) return
+
+        val today = LocalDate.now()
+        val day = today.toEpochDay()
+        val history = getNoteInHistory(noteId, day)
+        val isScheduledToday = (note.patternType ?: FilterType.NO_TERMS)
+            .datesFilter.isActual(note.toSchedule(), today)
+
+        if (!isScheduledToday && history != null) {
+            remoCardForDay(day, noteId)
+        } else if (isScheduledToday && history == null) {
+            insert(NoteConverter.toNoteInHistory(note, day))
+        }
+    }
 
     /**
      * Для других дней история может сохраняться при удалении задачи, а на сегодня -- нет

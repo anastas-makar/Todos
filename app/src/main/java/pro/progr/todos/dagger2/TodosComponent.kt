@@ -30,8 +30,6 @@ interface TodosComponent {
 
     fun daggerViewModelFactory(): DaggerViewModelFactory
 
-    fun noteCalendarViewModelFactory(): NoteCalendarViewModelFactory
-
     fun paletteViewModelFactory(): PaletteViewModelFactory
 
     fun api(): TodosApiService

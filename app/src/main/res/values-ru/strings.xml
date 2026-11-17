@@ -46,6 +46,10 @@
     <string name="dates">Даты</string>
     <string name="task_not_in_calendar">Задача не в календаре</string>
     <string name="schedule">Расписание</string>
+    <string name="no_dates_selected">Даты не выбраны</string>
+    <string name="selected_dates_count">Выбрано дат: %1$d</string>
+    <string name="date_range_hint">Необязательный период (ГГГГ-ММ-ДД)</string>
+    <string name="cancel">Отмена</string>
     <string name="repeat_daily">Повторять каждый день</string>
     <string name="every_day">Каждый день</string>
     <string name="every_other_day">Через день</string>

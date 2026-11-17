@@ -17,6 +17,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshotFlow
@@ -40,6 +42,7 @@ import pro.progr.todos.brightcards.model.CardAction
 import pro.progr.todos.brightcards.vm.PaletteViewModel
 import pro.progr.todos.composable.AddTagsScreen
 import pro.progr.todos.composable.NoteBar
+import pro.progr.todos.composable.ScheduleEditorDialog
 import pro.progr.todos.datefilters.FilterType
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -56,6 +59,7 @@ fun CardEditorScreen(
     val screenScope = rememberCoroutineScope()
     val cardId = cardViewModel.getCardId()
     val cardLoadState = cardViewModel.cardLoadState.collectAsState()
+    var showScheduleEditor by remember(cardViewModel) { mutableStateOf(false) }
     val initialScheduleReady = remember(cardViewModel, initialDate, isNewCard) {
         mutableStateOf(!isNewCard || initialDate == null)
     }
@@ -119,13 +123,24 @@ fun CardEditorScreen(
     cardAction.value?.let { action ->
         cardViewModel.onCardActionClickFired()
         when (action) {
-            CardAction.EDIT_SCHEDULE -> screenScope.launch {
-                cardViewModel.flushAndAwaitCardEdits()
-                navController.navigate("taskSchedule/${cardId}")
-            }
+            CardAction.EDIT_SCHEDULE -> showScheduleEditor = true
             CardAction.SELECT_LIST -> listsViewModel.sheetMode.value = ListsViewModel.SheetMode.SHOW
             CardAction.SELECT_TAGS -> tagsViewModel.showTagsSheet.value = !tagsViewModel.showTagsSheet.value
         }
+    }
+
+    if (showScheduleEditor && cardLoadState.value == CardViewModel.CardLoadState.READY) {
+        ScheduleEditorDialog(
+            initialSchedule = cardViewModel.scheduleState.value,
+            onDismiss = { showScheduleEditor = false },
+            onApply = { schedule ->
+                screenScope.launch {
+                    cardViewModel.flushAndAwaitCardEdits()
+                    cardViewModel.setScheduleAndAwait(schedule)
+                    showScheduleEditor = false
+                }
+            }
+        )
     }
 
     if (cardLoadState.value == CardViewModel.CardLoadState.FAILED) {

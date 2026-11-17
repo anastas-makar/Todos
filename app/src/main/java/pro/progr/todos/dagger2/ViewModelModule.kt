@@ -3,7 +3,6 @@ package pro.progr.todos.dagger2
 import dagger.Module
 import dagger.Provides
 import pro.progr.todos.CardRepository
-import pro.progr.todos.DatesGridRepository
 import pro.progr.todos.ListRepository
 @Module
 class ViewModelModule {
@@ -15,11 +14,6 @@ class ViewModelModule {
     @Provides
     fun provideListViewModelFactory(repository: ListRepository): ListsViewModelFactory {
         return ListsViewModelFactory(repository)
-    }
-
-    @Provides
-    fun provideCalendarViewModelFactory(repository: DatesGridRepository): NoteCalendarViewModelFactory {
-        return NoteCalendarViewModelFactory(repository)
     }
 
 }
