@@ -18,11 +18,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import pro.progr.todos.R
-import pro.progr.todos.CardViewModel
+import pro.progr.todos.brightcards.ColorUpdateInterface
 
 @Composable
-fun ColorPickerButton(onClick: () -> Unit, cardViewModel: CardViewModel) {
-    val backgroundColor = Color(cardViewModel.getCardContent().value.style.separateIconBackgroundColor())
+fun ColorPickerButton(onClick: () -> Unit, colorUpdater: ColorUpdateInterface) {
+    val content = colorUpdater.getCardContent().value
+    val backgroundColor = Color(content.style.separateIconBackgroundColor())
     Box(
         modifier = Modifier
             .size(32.dp)
@@ -35,7 +36,7 @@ fun ColorPickerButton(onClick: () -> Unit, cardViewModel: CardViewModel) {
         Icon(
             painter = painterResource(id = R.drawable.ic_palette),
             contentDescription = stringResource(R.string.todo),
-            tint = Color(cardViewModel.getCardContent().value.style.separateIconColor())
+            tint = Color(content.style.separateIconColor())
         )
     }
 }

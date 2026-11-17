@@ -93,15 +93,38 @@ class EditCardInHistoryViewModel private constructor(
     }
 
     override fun updateCardTitleBackground(filled: Boolean) {
-        TODO("Not yet implemented")
+        updateHistoryContent { it.copy(fillTitleBackground = filled) }
+        persistHistoryField { cardId ->
+            repository.updateCardHistoryTitleBackground(cardId, epochDay, filled)
+        }
     }
 
     override fun updateCardDescriptionBackground(filled: Boolean) {
-        TODO("Not yet implemented")
+        updateHistoryContent { it.copy(fillTextBackground = filled) }
+        persistHistoryField { cardId ->
+            repository.updateCardHistoryDescriptionBackground(cardId, epochDay, filled)
+        }
     }
 
     override fun updateCardStyle(style: ColorStyle) {
-        TODO("Not yet implemented")
+        updateHistoryContent { it.copy(style = style) }
+        persistHistoryField { cardId ->
+            repository.updateCardHistoryStyle(cardId, epochDay, style)
+        }
+    }
+
+    private fun updateHistoryContent(transform: (CardContent) -> CardContent) {
+        val updated = transform(_cardContent.value)
+        _cardContent.value = updated
+        cardContent.value = updated
+    }
+
+    private fun persistHistoryField(update: (String) -> Unit) {
+        cardContent.value.id?.let { cardId ->
+            viewModelScope.launch(Dispatchers.IO) {
+                update(cardId)
+            }
+        }
     }
 
     fun removeForDay(date: LocalDate) {

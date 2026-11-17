@@ -84,6 +84,16 @@ interface NoteAndHistoryDao {
 """)
     fun editNoteInHistory(title: String, description: String, noteId: String, epochDay: Long)
 
+    @Query("UPDATE notes_in_history SET fillTitleBackground = :filled, edited = 1 WHERE noteId = :noteId AND date = :epochDay")
+    fun updateHistoryTitleBackground(noteId: String, epochDay: Long, filled: Boolean): Int
+
+    @Query("UPDATE notes_in_history SET fillTextBackground = :filled, edited = 1 WHERE noteId = :noteId AND date = :epochDay")
+    fun updateHistoryDescriptionBackground(noteId: String, epochDay: Long, filled: Boolean): Int
+
+    @TypeConverters(ColorStyleConverter::class)
+    @Query("UPDATE notes_in_history SET style = :style, edited = 1 WHERE noteId = :noteId AND date = :epochDay")
+    fun updateHistoryStyle(noteId: String, epochDay: Long, style: ColorStyle): Int
+
     @Transaction
     suspend fun updateDaysNoteHistoryIfNotEdited(historyNote: NoteInHistory, day: Long) {
         val existing = getHistoryEntryIncludingDeleted(historyNote.noteId, day)

@@ -154,6 +154,18 @@ class CardRepository @Inject constructor(
             )
     }
 
+    fun updateCardHistoryStyle(noteId: String, epochDay: Long, style: pro.progr.todos.brightcards.colors.ColorStyle) {
+        noteAndHistoryDao.updateHistoryStyle(noteId, epochDay, style)
+    }
+
+    fun updateCardHistoryTitleBackground(noteId: String, epochDay: Long, filled: Boolean) {
+        noteAndHistoryDao.updateHistoryTitleBackground(noteId, epochDay, filled)
+    }
+
+    fun updateCardHistoryDescriptionBackground(noteId: String, epochDay: Long, filled: Boolean) {
+        noteAndHistoryDao.updateHistoryDescriptionBackground(noteId, epochDay, filled)
+    }
+
     override suspend fun saveCard(cardContent: CardContent) : CardContent {
         val note = NoteConverter.toNote(cardContent)
         notesWithDataDao.insert(note)

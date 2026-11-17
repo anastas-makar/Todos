@@ -176,7 +176,8 @@ fun TodosNavigation(
                 EditNoteInHistoryScreen(
                     cardViewModel = cardViewModel,
                     epochDay = epochDay.toLong(),
-                    navController = navController
+                    navController = navController,
+                    paletteViewModel = paletteViewModelState.value
                 )
 
             }

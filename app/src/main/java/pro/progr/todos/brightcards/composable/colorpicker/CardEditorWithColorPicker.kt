@@ -83,7 +83,7 @@ fun CardEditorWithColorPicker(
                             coroutineScope.launch {
                                 if (sheetState.isVisible) sheetState.hide() else sheetState.show()
                             }
-                        }, cardViewModel = cardViewModel)
+                        }, colorUpdater = cardViewModel)
                     }
                     EditCard(cardViewModel = cardViewModel, metadataAtTop = true)
                 }
@@ -103,7 +103,7 @@ fun CardEditorWithColorPicker(
                             sheetState.show()
                         }
                     }
-                }, cardViewModel = cardViewModel)
+                }, colorUpdater = cardViewModel)
                 }
             }
         }
