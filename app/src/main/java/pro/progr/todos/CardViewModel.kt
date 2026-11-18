@@ -141,35 +141,35 @@ class CardViewModel private constructor(
     override fun updateCardStyle(style: ColorStyle) {
         val content = updateVisibleContent { it.copy(style = style) } ?: return
         content.id?.let { id ->
-            persist { repository.updateCardStyle(id, style, isNewCard) }
+            persist { repository.updateCardStyle(id, style) }
         }
     }
 
     override fun updateCardTitleBackground(filled: Boolean) {
         val content = updateVisibleContent { it.copy(fillTitleBackground = filled) } ?: return
         content.id?.let { id ->
-            persist { repository.updateCardTitleBackground(id, filled, isNewCard) }
+            persist { repository.updateCardTitleBackground(id, filled) }
         }
     }
 
     override fun updateCardDescriptionBackground(filled: Boolean) {
         val content = updateVisibleContent { it.copy(fillTextBackground = filled) } ?: return
         content.id?.let { id ->
-            persist { repository.updateCardDescriptionBackground(id, filled, isNewCard) }
+            persist { repository.updateCardDescriptionBackground(id, filled) }
         }
     }
 
     fun updateCardReward(reward: Int) {
         val content = updateVisibleContent { it.copy(reward = reward) } ?: return
         content.id?.let { id ->
-            persist { repository.updateCardReward(id, reward, isNewCard) }
+            persist { repository.updateCardReward(id, reward) }
         }
     }
 
     fun updateCardTodo(todo: TodoStatus) {
         val content = updateVisibleContent { it.copy(todo = todo) } ?: return
         content.id?.let { id ->
-            persist { repository.updateCardTodo(id, todo, isNewCard) }
+            persist { repository.updateCardTodo(id, todo) }
         }
     }
 
@@ -187,7 +187,7 @@ class CardViewModel private constructor(
         titleSaveJob?.cancel()
         titleSaveJob = viewModelScope.launch(Dispatchers.IO) {
             delay(TEXT_SAVE_DEBOUNCE_MS)
-            repository.enqueueTemplateEdit { repository.updateCardTitle(noteId, title, isNewCard) }.join()
+            repository.enqueueTemplateEdit { repository.updateCardTitle(noteId, title) }.join()
             if (pendingTitle == title) pendingTitle = null
         }
     }
@@ -197,7 +197,7 @@ class CardViewModel private constructor(
         descriptionSaveJob?.cancel()
         descriptionSaveJob = viewModelScope.launch(Dispatchers.IO) {
             delay(TEXT_SAVE_DEBOUNCE_MS)
-            repository.enqueueTemplateEdit { repository.updateCardDescription(noteId, description, isNewCard) }.join()
+            repository.enqueueTemplateEdit { repository.updateCardDescription(noteId, description) }.join()
             if (pendingDescription == description) pendingDescription = null
         }
     }
@@ -221,8 +221,8 @@ class CardViewModel private constructor(
         pendingDescription = null
         if (title != null || description != null) {
             persist {
-                if (title != null) repository.updateCardTitle(id, title, isNewCard)
-                if (description != null) repository.updateCardDescription(id, description, isNewCard)
+                if (title != null) repository.updateCardTitle(id, title)
+                if (description != null) repository.updateCardDescription(id, description)
             }
         }
     }

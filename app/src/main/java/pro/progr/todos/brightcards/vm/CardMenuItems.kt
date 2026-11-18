@@ -17,7 +17,7 @@ class CardMenuItems(private val context: Context, val date: LocalDate,
     init {
         notToday()
         setDoneMenuItem()
-        setNoteInHistoryDone()
+        setNoteDateEntryDone()
         setNotDoneMenuItem()
         removeForToday()
         edit()
@@ -81,13 +81,13 @@ class CardMenuItems(private val context: Context, val date: LocalDate,
         }
     }
 
-    private fun setNoteInHistoryDone() {
+    private fun setNoteDateEntryDone() {
         if (todo == TodoStatus.FAIL
             && date.isBefore(LocalDate.now())) {
             add(
                 MenuItem(
                     context.getString(R.string.mark_done),
-                    { updateDestination(Destinations.MARK_NOTE_IN_HISTORY_DONE) }
+                    { updateDestination(Destinations.MARK_DATE_ENTRY_DONE) }
                 )
             )
         }
@@ -119,17 +119,14 @@ class CardMenuItems(private val context: Context, val date: LocalDate,
     }
 
     private fun editThis() {
-        if (!date.isAfter(LocalDate.now())) {
-            add(
-                MenuItem(
-                    context.getString(
-                        R.string.change_entry_date,
-                        if (date.equals(LocalDate.now())) context.getString(R.string.today) else date.format(formatter)
-                    ),
-                    { updateDestination(Destinations.TO_EDIT_NOTE_IN_HISTORY) }
-                )
+        add(
+            MenuItem(
+                context.getString(
+                    R.string.change_entry_date,
+                    if (date.equals(LocalDate.now())) context.getString(R.string.today) else date.format(formatter)
+                ),
+                { updateDestination(Destinations.TO_EDIT_NOTE_FOR_DATE) }
             )
-
-        }
+        )
     }
 }

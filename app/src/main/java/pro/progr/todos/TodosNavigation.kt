@@ -18,7 +18,7 @@ import pro.progr.lists.ListsViewModel
 import pro.progr.todos.brightcards.colors.ColorsProvider
 import pro.progr.todos.brightcards.vm.PaletteViewModel
 import pro.progr.todos.composable.pages.CalendarScreen
-import pro.progr.todos.composable.pages.EditNoteInHistoryScreen
+import pro.progr.todos.composable.pages.EditNoteDateEntryScreen
 import pro.progr.todos.composable.pages.ListScreen
 import pro.progr.todos.dagger2.CardViewModelFactory
 import pro.progr.todos.dagger2.ListsViewModelFactory
@@ -47,7 +47,6 @@ fun TodosNavigation(
     val paletteViewModel : PaletteViewModel = viewModel(factory = component.paletteViewModelFactory())
 
     val paletteViewModelState = remember { mutableStateOf(paletteViewModel) }
-    val historyState = cardsListViewModel.getHistoryFlow().collectAsState(null)
 
     val navController = rememberNavController()
 
@@ -64,8 +63,7 @@ fun TodosNavigation(
                 drawerState = drawerState,
                 cardsListViewModel = cardsListViewModel,
                 commonListsViewModel = commonListsViewModel,
-                tagsViewModel = tagsViewModel,
-                historyState = historyState
+                tagsViewModel = tagsViewModel
             )
 
         }
@@ -150,7 +148,7 @@ fun TodosNavigation(
             )
         }
 
-        composable("editNoteInHistory/{cardId}/date/{date}") { backStackEntry ->
+        composable("editNoteDateEntry/{cardId}/date/{date}") { backStackEntry ->
             val cardId = backStackEntry.arguments?.getString("cardId")
             val epochDay = backStackEntry.arguments?.getString("date")
 
@@ -159,10 +157,10 @@ fun TodosNavigation(
                 cardViewModelFactory.epochDay = epochDay.toLong()
                 cardViewModelFactory.cardId = cardId
 
-                val cardViewModel: EditCardInHistoryViewModel =
+                val cardViewModel: EditCardForDateViewModel =
                     viewModel(factory = cardViewModelFactory)
 
-                EditNoteInHistoryScreen(
+                EditNoteDateEntryScreen(
                     cardViewModel = cardViewModel,
                     epochDay = epochDay.toLong(),
                     navController = navController,

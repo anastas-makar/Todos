@@ -13,13 +13,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import pro.progr.todos.EditCardInHistoryViewModel
+import pro.progr.todos.EditCardForDateViewModel
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 @Composable
-fun EditNoteInHistoryBar(navController : NavHostController, viewModel: EditCardInHistoryViewModel, date: LocalDate) {
+fun EditNoteDateEntryBar(navController : NavHostController, viewModel: EditCardForDateViewModel, date: LocalDate) {
     val formatter = DateTimeFormatter.ofPattern("dd MMMM yyy", Locale.getDefault())
 
     TopAppBar(

@@ -6,7 +6,7 @@ import pro.progr.todos.brightcards.colors.ColorStyle
 import pro.progr.todos.brightcards.colors.GouachePalette
 import pro.progr.todos.CardRepository
 import pro.progr.todos.CardViewModel
-import pro.progr.todos.EditCardInHistoryViewModel
+import pro.progr.todos.EditCardForDateViewModel
 import javax.inject.Inject
 
 class CardViewModelFactory @Inject constructor(
@@ -25,13 +25,10 @@ class CardViewModelFactory @Inject constructor(
             } else {
                 CardViewModel(repository, style) as T
             }
-        } else if (modelClass.isAssignableFrom(EditCardInHistoryViewModel::class.java)
+        } else if (modelClass.isAssignableFrom(EditCardForDateViewModel::class.java)
             && epochDay != null) {
-            return if (cardId != null) {
-                EditCardInHistoryViewModel(repository, cardId!!, epochDay!!) as T
-            } else {
-                EditCardInHistoryViewModel(repository, style, epochDay!!) as T
-            }
+            val id = cardId ?: throw IllegalArgumentException("A dated entry editor needs a Note id")
+            return EditCardForDateViewModel(repository, id, epochDay!!) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

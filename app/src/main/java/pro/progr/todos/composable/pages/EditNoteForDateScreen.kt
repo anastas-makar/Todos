@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ModalBottomSheetLayout
@@ -29,20 +30,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.launch
-import pro.progr.todos.EditCardInHistoryViewModel
+import pro.progr.todos.EditCardForDateViewModel
 import pro.progr.todos.brightcards.CardStyle
 import pro.progr.todos.brightcards.composable.colorpicker.ColorPicker
 import pro.progr.todos.brightcards.composable.description.EditDescription
 import pro.progr.todos.brightcards.composable.title.EditTitle
 import pro.progr.todos.brightcards.composable.visual.ColorPickerButton
 import pro.progr.todos.brightcards.vm.PaletteViewModel
-import pro.progr.todos.composable.EditNoteInHistoryBar
+import pro.progr.todos.composable.EditNoteDateEntryBar
 import java.time.LocalDate
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun EditNoteInHistoryScreen(
-    cardViewModel: EditCardInHistoryViewModel,
+fun EditNoteDateEntryScreen(
+    cardViewModel: EditCardForDateViewModel,
     epochDay: Long,
     navController: NavHostController,
     paletteViewModel: PaletteViewModel
@@ -87,7 +88,7 @@ fun EditNoteInHistoryScreen(
             modifier = Modifier.navigationBarsPadding(),
             topBar = {
                 Box(modifier = Modifier.statusBarsPadding()) {
-                    EditNoteInHistoryBar(
+                    EditNoteDateEntryBar(
                         navController = navController,
                         viewModel = cardViewModel,
                         date = LocalDate.ofEpochDay(epochDay)
@@ -101,16 +102,21 @@ fun EditNoteInHistoryScreen(
                         .fillMaxHeight()
                         .navigationBarsPadding()
                 ) {
-                    val contentState = cardViewModel.getCardContent()
-                    val content = contentState.value
-                    val style = remember(contentState) { CardStyle(contentState) }
-                    Column(
-                        modifier = Modifier
-                            .padding(horizontal = 15.dp, vertical = 5.dp)
-                            .fillMaxSize()
-                            .background(Color.Transparent, RoundedCornerShape(5.dp))
-                            .border(1.dp, Color(content.style.backgroundColor()), RoundedCornerShape(5.dp))
-                    ) {
+                    if (!cardViewModel.editorReady.value) {
+                        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            CircularProgressIndicator()
+                        }
+                    } else {
+                        val contentState = cardViewModel.getCardContent()
+                        val content = contentState.value
+                        val style = remember(contentState) { CardStyle(contentState) }
+                        Column(
+                            modifier = Modifier
+                                .padding(horizontal = 15.dp, vertical = 5.dp)
+                                .fillMaxSize()
+                                .background(Color.Transparent, RoundedCornerShape(5.dp))
+                                .border(1.dp, Color(content.style.backgroundColor()), RoundedCornerShape(5.dp))
+                        ) {
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -142,6 +148,7 @@ fun EditNoteInHistoryScreen(
                             style = style,
                             onDescriptionChange = cardViewModel::updateCardDescription
                         )
+                        }
                     }
                 }
             }

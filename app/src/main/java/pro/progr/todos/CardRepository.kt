@@ -14,8 +14,7 @@ import pro.progr.todos.brightcards.model.CardContent
 import pro.progr.todos.brightcards.model.CardRepository
 import pro.progr.todos.brightcards.model.TodoStatus
 import pro.progr.diamondsandberries.db.Schedule
-import pro.progr.todos.db.NoteAndHistoryDao
-import pro.progr.todos.db.NoteInHistory
+import pro.progr.todos.db.NoteAndDateEntryDao
 import pro.progr.todos.db.NoteTag
 import pro.progr.todos.db.NoteWithData
 import pro.progr.todos.db.NoteWithDataDao
@@ -29,7 +28,7 @@ import javax.inject.Inject
 
 class CardRepository @Inject constructor(
     private val context: Context,
-    private val noteAndHistoryDao: NoteAndHistoryDao,
+    private val noteAndDateEntryDao: NoteAndDateEntryDao,
     private val notesWithDataDao: NoteWithDataDao,
     private val tagsDao: TagsDao
 ) : CardRepository {
@@ -61,31 +60,31 @@ class CardRepository @Inject constructor(
     }
 
     /** Persist one editor field without replacing unrelated values from a stale snapshot. */
-    suspend fun updateCardTitle(noteId: String, title: String, isNewCard: Boolean) = persistCardField(noteId, isNewCard) {
+    suspend fun updateCardTitle(noteId: String, title: String) = persistCardField {
         notesWithDataDao.updateTitle(noteId, title)
     }
 
-    suspend fun updateCardDescription(noteId: String, description: String, isNewCard: Boolean) = persistCardField(noteId, isNewCard) {
+    suspend fun updateCardDescription(noteId: String, description: String) = persistCardField {
         notesWithDataDao.updateDescription(noteId, description)
     }
 
-    suspend fun updateCardStyle(noteId: String, style: pro.progr.todos.brightcards.colors.ColorStyle, isNewCard: Boolean) = persistCardField(noteId, isNewCard) {
+    suspend fun updateCardStyle(noteId: String, style: pro.progr.todos.brightcards.colors.ColorStyle) = persistCardField {
         notesWithDataDao.updateStyle(noteId, style)
     }
 
-    suspend fun updateCardTitleBackground(noteId: String, filled: Boolean, isNewCard: Boolean) = persistCardField(noteId, isNewCard) {
+    suspend fun updateCardTitleBackground(noteId: String, filled: Boolean) = persistCardField {
         notesWithDataDao.updateTitleBackground(noteId, filled)
     }
 
-    suspend fun updateCardDescriptionBackground(noteId: String, filled: Boolean, isNewCard: Boolean) = persistCardField(noteId, isNewCard) {
+    suspend fun updateCardDescriptionBackground(noteId: String, filled: Boolean) = persistCardField {
         notesWithDataDao.updateDescriptionBackground(noteId, filled)
     }
 
-    suspend fun updateCardReward(noteId: String, reward: Int, isNewCard: Boolean) = persistCardField(noteId, isNewCard) {
+    suspend fun updateCardReward(noteId: String, reward: Int) = persistCardField {
         notesWithDataDao.updateReward(noteId, reward)
     }
 
-    suspend fun updateCardTodo(noteId: String, todo: TodoStatus, isNewCard: Boolean) = persistCardField(noteId, isNewCard) {
+    suspend fun updateCardTodo(noteId: String, todo: TodoStatus) = persistCardField {
         notesWithDataDao.updateTodo(noteId, todo)
     }
 
@@ -105,64 +104,35 @@ class CardRepository @Inject constructor(
         val completed: CompletableDeferred<Unit>
     )
 
-    private suspend fun persistCardField(
-        noteId: String,
-        propagateTodoToHistory: Boolean,
-        update: suspend () -> Unit
-    ) {
+    private suspend fun persistCardField(update: suspend () -> Unit) {
         templateEditMutex.withLock {
             update()
-            val freshNote = notesWithDataDao.getNote(noteId)
-            note = freshNote
-            val today = LocalDate.now()
-            val schedule = freshNote.note.toSchedule()
-            val type = freshNote.note.patternType ?: FilterType.NO_TERMS
-            if (type.datesFilter.isActual(schedule, today)) {
-                val history = NoteConverter.toNoteInHistory(freshNote.note, today.toEpochDay())
-                if (propagateTodoToHistory) {
-                    noteAndHistoryDao.updateNewCardHistoryIfNotEdited(history, history.date)
-                } else {
-                    noteAndHistoryDao.updateDaysNoteHistoryIfNotEdited(history, history.date)
-                }
-            }
         }
     }
 
-    fun getCardInHistory(id: String, epochDay: Long): CardContent? {
-        val noteInHistory = noteAndHistoryDao.getNoteInHistory(id, epochDay)
-
-        noteInHistory?.let {
-
-            val cardContent = NoteInHistoryConverter.toCardContent(noteInHistory)
-
-            note = NoteWithData(NoteConverter.toNote(cardContent), emptyList())
-
-            return cardContent
-
+    suspend fun getCardForDate(id: String, epochDay: Long): CardContent {
+        val entry = noteAndDateEntryDao.getDateEntryWithData(id, epochDay)
+        val content = if (entry != null) {
+            NoteDateEntryConverter.toCardContent(entry, context)
+        } else {
+            NoteConverter.toCardContent(notesWithDataDao.getNote(id), context)
         }
-
-        return null
+        content.todo = when {
+            epochDay > LocalDate.now().toEpochDay() && content.todo in setOf(TodoStatus.TODO, TodoStatus.DONE, TodoStatus.TODO_NOT_ACTIVE) -> TodoStatus.TODO_NOT_ACTIVE
+            content.todo == TodoStatus.DONE -> TodoStatus.DONE
+            content.todo == TodoStatus.TODO && epochDay < LocalDate.now().toEpochDay() -> TodoStatus.FAIL
+            content.todo == TodoStatus.TODO && epochDay > LocalDate.now().toEpochDay() -> TodoStatus.TODO_NOT_ACTIVE
+            else -> content.todo
+        }
+        return content
     }
 
-    fun updateCardInHistory(title: String, description: String, noteId: String, epochDay: Long) {
-        noteAndHistoryDao.editNoteInHistory(
-            title = title,
-            description = description,
-            noteId = noteId,
-            epochDay = epochDay
+    suspend fun updateDateEntry(content: CardContent, epochDay: Long) {
+        templateEditMutex.withLock {
+            noteAndDateEntryDao.upsertDateEntry(
+                NoteDateEntryConverter.fromCardContent(content, epochDay)
             )
-    }
-
-    fun updateCardHistoryStyle(noteId: String, epochDay: Long, style: pro.progr.todos.brightcards.colors.ColorStyle) {
-        noteAndHistoryDao.updateHistoryStyle(noteId, epochDay, style)
-    }
-
-    fun updateCardHistoryTitleBackground(noteId: String, epochDay: Long, filled: Boolean) {
-        noteAndHistoryDao.updateHistoryTitleBackground(noteId, epochDay, filled)
-    }
-
-    fun updateCardHistoryDescriptionBackground(noteId: String, epochDay: Long, filled: Boolean) {
-        noteAndHistoryDao.updateHistoryDescriptionBackground(noteId, epochDay, filled)
+        }
     }
 
     override suspend fun saveCard(cardContent: CardContent) : CardContent {
@@ -187,36 +157,17 @@ class CardRepository @Inject constructor(
         note.note.reward = cardContent.reward
         note.note.latestDone = cardContent.latestDone
 
-        if ((note.note.patternType ?: pro.progr.todos.datefilters.FilterType.NO_TERMS).datesFilter.isActual(
-                note.note.toSchedule(),
-                LocalDate.now()
-            )) {
-            val historyNote = NoteConverter.toNoteInHistory(note = note.note, LocalDate.now().toEpochDay())
-            noteAndHistoryDao.updateDaysNoteHistoryIfNotEdited(historyNote, historyNote.date)
-        }
-
         notesWithDataDao.update(note)
     }
 
     suspend fun updateList(sublistChain : SublistChain) {
         note.note.sublistChain = sublistChain
 
-        if ((note.note.patternType ?: pro.progr.todos.datefilters.FilterType.NO_TERMS).datesFilter.isActual(
-                note.note.toSchedule(),
-                LocalDate.now()
-            )) {
-            val historyNote = NoteConverter.toNoteInHistory(note = note.note, LocalDate.now().toEpochDay())
-            noteAndHistoryDao.updateDaysNoteHistoryIfNotEdited(historyNote, historyNote.date)
-        }
-
         //notesWithDataDao.update(note)
     }
 
     override suspend fun deleteCard(cardContent: CardContent): Boolean {
-        return notesWithDataDao.deleteWithHistoryForDate(
-            NoteConverter.toNote(cardContent),
-            LocalDate.now().toEpochDay()
-        ) > 0
+        return notesWithDataDao.delete(requireNotNull(cardContent.id)) > 0
     }
 
     fun getSublistChane() : SublistChain {
@@ -225,7 +176,12 @@ class CardRepository @Inject constructor(
 
     suspend fun updateCardSchedule(schedule: Schedule) {
         val noteId = note.note.id
-        noteAndHistoryDao.updateScheduleAndHistory(noteId, schedule)
+        val updated = notesWithDataDao.getNote(noteId).note
+        updated.applySchedule(schedule)
+        noteAndDateEntryDao.updateScheduleColumns(
+            noteId, updated.addedDates, updated.cancelledDates, updated.patterDates,
+            updated.patternType, updated.dateSince, updated.dateTill
+        )
         note.note.applySchedule(schedule)
     }
 
@@ -239,27 +195,11 @@ class CardRepository @Inject constructor(
     fun getNoTagsText(): String = context.getString(R.string.no_tags)
 
     override suspend fun setCardDone(cardContent: CardContent) {
-        val note = NoteConverter.toNote(cardContent, note.note.toSchedule())
-
         val currentDate = LocalDate.now().toEpochDay()
-
-        note.latestDone = currentDate
-
-        val historyNote = NoteInHistory(
-            id = "${note.id}_$currentDate",
-            noteId = note.id,
-            date = currentDate,
-            title = note.title,
-            description = note.description,
-            sublistChain = note.sublistChain,
-            style = note.style,
-            reward = note.reward,
-            fillTitleBackground = note.fillTitleBackground,
-            fillTextBackground = note.fillTextBackground,
-            todo = TodoStatus.DONE
-        )
-
-        noteAndHistoryDao.setCardDoneAndUpdateHistory(note, historyNote, LocalDate.now().toEpochDay())
+        updateDateEntry(cardContent.copy(todo = TodoStatus.DONE), currentDate)
+        if ((note.note.patternType ?: FilterType.NO_TERMS) == FilterType.NO_TERMS) {
+            noteAndDateEntryDao.updateUnscheduledNoteDone(note.note.id)
+        }
     }
 
     fun insertTag(tagName: String) : String {
@@ -278,10 +218,14 @@ class CardRepository @Inject constructor(
     }
 
     suspend fun updateNote() {
-        noteAndHistoryDao.updateNoteDates(note.note)
+        noteAndDateEntryDao.update(note.note)
     }
 
-    suspend fun removeForDay(date: LocalDate, noteId: String) {
-        noteAndHistoryDao.remoCardForDay(date.toEpochDay(), noteId)
+    suspend fun removeForDay(content: CardContent, date: LocalDate) {
+        templateEditMutex.withLock {
+            noteAndDateEntryDao.upsertDateEntry(
+                NoteDateEntryConverter.fromCardContent(content, date.toEpochDay(), deleted = true)
+            )
+        }
     }
 }

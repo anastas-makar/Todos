@@ -13,6 +13,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,7 +42,9 @@ fun DayInHistory(
     diamondViewModel : DiamondViewModel,
     navController: NavHostController,
     date: LocalDate,
-    cardsForDate:  List<CardRow>) {
+    ) {
+
+    val cardsForDate = cardsListViewModel.getCardsForDate(date).collectAsState().value
 
     val formatter = DateTimeFormatter.ofPattern("E dd MMMM yyy", Locale.getDefault())
 

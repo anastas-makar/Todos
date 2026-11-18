@@ -18,7 +18,7 @@ import pro.progr.todos.db.DiamondsLogDao
 import pro.progr.todos.db.NoteListsDao
 import pro.progr.todos.db.NoteToTagXRefDao
 import pro.progr.todos.db.NotesDao
-import pro.progr.todos.db.NotesInHistoryDao
+import pro.progr.todos.db.NoteDateEntriesDao
 import pro.progr.todos.db.OutboxDao
 import pro.progr.todos.db.TagsDao
 import pro.progr.todos.db.TodosDataBase
@@ -34,7 +34,7 @@ class SyncRepository @Inject constructor(
     private val notesDao: NotesDao = db.notesDao()
     private val noteListsDao: NoteListsDao = db.noteListsDao()
     private val tagsDao: TagsDao = db.tagsDao()
-    private val notesInHistoryDao: NotesInHistoryDao = db.notesInHistoryDao()
+    private val noteDateEntriesDao: NoteDateEntriesDao = db.noteDateEntriesDao()
     private val diamondsCountDao: DiamondsCountDao = db.diamondsCountDao()
     private val noteToTagXRefDao: NoteToTagXRefDao = db.noteToTagXRefDao()
     private val diamondsLogDao: DiamondsLogDao = db.diamondsLogDao()
@@ -65,9 +65,9 @@ class SyncRepository @Inject constructor(
                 else notesDao.getUpdates(byTable["notes"]!!).map {
                     it.toDto(personalCrypto, latestUpdates[it.id])
                 },
-            notesInHistory = if (byTable["notes_in_history"].isNullOrEmpty()) emptyList()
-                else notesInHistoryDao.getUpdates(byTable["notes_in_history"]!!).map {
-                    it.toDto(personalCrypto, latestUpdates[it.id])
+            noteDateEntries = if (byTable["note_date_entries"].isNullOrEmpty()) emptyList()
+                else noteDateEntriesDao.getUpdatesWithData(byTable["note_date_entries"]!!).map {
+                    it.toDto(personalCrypto, latestUpdates[it.dateEntry.id])
                 },
             notesLists = if (byTable["note_lists"].isNullOrEmpty()) emptyList()
                 else noteListsDao.getUpdates(byTable["note_lists"]!!).map {
@@ -93,8 +93,11 @@ class SyncRepository @Inject constructor(
         db.withTransaction {
             if (serverData.notes.isNotEmpty()) notesDao.setUpdates(
                 serverData.notes.map { it.toEntity(personalCrypto) })
-            if (serverData.notesInHistory.isNotEmpty()) notesInHistoryDao.setUpdates(
-                serverData.notesInHistory.map { it.toEntity(personalCrypto) })
+            val meaningfulDateEntries = serverData.noteDateEntries.filter { dto ->
+                dto.edited || dto.deleted || dto.todo == "DONE"
+            }
+            if (meaningfulDateEntries.isNotEmpty()) noteDateEntriesDao.setUpdates(
+                meaningfulDateEntries.map { it.toEntity(personalCrypto) })
             if (serverData.notesLists.isNotEmpty()) noteListsDao.setUpdates(
                 serverData.notesLists.map { it.toEntity(personalCrypto) })
             if (serverData.noteTags.isNotEmpty()) tagsDao.setUpdates(

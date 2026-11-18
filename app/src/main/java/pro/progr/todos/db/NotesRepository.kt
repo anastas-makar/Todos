@@ -1,143 +1,52 @@
 package pro.progr.todos.db
 
-import android.content.Context
 import androidx.sqlite.db.SimpleSQLiteQuery
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
-import pro.progr.todos.brightcards.model.CardContent
-import pro.progr.todos.NoteConverter
-import pro.progr.todos.NoteInHistoryConverter
 import pro.progr.notecastle.model.NotesQueryBuilder
-import java.time.LocalDate
 import javax.inject.Inject
 
-@ExperimentalCoroutinesApi
+@OptIn(ExperimentalCoroutinesApi::class)
 class NotesRepository @Inject constructor(
-    private val context: Context,
-    initialQuery : NotesQuery,
+    initialQuery: NotesQuery,
     private val dao: NoteWithDataDao,
-    private val notesInHistoryDao: NotesInHistoryDao,
-    private val noteAndHistoryDao: NoteAndHistoryDao
+    private val noteDateEntriesDao: NoteDateEntriesDao
 ) {
-    private val notesQueryFlow : MutableStateFlow<NotesQuery>
+    private val notesQueryFlow = MutableStateFlow(initialQuery)
 
-    private val _notesListFlow : Flow<List<NoteWithData>>
-    val notesListFlow get() = _notesListFlow
-
-    private val _notesInHistoryFlow : Flow<Map<Long, List<CardContent>>>
-    val notesInHistoryFlow get() = _notesInHistoryFlow
-
-    private val _selectedTagsFlow : MutableStateFlow<MutableList<NoteTag>> = MutableStateFlow(mutableListOf())
-
-    init {
-        notesQueryFlow = MutableStateFlow(initialQuery)
-
-        _notesListFlow = notesQueryFlow.flatMapLatest { notesQuery ->
-            if(notesQuery.isChanged()) {
-                dao.getNotesWithTags(
-                    SimpleSQLiteQuery(
-                        notesQuery.queryString,
-                        notesQuery.queryArguments.toArray()
-                    )
-                )
-            } else {
-                dao.getAllNotesWithTags()
-            }
-        }
-
-        _notesInHistoryFlow = notesQueryFlow.flatMapLatest { notesQuery ->
-            val currentDate = LocalDate.now().toEpochDay()
-            if(notesQuery.isChanged()) {
-                notesInHistoryDao.getHistoryByQuery(
-                    SimpleSQLiteQuery(
-                        notesQuery.historyQueryString,
-                        notesQuery.queryArguments.toArray()
-                    )
-                ).map {
-                    it.filter { noteInHistory ->
-                        noteInHistory.noteInHistory.date <= currentDate
-                    }.groupBy { noteInHistory ->
-                        noteInHistory.noteInHistory.date
-                    }.mapValues { (_, notes) ->
-                        notes.map { note ->
-                            NoteInHistoryConverter.toCardContent(note)
-                        }
-                    }
-                }
-            } else {
-                notesInHistoryDao.getHistory().map {
-                    it.filter { noteInHistory ->
-                        noteInHistory.noteInHistory.date <= currentDate
-                    }.groupBy { noteInHistory ->
-                        noteInHistory.noteInHistory.date
-                    }.mapValues { (_, notes) ->
-                        notes.map { note ->
-                            NoteInHistoryConverter.toCardContent(note)
-                        }
-                    }
-                }
-            }
-        }
-
+    val notesListFlow: Flow<List<NoteWithData>> = notesQueryFlow.flatMapLatest { query ->
+        if (query.isChanged()) dao.getNotesWithTags(
+            SimpleSQLiteQuery(query.queryString, query.queryArguments.toTypedArray())
+        ) else dao.getAllNotesWithTags()
     }
 
-    fun updateQuery(builder : NotesQueryBuilder) {
+    /** Includes tombstones; a deleted dated entry still suppresses its template occurrence. */
+    val dateEntriesFlow = noteDateEntriesDao.observeAll()
+
+    private val _selectedTagsFlow: MutableStateFlow<MutableList<NoteTag>> = MutableStateFlow(mutableListOf())
+
+    fun updateQuery(builder: NotesQueryBuilder) {
         notesQueryFlow.value = builder.getQuery()
-
-        _selectedTagsFlow.update { tagsList ->
-            ArrayList(builder.tags)
-        }
+        _selectedTagsFlow.update { ArrayList(builder.tags) }
     }
 
-    fun deleteUnlinkedHistoryForToday(today : Long) : Int {
-        return noteAndHistoryDao.deleteEmptyNotesAndUnlinkedHistoryForToday(today)
-    }
+    suspend fun deleteEmptyNotes(): Int = dao.deleteEmptyNotes()
 
-    fun getQueryBuilder() : NotesQueryBuilder {
-        return NotesQueryBuilder(notesQueryFlow.value)
-    }
+    fun getQueryBuilder(): NotesQueryBuilder = NotesQueryBuilder(notesQueryFlow.value)
 
-    suspend fun setLastNotes() {
-
-        val latestDate = noteAndHistoryDao.getLatestDate()
-
-        val currentDate = LocalDate.now().toEpochDay()
-
-        //if (currentDate == latestDate) return
-
-        notesListFlow.first { notesList ->
-
-            val dates : List<Long> = if (latestDate == null) listOf(currentDate) else
-                (latestDate .. currentDate).toList()
-
-            val notesInHistory = ArrayList<NoteInHistory>()
-
-            for (date: Long in dates) {
-                notesInHistory.addAll(
-
-                    notesList.filter { note ->
-                        (note.note.patternType ?: pro.progr.todos.datefilters.FilterType.NO_TERMS).datesFilter.isActual(
-                            note.note.toSchedule(),
-                            LocalDate.ofEpochDay(date)
-                        )
-                    }.map {
-                            note -> NoteConverter.toNoteInHistory(note.note, date)
-                    })
-
-            }
-
-            saveNotesInHistory(notesInHistory)
-
-            return@first true
-        }
-    }
-
-    suspend fun saveNotesInHistory(notesInHistory : List<NoteInHistory>) {
-        notesInHistoryDao.insert(notesInHistory)
+    fun matchesDateEntryQuery(entry: NoteDateEntryWithData): Boolean {
+        val query = notesQueryFlow.value
+        val note = entry.note
+        if (note.deleted) return false
+        if (!note.sublistChain.sublistsString.startsWith(query.sublistChain.sublistsString)) return false
+        if (query.tags.isNotEmpty() && entry.tags.none { tag -> query.tags.any { it.id == tag.id } }) return false
+        if (query.filterType != null && (note.patternType ?: pro.progr.todos.datefilters.FilterType.NO_TERMS) != query.filterType) return false
+        if (query.notDone && entry.dateEntry.todo == pro.progr.todos.brightcards.model.TodoStatus.DONE) return false
+        val search = query.description
+        return search.isEmpty() || (entry.dateEntry.title + " " + entry.dateEntry.description)
+            .contains(search, ignoreCase = true)
     }
 }

@@ -51,16 +51,6 @@ class NotesQuery(
                     " ORDER BY id DESC"
         }
 
-    val historyQueryString = "SELECT * FROM notes_in_history WHERE deleted = 0 AND "
-        get() {
-            return field +
-                    (if (description.isNotEmpty()) "title || description LIKE :description AND " else "") +
-                    " sublist_chain LIKE :sublistChain " +
-                    (if (tags.isEmpty()) "" else " AND noteId IN (SELECT note_id FROM note_to_tag WHERE tag_id IN (" +
-                            tags.joinToString(separator = ",", transform = { "\'${it.id}\'" }) +")) " ) +
-                    " ORDER BY id DESC"
-        }
-
     val queryArguments = ArrayList<Any>()
         get() {
             field.clear()

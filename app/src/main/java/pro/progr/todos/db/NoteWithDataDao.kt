@@ -70,17 +70,11 @@ interface NoteWithDataDao {
     @Query("SELECT * FROM notes WHERE id = :noteId")
     fun getNoteFlow(noteId: String): Flow<NoteWithData?>
 
-    @Transaction
-    fun deleteWithHistoryForDate(note: Note, date: Long) : Int {
-        deleteInHistory(date, note.id)
-        return delete(note.id)
-    }
-
-    @Query("UPDATE notes_in_history SET deleted = 1 WHERE noteId = :noteId AND date = :date")
-    fun deleteInHistory(date: Long, noteId: String)
-
     @Query("UPDATE notes SET deleted = 1 WHERE id = :noteId")
     fun delete(noteId: String): Int
+
+    @Query("UPDATE notes SET deleted = 1 WHERE coalesce(title, '') = '' AND coalesce(description, '') = ''")
+    suspend fun deleteEmptyNotes(): Int
 
     @Query("UPDATE note_to_tag SET deleted = 1, note_id = \"\", tag_id = \"\" WHERE tag_id = :tagId AND note_id = :noteId")
     fun removeNoteTag(tagId: String, noteId: String)

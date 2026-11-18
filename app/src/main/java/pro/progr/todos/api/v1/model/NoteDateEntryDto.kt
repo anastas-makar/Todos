@@ -1,6 +1,6 @@
 package pro.progr.todos.api.v1.model
 
-data class NoteInHistoryDto(
+data class NoteDateEntryDto(
     val id: String,
     val noteId: String,
     val date: Long,

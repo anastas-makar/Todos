@@ -7,8 +7,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import pro.progr.todos.brightcards.MenuItem
@@ -20,7 +20,8 @@ import pro.progr.todos.brightcards.vm.Destinations
 import pro.progr.todos.brightcards.vm.UndatedCardMenuItems
 import pro.progr.todos.datefilters.FilterType
 import pro.progr.todos.db.NoteTag
-import pro.progr.todos.db.NoteAndHistoryDao
+import pro.progr.todos.db.NoteAndDateEntryDao
+import pro.progr.todos.NoteDateEntryConverter
 import pro.progr.todos.db.NoteWithData
 import pro.progr.todos.db.NotesRepository
 import pro.progr.todos.db.SublistChain
@@ -32,7 +33,7 @@ import javax.inject.Inject
 class CardsListViewModel @Inject constructor(
     private val context: Context,
     private val notesRepository: NotesRepository,
-    private val noteAndHistoryDao: NoteAndHistoryDao
+    private val noteAndDateEntryDao: NoteAndDateEntryDao
 ) : ViewModel() {
 
     val cardsList: MutableState<List<CardRow>> = mutableStateOf(emptyList())
@@ -78,35 +79,39 @@ class CardsListViewModel @Inject constructor(
             )
 
             viewModelScope.launch {
-                notesRepository.notesListFlow.collectLatest { notesList ->
-                    listsFlow.value = notesList
+                combine(notesRepository.notesListFlow, notesRepository.dateEntriesFlow) { notes, entries ->
+                    val day = date.toEpochDay()
+                    val entriesForDate = entries.filter { it.dateEntry.date == day }
+                    val byId = notes.associateBy { it.note.id }
+                    val relevantEntries = entriesForDate.filter { notesRepository.matchesDateEntryQuery(it) }
+                    val supersededNoteIds = entriesForDate.map { it.dateEntry.noteId }.toSet()
+
+                    val snapshotRows = relevantEntries.filterNot { it.dateEntry.deleted }.map { entry ->
+                        val owner = byId[entry.dateEntry.noteId] ?: NoteWithData(entry.note, entry.tags)
+                        val content = NoteDateEntryConverter.toCardContent(entry, context)
+                        content.todo = statusForDate(content.todo, date)
+                        CardRow(CardRowKey(entry.dateEntry.noteId, day), owner, mutableStateOf(content))
+                    }
+
+                    val templateRows = notes.asSequence()
+                        .filter { it.note.id !in supersededNoteIds }
                         .filter { note ->
                             (note.note.patternType ?: FilterType.NO_TERMS).datesFilter.isActual(
-                                note.note.toSchedule(),
-                                date
-                            )
-                        }.map { note ->
-                            val cardContent = NoteConverter.toCardContent(note, context)
-
-                            if (date.isEqual(LocalDate.now())) {
-                                //задачи на сегодня
-                                if (note.note.latestDone == LocalDate.now().toEpochDay()) {
-                                    cardContent.todo = TodoStatus.DONE
-                                }
-                            } else if (date.isAfter(LocalDate.now())) {
-                                //задачи на будущее
-                                if (note.note.todo == TodoStatus.TODO) {
-                                    cardContent.todo = TodoStatus.TODO_NOT_ACTIVE
-                                }
-                            }
-
-                            CardRow(
-                                CardRowKey(note.note.id, date.toEpochDay()),
-                                note,
-                                mutableStateOf(cardContent)
+                                note.note.toSchedule(), date
                             )
                         }
-                }
+                        .map { note ->
+                            val content = NoteConverter.toCardContent(note, context)
+                            content.todo = when {
+                                date.isBefore(LocalDate.now()) -> TodoStatus.FAIL
+                                date.isAfter(LocalDate.now()) -> TodoStatus.TODO_NOT_ACTIVE
+                                else -> TodoStatus.TODO
+                            }
+                            CardRow(CardRowKey(note.note.id, day), note, mutableStateOf(content))
+                        }
+                        .toList()
+                    snapshotRows + templateRows
+                }.collectLatest { listsFlow.value = it }
 
             }
 
@@ -116,39 +121,12 @@ class CardsListViewModel @Inject constructor(
 
     }
 
-    fun getHistoryFlow() : Flow<Map<Long, List<CardContent>>> {
-        return notesRepository.notesInHistoryFlow
-    }
-
-    fun getHistoryRows(cards: List<CardContent>, date: LocalDate): List<CardRow> {
-
-        /**
-         * TODO:
-         * Тут может быть баг:
-         * до полуночи открыть режим "не в календаре",
-         * пометить дело сделанным (появится карточка в истории на сегодня),
-         * --> и дальше в календаре будет отображаться только эта карточка
-         */
-        if (cards.isEmpty()) {
-            saveTodaysNotes()
-        }
-
-        return cards.map { sourceContent ->
-            val cardContent = if (sourceContent.todo == TodoStatus.TODO && date.isBefore(LocalDate.now())) {
-                sourceContent.copy(todo = TodoStatus.FAIL)
-            } else {
-                sourceContent
-            }
-            val note = NoteWithData(
-                note = NoteConverter.toNote(cardContent),
-                tags = cardContent.tags.map { tag -> NoteTag(tag.id, tag.title) }
-            )
-            CardRow(
-                CardRowKey(cardContent.id ?: error("History card is missing noteId"), date.toEpochDay()),
-                note,
-                mutableStateOf(cardContent)
-            )
-        }
+    private fun statusForDate(status: TodoStatus, date: LocalDate): TodoStatus = when {
+        date.isAfter(LocalDate.now()) && status in setOf(TodoStatus.TODO, TodoStatus.DONE, TodoStatus.TODO_NOT_ACTIVE) -> TodoStatus.TODO_NOT_ACTIVE
+        status == TodoStatus.DONE -> TodoStatus.DONE
+        status == TodoStatus.TODO && date.isBefore(LocalDate.now()) -> TodoStatus.FAIL
+        status == TodoStatus.TODO && date.isAfter(LocalDate.now()) -> TodoStatus.TODO_NOT_ACTIVE
+        else -> status
     }
 
     fun searchNotes(searchString: String) {
@@ -182,44 +160,47 @@ class CardsListViewModel @Inject constructor(
         navigate: (String) -> Unit,
         updateReward: (Int, LocalDate) -> Unit
     ) {
+        if (date.isAfter(LocalDate.now()) &&
+            (action == Destinations.MARK_DONE || action == Destinations.MARK_DATE_ENTRY_DONE)
+        ) return
+
         val content = card.content.value
-        val repository = CardRowRepository(noteAndHistoryDao, card.note)
+        val repository = CardRowRepository(noteAndDateEntryDao, card.note)
 
         when (action) {
             Destinations.DO_TODAY -> viewModelScope.launch(Dispatchers.IO) {
                 val today = LocalDate.now()
-                repository.addCardForDay(content, today)
-                repository.addCardToHistory(content, today)
+                repository.saveForDate(content.copy(todo = TodoStatus.TODO), today)
             }
             Destinations.DO_TOMORROW -> viewModelScope.launch(Dispatchers.IO) {
-                repository.addCardForDay(content, LocalDate.now().plusDays(1))
+                repository.saveForDate(content.copy(todo = TodoStatus.TODO), LocalDate.now().plusDays(1))
             }
             Destinations.MARK_DONE -> {
                 val doneContent = content.copy(todo = TodoStatus.DONE)
                 card.content.value = doneContent
-                viewModelScope.launch(Dispatchers.IO) { repository.setCardDone(doneContent) }
-                updateReward(content.reward, LocalDate.now())
+                viewModelScope.launch(Dispatchers.IO) { repository.setCardDone(doneContent, date) }
+                updateReward(content.reward, date)
             }
             Destinations.MARK_NOT_DONE -> {
                 val notDoneContent = content.copy(todo = TodoStatus.TODO)
                 card.content.value = notDoneContent
-                viewModelScope.launch(Dispatchers.IO) { repository.setCardNotDone(notDoneContent) }
-                updateReward(-content.reward, LocalDate.now())
+                viewModelScope.launch(Dispatchers.IO) { repository.setCardNotDone(notDoneContent, date) }
+                updateReward(-content.reward, date)
             }
-            Destinations.MARK_NOTE_IN_HISTORY_DONE -> {
+            Destinations.MARK_DATE_ENTRY_DONE -> {
                 val doneContent = content.copy(todo = TodoStatus.DONE)
                 card.content.value = doneContent
                 viewModelScope.launch(Dispatchers.IO) {
-                    repository.setNoteInHistoryDone(doneContent, date)
+                    repository.setCardDone(doneContent, date)
                 }
                 updateReward(content.reward, date)
             }
             Destinations.REMOVE_FOR_DAY -> content.id?.let { noteId ->
-                viewModelScope.launch(Dispatchers.IO) { repository.removeForDay(date, noteId) }
+                viewModelScope.launch(Dispatchers.IO) { repository.removeForDay(content, date) }
             }
             Destinations.TO_EDIT_CARD -> content.id?.let { navigate("editCard/$it") }
-            Destinations.TO_EDIT_NOTE_IN_HISTORY -> content.id?.let { noteId ->
-                navigate("editNoteInHistory/$noteId/date/${date.toEpochDay()}")
+            Destinations.TO_EDIT_NOTE_FOR_DATE -> content.id?.let { noteId ->
+                navigate("editNoteDateEntry/$noteId/date/${date.toEpochDay()}")
             }
             Destinations.NONE -> Unit
         }
@@ -254,7 +235,7 @@ class CardsListViewModel @Inject constructor(
 
     fun deleteEmptyNotes() {
         viewModelScope.launch(Dispatchers.Default) {
-            val deletedCount = notesRepository.deleteUnlinkedHistoryForToday(LocalDate.now().toEpochDay())
+            val deletedCount = notesRepository.deleteEmptyNotes()
             if (deletedCount > 0) {
                 notifications.value =
                     notifications.value + listOf(context.getString(R.string.delete_empty_notes, deletedCount))
@@ -262,9 +243,4 @@ class CardsListViewModel @Inject constructor(
         }
     }
 
-    fun saveTodaysNotes() {
-        viewModelScope.launch(Dispatchers.Default) {
-            notesRepository.setLastNotes()
-        }
-    }
 }

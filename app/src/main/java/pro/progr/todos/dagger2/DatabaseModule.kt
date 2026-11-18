@@ -47,14 +47,14 @@ class DatabaseModule {
 
     @Singleton
     @Provides
-    fun provideNoteAndHistoryDao(database: TodosDataBase): NoteAndHistoryDao {
-        return database.noteAndHistoryDao()
+    fun provideNoteAndDateEntryDao(database: TodosDataBase): NoteAndDateEntryDao {
+        return database.noteAndDateEntryDao()
     }
 
     @Singleton
     @Provides
-    fun provideNoteInHistoryDao(database: TodosDataBase): NotesInHistoryDao {
-        return database.notesInHistoryDao()
+    fun provideNoteDateEntryDao(database: TodosDataBase): NoteDateEntriesDao {
+        return database.noteDateEntriesDao()
     }
 
     @Singleton

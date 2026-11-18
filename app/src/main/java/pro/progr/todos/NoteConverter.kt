@@ -7,7 +7,6 @@ import pro.progr.todos.brightcards.model.TodoStatus
 import pro.progr.diamondsandberries.db.Schedule
 import pro.progr.todos.datefilters.FilterType
 import pro.progr.todos.db.Note
-import pro.progr.todos.db.NoteInHistory
 import pro.progr.todos.db.NoteWithData
 import pro.progr.todos.db.applySchedule
 import pro.progr.todos.db.toSchedule
@@ -84,22 +83,6 @@ class NoteConverter {
             cardContent.todo == note.todo &&
             cardContent.reward == note.reward &&
             cardContent.latestDone == note.latestDone
-        }
-
-        fun toNoteInHistory(note: Note, date: Long) : NoteInHistory {
-            return NoteInHistory(
-                id = "${note.id}_$date",
-                noteId = note.id,
-                date = date,
-                description = note.description,
-                title = note.title,
-                reward = note.reward,
-                sublistChain = note.sublistChain,
-                style = note.style,
-                fillTitleBackground = note.fillTitleBackground,
-                fillTextBackground = note.fillTextBackground,
-                todo = note.todo
-            )
         }
 
     }

@@ -9,12 +9,10 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.State
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import pro.progr.todos.brightcards.model.CardContent
 import pro.progr.todos.CardsListViewModel
 import pro.progr.todos.DiamondViewModel
 import pro.progr.todos.NList
@@ -45,8 +43,7 @@ fun CalendarScreen(
     drawerState: DrawerState,
     cardsListViewModel: CardsListViewModel,
     commonListsViewModel: ListsViewModel,
-    tagsViewModel: TagsViewModel,
-    historyState: State<Map<Long, List<CardContent>>?>) {
+    tagsViewModel: TagsViewModel) {
     LaunchedEffect(Unit) {
         cardsListViewModel.flushNotesSearch()
         cardsListViewModel.deleteEmptyNotes()
@@ -89,10 +86,7 @@ fun CalendarScreen(
                                             cardsListViewModel = cardsListViewModel,
                                             diamondViewModel = diamondViewModel,
                                             navController = navController,
-                                            date = date,
-                                            cardsForDate = cardsListViewModel.getHistoryRows(
-                                                historyState.value?.get(date.toEpochDay())
-                                                    ?: emptyList(), date)
+                                            date = date
                                         ) {
                                             smallActionsViewModel.selectedDate = today
                                             floatingElementViewModel.showScrim.value = true
@@ -112,10 +106,7 @@ fun CalendarScreen(
                                             cardsListViewModel = cardsListViewModel,
                                             diamondViewModel = diamondViewModel,
                                             navController = navController,
-                                            date = date,
-                                            cardsForDate = cardsListViewModel.getHistoryRows(
-                                                historyState.value?.get(date.toEpochDay())
-                                                    ?: emptyList(), date)
+                                            date = date
                                         )
                                     }
                                 },
