@@ -102,10 +102,14 @@ class CardsListViewModel @Inject constructor(
                         }
                         .map { note ->
                             val content = NoteConverter.toCardContent(note, context)
-                            content.todo = when {
-                                date.isBefore(LocalDate.now()) -> TodoStatus.FAIL
-                                date.isAfter(LocalDate.now()) -> TodoStatus.TODO_NOT_ACTIVE
-                                else -> TodoStatus.TODO
+                            content.todo = if (note.note.todo == TodoStatus.NOT_ACTIVE) {
+                                TodoStatus.NOT_ACTIVE
+                            } else {
+                                when {
+                                    date.isBefore(LocalDate.now()) -> TodoStatus.FAIL
+                                    date.isAfter(LocalDate.now()) -> TodoStatus.TODO_NOT_ACTIVE
+                                    else -> TodoStatus.TODO
+                                }
                             }
                             CardRow(CardRowKey(note.note.id, day), note, mutableStateOf(content))
                         }
@@ -170,10 +174,10 @@ class CardsListViewModel @Inject constructor(
         when (action) {
             Destinations.DO_TODAY -> viewModelScope.launch(Dispatchers.IO) {
                 val today = LocalDate.now()
-                repository.saveForDate(content.copy(todo = TodoStatus.TODO), today)
+                repository.saveForDate(content, today)
             }
             Destinations.DO_TOMORROW -> viewModelScope.launch(Dispatchers.IO) {
-                repository.saveForDate(content.copy(todo = TodoStatus.TODO), LocalDate.now().plusDays(1))
+                repository.saveForDate(content, LocalDate.now().plusDays(1))
             }
             Destinations.MARK_DONE -> {
                 val doneContent = content.copy(todo = TodoStatus.DONE)

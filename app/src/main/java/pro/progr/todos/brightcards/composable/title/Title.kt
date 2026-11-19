@@ -64,22 +64,24 @@ fun Title(row: CardRow,
             TodoRow(row, menuItems, onDoneClick, style)
         }
 
-        Row(modifier = Modifier
-            .wrapContentWidth()
-            .align(Alignment.TopEnd)
-            .padding(end = 5.dp, top = 1.dp)) {
-            Text(text = row.content.value.reward.toString(), color = style.titleTextColor,
-                modifier = Modifier
-                    .height(24.dp)
-                    .padding(4.dp))
-            Icon(
-                painter = painterResource(id = R.drawable.ic_diamond),
-                contentDescription = stringResource(R.string.todo),
-                tint = style.titleTextColor,
-                modifier = Modifier
-                    .size(20.dp)
-                    .padding(top = 4.dp, end = 4.dp)
-            )
+        if (row.content.value.todo != TodoStatus.NOT_ACTIVE) {
+            Row(modifier = Modifier
+                .wrapContentWidth()
+                .align(Alignment.TopEnd)
+                .padding(end = 5.dp, top = 1.dp)) {
+                Text(text = row.content.value.reward.toString(), color = style.titleTextColor,
+                    modifier = Modifier
+                        .height(24.dp)
+                        .padding(4.dp))
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_diamond),
+                    contentDescription = stringResource(R.string.todo),
+                    tint = style.titleTextColor,
+                    modifier = Modifier
+                        .size(20.dp)
+                        .padding(top = 4.dp, end = 4.dp)
+                )
+            }
         }
     }
 
