@@ -6,13 +6,10 @@ data class NoteDateEntryDto(
     val date: Long,
     val title: String,
     val description: String,
-    val reward: Int,
-    val sublistChain: SublistChainDto,
     val style: String,                 // ColorStyle → строка через конвертер
     val fillTitleBackground: Boolean,
     val fillTextBackground: Boolean,
     val todo: String,                  // enum.name
-    val edited: Boolean,
     val deleted: Boolean,
     val latestUpdate: Long?
 )

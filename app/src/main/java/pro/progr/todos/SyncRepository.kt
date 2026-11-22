@@ -93,11 +93,8 @@ class SyncRepository @Inject constructor(
         db.withTransaction {
             if (serverData.notes.isNotEmpty()) notesDao.setUpdates(
                 serverData.notes.map { it.toEntity(personalCrypto) })
-            val meaningfulDateEntries = serverData.noteDateEntries.filter { dto ->
-                dto.edited || dto.deleted || dto.todo == "DONE"
-            }
-            if (meaningfulDateEntries.isNotEmpty()) noteDateEntriesDao.setUpdates(
-                meaningfulDateEntries.map { it.toEntity(personalCrypto) })
+            if (serverData.noteDateEntries.isNotEmpty()) noteDateEntriesDao.setUpdates(
+                serverData.noteDateEntries.map { it.toEntity(personalCrypto) })
             if (serverData.notesLists.isNotEmpty()) noteListsDao.setUpdates(
                 serverData.notesLists.map { it.toEntity(personalCrypto) })
             if (serverData.noteTags.isNotEmpty()) tagsDao.setUpdates(

@@ -5,7 +5,6 @@ import android.util.Log
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import androidx.room.migration.Migration
 import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
 import pro.progr.diamondsandberries.db.FilterTypeConverter
@@ -23,7 +22,7 @@ import java.util.UUID
         DiamondsCount::class,
         DiamondsLog::class,
         Outbox::class,
-        AppMeta::class], version = 6
+        AppMeta::class], version = 1
 )
 @TypeConverters(
     SublistChainConverter::class,
@@ -50,39 +49,6 @@ abstract class TodosDataBase : RoomDatabase() {
     abstract fun appMetDao(): AppMetaDao
 
     companion object {
-        private val MIGRATION_5_6 = object : Migration(5, 6) {
-            override fun migrate(db: SupportSQLiteDatabase) {
-                db.execSQL("""
-                    CREATE TABLE IF NOT EXISTS note_date_entries (
-                        id TEXT NOT NULL,
-                        noteId TEXT NOT NULL,
-                        date INTEGER NOT NULL,
-                        title TEXT NOT NULL,
-                        description TEXT NOT NULL,
-                        style TEXT NOT NULL,
-                        fillTitleBackground INTEGER NOT NULL,
-                        fillTextBackground INTEGER NOT NULL,
-                        todo TEXT NOT NULL,
-                        deleted INTEGER NOT NULL DEFAULT 0,
-                        PRIMARY KEY(id)
-                    )
-                """.trimIndent())
-                db.execSQL("""
-                    INSERT OR REPLACE INTO note_date_entries
-                    (id, noteId, date, title, description, style, fillTitleBackground,
-                     fillTextBackground, todo, deleted)
-                    SELECT id, noteId, date, title, description, style, fillTitleBackground,
-                           fillTextBackground, todo, deleted
-                    FROM notes_in_history
-                    WHERE edited = 1 OR todo = 'DONE' OR deleted = 1
-                """.trimIndent())
-                db.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS index_note_date_entries_noteId_date ON note_date_entries(noteId, date)")
-                db.execSQL("UPDATE outbox SET table_name='note_date_entries' WHERE table_name='notes_in_history' AND row_id IN (SELECT id FROM note_date_entries)")
-                db.execSQL("DELETE FROM outbox WHERE table_name='notes_in_history'")
-                db.execSQL("DROP TABLE notes_in_history")
-            }
-        }
-
         @Volatile
         private var INSTANCE: TodosDataBase? = null
 
@@ -93,8 +59,6 @@ abstract class TodosDataBase : RoomDatabase() {
                     TodosDataBase::class.java,
                     "todos_database"
                 )
-                    .addMigrations(MIGRATION_5_6)
-                .fallbackToDestructiveMigration()
                     .addCallback(object : RoomDatabase.Callback() {
                         override fun onCreate(db: SupportSQLiteDatabase) {
                             super.onCreate(db)
