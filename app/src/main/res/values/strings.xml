@@ -65,6 +65,8 @@
     <string name="days_of_week">Days of the week</string>
     <string name="days_of_week_list">Days of the week: %1$s</string>
     <string name="not_in_calendar">Not in calendar</string>
+    <string name="all_templates">All templates</string>
+    <string name="clear_search">Clear search</string>
     <string name="repeat_every_day_field">Every day starting</string>
     <string name="repeat_every_other_day_field">Every other day</string>
     <string name="repeat_field">Repeat</string>

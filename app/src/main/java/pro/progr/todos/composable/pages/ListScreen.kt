@@ -12,19 +12,30 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.DrawerState
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.SnackbarResult
+import androidx.compose.material.Surface
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import pro.progr.flow.vm.FloatingElementViewModel
 import pro.progr.lists.ListedContentFrame
@@ -37,6 +48,7 @@ import pro.progr.todos.composable.BottomSearch
 import pro.progr.todos.composable.CardsList
 import pro.progr.todos.composable.ListModeBar
 import pro.progr.todos.composable.MyFloatingActionButton
+import pro.progr.todos.composable.SearchBar
 import pro.progr.todos.composable.SmallActionsViewModel
 import pro.progr.todos.composable.ScheduleReturnSnackbar
 import pro.progr.todos.R
@@ -59,13 +71,37 @@ fun ListScreen(
     tagsViewModel: TagsViewModel) {
 
     LaunchedEffect(Unit) {
-        cardsListViewModel.flushNotesList()
         cardsListViewModel.deleteEmptyNotes()
         drawerState.close()
     }
     val scaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val searchFocusRequester = remember { FocusRequester() }
+    var searchActive by rememberSaveable { mutableStateOf(false) }
+    var searchQuery by rememberSaveable { mutableStateOf("") }
+    var showAllTemplates by rememberSaveable { mutableStateOf(false) }
+    val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
+
+    LaunchedEffect(currentRoute, searchActive, searchQuery, showAllTemplates) {
+        if (currentRoute == "list") {
+            cardsListViewModel.updateListQuery(
+                showAllTemplates = showAllTemplates,
+                searchString = if (searchActive) searchQuery else ""
+            )
+        }
+    }
+
+    LaunchedEffect(searchActive) {
+        if (searchActive) {
+            searchFocusRequester.requestFocus()
+            keyboardController?.show()
+        } else {
+            keyboardController?.hide()
+        }
+    }
+
     if (commonListsViewModel.selectedListState.value != null) {
         cardsListViewModel.useList((commonListsViewModel.selectedListState.value as NList).sublistChain)
     }
@@ -97,24 +133,48 @@ fun ListScreen(
                                 .navigationBarsPadding()
                                 .imePadding()
                         ) {
-                            CardsList(
-                                cardsListViewModel,
-                                diamondViewModel,
-                                navController,
-                                onDoneMarked = {
-                                    scope.launch {
-                                        val result = scaffoldState.snackbarHostState.showSnackbar(
-                                            message = context.getString(R.string.task_done_in_calendar_notice),
-                                            actionLabel = context.getString(R.string.open_calendar)
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(bottom = 56.dp)
+                            ) {
+                                if (searchActive) {
+                                    Surface(
+                                        color = MaterialTheme.colors.surface,
+                                        elevation = 2.dp
+                                    ) {
+                                        SearchBar(
+                                            value = searchQuery,
+                                            onValueChange = { searchQuery = it },
+                                            modifier = Modifier
+                                                .padding(horizontal = 20.dp, vertical = 8.dp)
+                                                .focusRequester(searchFocusRequester)
                                         )
-                                        if (result == SnackbarResult.ActionPerformed) {
-                                            navController.navigate("calendar")
-                                        }
                                     }
                                 }
-                            )
 
-                            if (floatingElementViewModel.showScrim.value) {
+                                Box(modifier = Modifier.weight(1f)) {
+                                    CardsList(
+                                        cardsListViewModel = cardsListViewModel,
+                                        diamondViewModel = diamondViewModel,
+                                        navController = navController,
+                                        bottomContentPadding = 0.dp,
+                                        onDoneMarked = {
+                                            scope.launch {
+                                                val result = scaffoldState.snackbarHostState.showSnackbar(
+                                                    message = context.getString(R.string.task_done_in_calendar_notice),
+                                                    actionLabel = context.getString(R.string.open_calendar)
+                                                )
+                                                if (result == SnackbarResult.ActionPerformed) {
+                                                    navController.navigate("calendar")
+                                                }
+                                            }
+                                        }
+                                    )
+                                }
+                            }
+
+                            if (floatingElementViewModel.showScrim.value && !searchActive) {
                                 Box(modifier = Modifier
                                     .fillMaxSize()
                                     .background(color = Color(0xEEFFFFFF))
@@ -125,16 +185,34 @@ fun ListScreen(
                                 )
                             }
 
-                            Column(modifier = Modifier
-                                .align(Alignment.BottomCenter)
-                                .zIndex(2f)) {
+                            if (!searchActive) {
                                 MyFloatingActionButton(
                                     floatingElementViewModel = floatingElementViewModel,
                                     SmallActionsViewModel(),
-                                    navController
+                                    navController,
+                                    modifier = Modifier
+                                        .align(Alignment.BottomEnd)
+                                        .zIndex(1f)
+                                        .padding(bottom = 56.dp)
                                 )
-                                BottomSearch(cardsListViewModel)
                             }
+
+                            BottomSearch(
+                                searchActive = searchActive,
+                                showAllTemplates = showAllTemplates,
+                                onSearchToggle = {
+                                    searchActive = !searchActive
+                                    if (searchActive) {
+                                        floatingElementViewModel.showScrim.value = false
+                                    } else {
+                                        searchQuery = ""
+                                    }
+                                },
+                                onModeToggle = { showAllTemplates = !showAllTemplates },
+                                modifier = Modifier
+                                    .align(Alignment.BottomCenter)
+                                    .zIndex(2f)
+                            )
                         }
                     }
                 }

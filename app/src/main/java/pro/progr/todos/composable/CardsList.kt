@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.Dp
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import pro.progr.todos.brightcards.composable.BrightCard
@@ -26,12 +27,13 @@ import java.time.LocalDate
 fun CardsList(cardsListViewModel: CardsListViewModel,
               diamondViewModel: DiamondViewModel,
               navController: NavHostController,
+              bottomContentPadding: Dp = 60.dp,
               onDoneMarked: () -> Unit = {}) {
     val shape = RoundedCornerShape(10.dp)
 
     Box(modifier = Modifier
         .fillMaxSize()
-        .padding(start = 15.dp, end = 15.dp, top = 5.dp, bottom = 60.dp)
+        .padding(start = 15.dp, end = 15.dp, top = 5.dp, bottom = bottomContentPadding)
         .dashedBorder(
             width = 1.dp,
             color = Color.LightGray,

@@ -65,6 +65,8 @@
     <string name="days_of_week">Дни недели</string>
     <string name="days_of_week_list">Дни недели: %1$s</string>
     <string name="not_in_calendar">Не в календаре</string>
+    <string name="all_templates">Все шаблоны</string>
+    <string name="clear_search">Очистить поиск</string>
     <string name="repeat_every_day_field">Выполнять каждый день с</string>
     <string name="repeat_every_other_day_field">Выполнять через день</string>
     <string name="repeat_field">Выполнять</string>

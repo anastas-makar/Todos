@@ -137,6 +137,15 @@ class CardsListViewModel @Inject constructor(
         notesRepository.updateQuery(notesRepository.getQueryBuilder().withDescription(searchString))
     }
 
+    fun updateListQuery(showAllTemplates: Boolean, searchString: String) {
+        notesRepository.updateQuery(
+            notesRepository.getQueryBuilder()
+                .withDescription(searchString)
+                .withFilterType(if (showAllTemplates) null else FilterType.NO_TERMS)
+                .withNotDone(!showAllTemplates)
+        )
+    }
+
     fun updateTag(noteTag: NoteTag) {
         selectedTag.value = noteTag
         notesRepository.updateQuery(notesRepository.getQueryBuilder().withTags(hashSetOf(noteTag)))

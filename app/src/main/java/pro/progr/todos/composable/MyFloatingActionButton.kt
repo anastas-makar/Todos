@@ -41,7 +41,8 @@ import pro.progr.flow.vm.FloatingElementViewModel
 fun MyFloatingActionButton(
     floatingElementViewModel: FloatingElementViewModel,
     smallActionsViewModel: SmallActionsViewModel,
-    navHostController: NavHostController
+    navHostController: NavHostController,
+    modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
     val rotationAngle =
@@ -50,7 +51,7 @@ fun MyFloatingActionButton(
     Column(
         horizontalAlignment = Alignment.End,
         verticalArrangement = Arrangement.Bottom,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(16.dp)
     ) {
