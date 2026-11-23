@@ -6,18 +6,23 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.DrawerState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Scaffold
+import androidx.compose.material.SnackbarResult
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -33,6 +38,9 @@ import pro.progr.todos.composable.CardsList
 import pro.progr.todos.composable.ListModeBar
 import pro.progr.todos.composable.MyFloatingActionButton
 import pro.progr.todos.composable.SmallActionsViewModel
+import pro.progr.todos.composable.ScheduleReturnSnackbar
+import pro.progr.todos.R
+import kotlinx.coroutines.launch
 import pro.progr.todos.composable.TagsScreen
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalCoroutinesApi::class)
@@ -55,6 +63,9 @@ fun ListScreen(
         cardsListViewModel.deleteEmptyNotes()
         drawerState.close()
     }
+    val scaffoldState = rememberScaffoldState()
+    val scope = rememberCoroutineScope()
+    val context = LocalContext.current
     if (commonListsViewModel.selectedListState.value != null) {
         cardsListViewModel.useList((commonListsViewModel.selectedListState.value as NList).sublistChain)
     }
@@ -64,6 +75,7 @@ fun ListScreen(
 
         TagsScreen(tagsViewModel, cardsListViewModel) {
             Scaffold(
+                scaffoldState = scaffoldState,
                 topBar = {
                     Box(modifier = Modifier.statusBarsPadding()) {
                         ListModeBar(navController,
@@ -74,6 +86,7 @@ fun ListScreen(
                     }
                 },
                 content = { innerPadding ->
+                    ScheduleReturnSnackbar("list", navController, scaffoldState)
                     val floatingElementViewModel = remember { FloatingElementViewModel() }
 
                     ListedContentFrame(listsViewModel = commonListsViewModel) {
@@ -82,8 +95,24 @@ fun ListScreen(
                                 .padding(innerPadding)
                                 .fillMaxHeight()
                                 .navigationBarsPadding()
+                                .imePadding()
                         ) {
-                            CardsList(cardsListViewModel, diamondViewModel, navController)
+                            CardsList(
+                                cardsListViewModel,
+                                diamondViewModel,
+                                navController,
+                                onDoneMarked = {
+                                    scope.launch {
+                                        val result = scaffoldState.snackbarHostState.showSnackbar(
+                                            message = context.getString(R.string.task_done_in_calendar_notice),
+                                            actionLabel = context.getString(R.string.open_calendar)
+                                        )
+                                        if (result == SnackbarResult.ActionPerformed) {
+                                            navController.navigate("calendar")
+                                        }
+                                    }
+                                }
+                            )
 
                             if (floatingElementViewModel.showScrim.value) {
                                 Box(modifier = Modifier

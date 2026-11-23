@@ -96,4 +96,9 @@
     <string name="sync_update_required_dismiss">Got it</string>
     <string name="card_load_failed">Could not load this card.</string>
     <string name="retry">Retry</string>
+    <string name="task_not_in_calendar_notice">Task is not in the calendar</string>
+    <string name="open_not_in_calendar_list">Open not-in-calendar list</string>
+    <string name="task_added_to_calendar_notice">Task is shown in the calendar</string>
+    <string name="open_calendar">Open calendar</string>
+    <string name="task_done_in_calendar_notice">Task is shown in the calendar as completed today</string>
 </resources>

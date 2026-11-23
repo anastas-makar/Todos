@@ -3,6 +3,7 @@ package pro.progr.todos.composable.pages
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -43,6 +44,9 @@ import pro.progr.todos.brightcards.vm.PaletteViewModel
 import pro.progr.todos.composable.AddTagsScreen
 import pro.progr.todos.composable.NoteBar
 import pro.progr.todos.composable.ScheduleEditorDialog
+import pro.progr.todos.composable.NOT_IN_CALENDAR
+import pro.progr.todos.composable.IN_CALENDAR
+import pro.progr.todos.composable.NOTICE_KEY
 import pro.progr.todos.datefilters.FilterType
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -166,7 +170,31 @@ fun CardEditorScreen(
             Scaffold(
                 topBar = {
                     Box(modifier = Modifier.statusBarsPadding()) {
-                        NoteBar(navController, cardViewModel, isNewCard = isNewCard)
+                        NoteBar(
+                            navController = navController,
+                            viewModel = cardViewModel,
+                            isNewCard = isNewCard,
+                            onBack = {
+                                screenScope.launch {
+                                    cardViewModel.flushAndAwaitCardEdits()
+
+                                    if (isNewCard) {
+                                        val previous = navController.previousBackStackEntry
+                                        val isScheduled = cardViewModel.scheduleState.value.pattern.type != FilterType.NO_TERMS
+                                        val notice = when {
+                                            previous?.destination?.route == "calendar" && !isScheduled -> NOT_IN_CALENDAR
+                                            previous?.destination?.route == "list" && isScheduled -> IN_CALENDAR
+                                            else -> null
+                                        }
+                                        if (notice != null) {
+                                            previous?.savedStateHandle?.set(NOTICE_KEY, notice)
+                                        }
+                                    }
+
+                                    navController.popBackStack()
+                                }
+                            }
+                        )
                     }
                 },
                 content = { innerPadding ->
@@ -175,6 +203,7 @@ fun CardEditorScreen(
                             .padding(innerPadding)
                             .fillMaxSize()
                             .navigationBarsPadding()
+                            .imePadding()
                     ) {
                         ListedContentFrame(listsViewModel = listsViewModel) {
                             CardEditorWithColorPicker(

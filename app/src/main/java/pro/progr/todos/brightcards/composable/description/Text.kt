@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import pro.progr.todos.brightcards.CardStyle
 import pro.progr.todos.brightcards.model.CardTag
@@ -36,7 +37,9 @@ fun ColumnScope.Text(
         Text(
             text = row.content.value.text,
             color = style.descriptionTextColor,
-            textAlign = TextAlign.Start
+            textAlign = TextAlign.Start,
+            maxLines = 5,
+            overflow = TextOverflow.Ellipsis
         )
 
         Tags(row = row, onTagClick = onTagClick)

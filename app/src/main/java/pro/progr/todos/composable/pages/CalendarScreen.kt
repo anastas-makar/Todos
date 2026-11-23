@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.DrawerState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Scaffold
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -21,6 +22,7 @@ import pro.progr.todos.composable.CalendarModeBar
 import pro.progr.todos.composable.MyFloatingActionButton
 import pro.progr.todos.composable.SmallActionsViewModel
 import pro.progr.todos.composable.TagsScreen
+import pro.progr.todos.composable.ScheduleReturnSnackbar
 import pro.progr.todos.composable.calendar.DayInHistory
 import pro.progr.todos.composable.calendar.Future
 import pro.progr.todos.composable.calendar.Today
@@ -49,6 +51,7 @@ fun CalendarScreen(
         cardsListViewModel.deleteEmptyNotes()
         drawerState.close()
     }
+    val scaffoldState = rememberScaffoldState()
 
     appDrawer(drawerState, diamondViewModel, externalNavController) {
 
@@ -58,6 +61,7 @@ fun CalendarScreen(
 
         TagsScreen(viewModel = tagsViewModel, cardsListViewModel = cardsListViewModel) {
             Scaffold(
+                scaffoldState = scaffoldState,
                 topBar = {
                     Box(modifier = Modifier.statusBarsPadding()) {
                         CalendarModeBar(navController,
@@ -68,6 +72,7 @@ fun CalendarScreen(
                     }
                 },
                 content = { innerPadding ->
+                    ScheduleReturnSnackbar("calendar", navController, scaffoldState)
 
                     val floatingElementViewModel = remember { FloatingElementViewModel() }
                     val smallActionsViewModel = SmallActionsViewModel()

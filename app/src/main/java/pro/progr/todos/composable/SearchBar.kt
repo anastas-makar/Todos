@@ -34,8 +34,7 @@ fun BoxScope.SearchBar(cardsListViewModel: CardsListViewModel) {
                 width = 2.dp,
                 color = Color.LightGray,
                 shape = RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp)
-            )
-            .imePadding(),
+            ),
     ) {
 
         var text by remember { mutableStateOf("") }

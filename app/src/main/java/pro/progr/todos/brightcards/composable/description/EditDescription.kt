@@ -44,6 +44,7 @@ fun ColumnScope.EditDescription(
         TextField(
             modifier = Modifier
                 .fillMaxWidth()
+                .weight(1f)
                 .padding(bottom = 10.dp),
             value = descriptionInput.value,
             onValueChange = { value: TextFieldValue ->

@@ -96,4 +96,9 @@
     <string name="sync_update_required_dismiss">Понятно</string>
     <string name="card_load_failed">Не удалось загрузить карточку.</string>
     <string name="retry">Повторить</string>
+    <string name="task_not_in_calendar_notice">Задача не в календаре</string>
+    <string name="open_not_in_calendar_list">Открыть список задач вне календаря</string>
+    <string name="task_added_to_calendar_notice">Задача отображается в календаре</string>
+    <string name="open_calendar">Открыть календарь</string>
+    <string name="task_done_in_calendar_notice">Задача отображается в календаре как сделанная сегодня</string>
 </resources>

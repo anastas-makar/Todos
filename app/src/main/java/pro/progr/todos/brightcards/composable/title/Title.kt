@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import pro.progr.todos.brightcards.MenuItem
 import pro.progr.todos.R
@@ -53,7 +54,9 @@ fun Title(row: CardRow,
                 text = row.content.value.title,
                 style = MaterialTheme.typography.h6,
                 color = style.titleTextColor,
-                textAlign = TextAlign.Start // Выравнивание текста по центру
+                textAlign = TextAlign.Start,
+                maxLines = 5,
+                overflow = TextOverflow.Ellipsis
             )
 
         }

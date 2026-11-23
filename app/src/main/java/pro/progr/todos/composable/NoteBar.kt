@@ -19,14 +19,15 @@ import pro.progr.todos.CardViewModel
 fun NoteBar(
     navController: NavHostController,
     viewModel: CardViewModel,
-    isNewCard: Boolean = true
+    isNewCard: Boolean = true,
+    onBack: () -> Unit = { navController.popBackStack() }
 ) {
     TopAppBar(
         title = {
             Text(text = stringResource(if (isNewCard) R.string.new_entry else R.string.edit_note))
         },
         navigationIcon = {
-            IconButton(onClick = { navController.popBackStack() }) {
+            IconButton(onClick = onBack) {
                 Icon(Icons.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
             }
         },

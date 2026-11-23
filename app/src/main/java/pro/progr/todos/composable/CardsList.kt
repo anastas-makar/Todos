@@ -1,7 +1,8 @@
 package pro.progr.todos.composable
 
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -24,10 +25,12 @@ import java.time.LocalDate
 @Composable
 fun CardsList(cardsListViewModel: CardsListViewModel,
               diamondViewModel: DiamondViewModel,
-              navController: NavHostController) {
+              navController: NavHostController,
+              onDoneMarked: () -> Unit = {}) {
     val shape = RoundedCornerShape(10.dp)
 
-    LazyColumn(modifier = Modifier
+    Box(modifier = Modifier
+        .fillMaxSize()
         .padding(start = 15.dp, end = 15.dp, top = 5.dp, bottom = 60.dp)
         .dashedBorder(
             width = 1.dp,
@@ -36,31 +39,32 @@ fun CardsList(cardsListViewModel: CardsListViewModel,
             dashLength = 6.dp,
             gapLength = 4.dp
         )
-        .clip(shape) // чтобы ripple/клик тоже был со скруглением
-        .padding(vertical = 25.dp)
-        .fillMaxHeight()) {
-        items(cardsListViewModel.cardsList.value, key = { cardVm -> cardVm.key.stableStringKey() }) { cardVm ->
-            val handleAction: (Destinations) -> Unit = { action ->
-                cardsListViewModel.handleCardAction(
-                    card = cardVm,
-                    action = action,
-                    date = LocalDate.now(),
-                    navigate = { route -> navController.navigate(route) },
-                    updateReward = { amount, date -> diamondViewModel.updateCount(amount, date) }
-                )
+        .clip(shape)) {
+        LazyColumn(modifier = Modifier.fillMaxSize().padding(vertical = 25.dp)) {
+            items(cardsListViewModel.cardsList.value, key = { cardVm -> cardVm.key.stableStringKey() }) { cardVm ->
+                val handleAction: (Destinations) -> Unit = { action ->
+                    if (action == Destinations.MARK_DONE) onDoneMarked()
+                    cardsListViewModel.handleCardAction(
+                        card = cardVm,
+                        action = action,
+                        date = LocalDate.now(),
+                        navigate = { route -> navController.navigate(route) },
+                        updateReward = { amount, date -> diamondViewModel.updateCount(amount, date) }
+                    )
+                }
+
+                BrightCard(
+                    row = cardVm,
+                    menuItems = cardsListViewModel.menuItems(cardVm, null, handleAction),
+                    onDoneClick = { handleAction(Destinations.MARK_DONE) },
+                    onTagClick = { cardTag ->
+                        cardsListViewModel.updateTag(NoteTag(cardTag.id, cardTag.title))
+                    },
+                    onclick = {
+                        //navController.navigate("editCard/${cardVm.content.value.id}")
+                    })
+
             }
-
-            BrightCard(
-                row = cardVm,
-                menuItems = cardsListViewModel.menuItems(cardVm, null, handleAction),
-                onDoneClick = { handleAction(Destinations.MARK_DONE) },
-                onTagClick = { cardTag ->
-                    cardsListViewModel.updateTag(NoteTag(cardTag.id, cardTag.title))
-                },
-                onclick = {
-                    //navController.navigate("editCard/${cardVm.content.value.id}")
-                })
-
         }
     }
 }
