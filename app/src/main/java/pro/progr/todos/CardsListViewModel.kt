@@ -12,6 +12,8 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import pro.progr.todos.brightcards.MenuItem
+import pro.progr.todos.R
+import pro.progr.todos.brightcards.model.CardContent
 import pro.progr.todos.brightcards.model.CardRowKey
 import pro.progr.todos.brightcards.model.TodoStatus
 import pro.progr.todos.brightcards.vm.CardMenuItems
@@ -20,6 +22,7 @@ import pro.progr.todos.brightcards.vm.UndatedCardMenuItems
 import pro.progr.todos.datefilters.FilterType
 import pro.progr.todos.db.NoteTag
 import pro.progr.todos.db.NoteAndDateEntryDao
+import pro.progr.todos.NoteDateEntryConverter
 import pro.progr.todos.db.NoteWithData
 import pro.progr.todos.db.NotesRepository
 import pro.progr.todos.db.SublistChain
@@ -42,6 +45,8 @@ class CardsListViewModel @Inject constructor(
 
     val cardsForDates: HashMap<LocalDate, MutableStateFlow<List<CardRow>>> = HashMap()
 
+    private var showAllTemplatesInList = false
+
     init {
         observeCards()
     }
@@ -58,6 +63,12 @@ class CardsListViewModel @Inject constructor(
 
                     if (note.note.latestDone == LocalDate.now().toEpochDay()) {
                         cardContent.todo = TodoStatus.DONE
+                    }
+
+                    val isCalendarTemplate =
+                        (note.note.patternType ?: FilterType.NO_TERMS) != FilterType.NO_TERMS
+                    if (showAllTemplatesInList && isCalendarTemplate && cardContent.todo == TodoStatus.TODO) {
+                        cardContent.todo = TodoStatus.TODO_NOT_ACTIVE
                     }
 
                     CardRow(CardRowKey(note.note.id, null), note, mutableStateOf(cardContent))
@@ -136,6 +147,7 @@ class CardsListViewModel @Inject constructor(
     }
 
     fun updateListQuery(showAllTemplates: Boolean, searchString: String) {
+        showAllTemplatesInList = showAllTemplates
         notesRepository.updateQuery(
             notesRepository.getQueryBuilder()
                 .withDescription(searchString)

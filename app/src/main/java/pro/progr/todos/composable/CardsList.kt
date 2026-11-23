@@ -19,6 +19,7 @@ import pro.progr.todos.brightcards.composable.BrightCard
 import pro.progr.todos.CardsListViewModel
 import pro.progr.todos.DiamondViewModel
 import pro.progr.todos.brightcards.vm.Destinations
+import pro.progr.todos.datefilters.FilterType
 import pro.progr.todos.db.NoteTag
 import java.time.LocalDate
 
@@ -58,7 +59,11 @@ fun CardsList(cardsListViewModel: CardsListViewModel,
                 BrightCard(
                     row = cardVm,
                     menuItems = cardsListViewModel.menuItems(cardVm, null, handleAction),
-                    onDoneClick = { handleAction(Destinations.MARK_DONE) },
+                    onDoneClick = {
+                        val isNotInCalendar =
+                            (cardVm.note.note.patternType ?: FilterType.NO_TERMS) == FilterType.NO_TERMS
+                        if (isNotInCalendar) handleAction(Destinations.MARK_DONE)
+                    },
                     onTagClick = { cardTag ->
                         cardsListViewModel.updateTag(NoteTag(cardTag.id, cardTag.title))
                     },

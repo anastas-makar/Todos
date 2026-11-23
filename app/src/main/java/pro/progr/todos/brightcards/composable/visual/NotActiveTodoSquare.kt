@@ -21,9 +21,13 @@ fun NotActiveTodoSquare(row: CardRow) {
             .padding(5.dp)
             .border(
                 1.dp,
-                if (row.content.value.fillTitleBackground) Color(row.content.value.style.secondaryElementsColor())
-                else MaterialTheme.colors.onSurface, shape = RoundedCornerShape(4.dp)
+                if (row.content.value.fillTitleBackground) {
+                    Color(row.content.value.style.secondaryElementsColor()).copy(alpha = 0.4f)
+                } else {
+                    MaterialTheme.colors.onSurface.copy(alpha = 0.4f)
+                },
+                shape = RoundedCornerShape(4.dp)
             )
-            .background(Color(0x44ffffff), shape = RoundedCornerShape(4.dp))
+            .background(Color(0x22ffffff), shape = RoundedCornerShape(4.dp))
     )
 }
