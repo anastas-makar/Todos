@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import pro.progr.todos.brightcards.MenuItem
-import pro.progr.todos.brightcards.model.CardContent
 import pro.progr.todos.brightcards.model.CardRowKey
 import pro.progr.todos.brightcards.model.TodoStatus
 import pro.progr.todos.brightcards.vm.CardMenuItems
@@ -21,7 +20,6 @@ import pro.progr.todos.brightcards.vm.UndatedCardMenuItems
 import pro.progr.todos.datefilters.FilterType
 import pro.progr.todos.db.NoteTag
 import pro.progr.todos.db.NoteAndDateEntryDao
-import pro.progr.todos.NoteDateEntryConverter
 import pro.progr.todos.db.NoteWithData
 import pro.progr.todos.db.NotesRepository
 import pro.progr.todos.db.SublistChain
@@ -161,7 +159,16 @@ class CardsListViewModel @Inject constructor(
         date: LocalDate?,
         onAction: (Destinations) -> Unit
     ): List<MenuItem> = if (date == null) {
-        UndatedCardMenuItems(context, card.content.value.todo, onAction)
+        val patternType = card.note.note.patternType ?: FilterType.NO_TERMS
+        if (patternType == FilterType.NO_TERMS) {
+            UndatedCardMenuItems(context, card.content.value.todo, onAction)
+        } else {
+            listOf(
+                MenuItem(context.getString(R.string.edit)) {
+                    onAction(Destinations.TO_EDIT_CARD)
+                }
+            )
+        }
     } else {
         CardMenuItems(context, date, card.content.value.todo, onAction)
     }
