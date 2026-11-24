@@ -29,7 +29,8 @@ fun CardsList(cardsListViewModel: CardsListViewModel,
               diamondViewModel: DiamondViewModel,
               navController: NavHostController,
               bottomContentPadding: Dp = 60.dp,
-              onDoneMarked: () -> Unit = {}) {
+              onDoneMarked: () -> Unit = {},
+              onScheduledToCalendar: () -> Unit = {}) {
     val shape = RoundedCornerShape(10.dp)
 
     Box(modifier = Modifier
@@ -52,7 +53,8 @@ fun CardsList(cardsListViewModel: CardsListViewModel,
                         action = action,
                         date = LocalDate.now(),
                         navigate = { route -> navController.navigate(route) },
-                        updateReward = { amount, date -> diamondViewModel.updateCount(amount, date) }
+                        updateReward = { amount, date -> diamondViewModel.updateCount(amount, date) },
+                        onScheduledToCalendar = onScheduledToCalendar
                     )
                 }
 

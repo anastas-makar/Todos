@@ -2,6 +2,7 @@ package pro.progr.todos
 
 import pro.progr.todos.brightcards.model.CardContent
 import pro.progr.todos.brightcards.model.TodoStatus
+import pro.progr.todos.db.ArrayPOJO
 import pro.progr.todos.db.NoteAndDateEntryDao
 import pro.progr.todos.NoteDateEntryConverter
 import pro.progr.todos.db.NoteWithData
@@ -15,6 +16,17 @@ class CardRowRepository(
         noteAndDateEntryDao.upsertDateEntry(
             NoteDateEntryConverter.fromCardContent(content, date.toEpochDay(), deleted)
         )
+    }
+
+    suspend fun scheduleUnscheduledNoteForDate(date: LocalDate): Boolean {
+        val epochDay = date.toEpochDay()
+        return noteAndDateEntryDao.scheduleUnscheduledNoteForDate(
+            noteId = note.note.id,
+            addedDates = ArrayPOJO(arrayOf(epochDay)),
+            cancelledDates = ArrayPOJO(emptyArray<Long>()),
+            patternDays = linkedMapOf(),
+            epochDay = epochDay
+        ) > 0
     }
 
     suspend fun setCardDone(content: CardContent, date: LocalDate) {

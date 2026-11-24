@@ -190,7 +190,8 @@ class CardsListViewModel @Inject constructor(
         action: Destinations,
         date: LocalDate,
         navigate: (String) -> Unit,
-        updateReward: (Int, LocalDate) -> Unit
+        updateReward: (Int, LocalDate) -> Unit,
+        onScheduledToCalendar: () -> Unit = {}
     ) {
         if (date.isAfter(LocalDate.now()) &&
             (action == Destinations.MARK_DONE || action == Destinations.MARK_DATE_ENTRY_DONE)
@@ -202,10 +203,19 @@ class CardsListViewModel @Inject constructor(
         when (action) {
             Destinations.DO_TODAY -> viewModelScope.launch(Dispatchers.IO) {
                 val today = LocalDate.now()
-                repository.saveForDate(content, today)
+                if ((card.note.note.patternType ?: FilterType.NO_TERMS) == FilterType.NO_TERMS) {
+                    if (repository.scheduleUnscheduledNoteForDate(today)) onScheduledToCalendar()
+                } else {
+                    repository.saveForDate(content, today)
+                }
             }
             Destinations.DO_TOMORROW -> viewModelScope.launch(Dispatchers.IO) {
-                repository.saveForDate(content, LocalDate.now().plusDays(1))
+                val tomorrow = LocalDate.now().plusDays(1)
+                if ((card.note.note.patternType ?: FilterType.NO_TERMS) == FilterType.NO_TERMS) {
+                    if (repository.scheduleUnscheduledNoteForDate(tomorrow)) onScheduledToCalendar()
+                } else {
+                    repository.saveForDate(content, tomorrow)
+                }
             }
             Destinations.MARK_DONE -> {
                 val doneContent = content.copy(todo = TodoStatus.DONE)

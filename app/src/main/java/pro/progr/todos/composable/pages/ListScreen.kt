@@ -169,6 +169,17 @@ fun ListScreen(
                                                     navController.navigate("calendar")
                                                 }
                                             }
+                                        },
+                                        onScheduledToCalendar = {
+                                            scope.launch {
+                                                val result = scaffoldState.snackbarHostState.showSnackbar(
+                                                    message = context.getString(R.string.task_added_to_calendar_notice),
+                                                    actionLabel = context.getString(R.string.open_calendar)
+                                                )
+                                                if (result == SnackbarResult.ActionPerformed) {
+                                                    navController.navigate("calendar")
+                                                }
+                                            }
                                         }
                                     )
                                 }

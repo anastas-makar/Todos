@@ -87,4 +87,16 @@ interface NoteAndDateEntryDao {
         patternDays: LinkedHashMap<Long, Schedule.Day>?, patternType: FilterType?,
         dateSince: Long?, dateTill: Long?
     ): Int
+
+    @Query("""UPDATE notes SET added_dates=:addedDates, cancelled_dates=:cancelledDates,
+        pattern_days=:patternDays, pattern_type='DATE', date_since=:epochDay, date_till=:epochDay
+        WHERE id=:noteId AND coalesce(pattern_type, 'NO_TERMS')='NO_TERMS'""")
+    @TypeConverters(LongArrayConverter::class, PatternDatesConverter::class)
+    suspend fun scheduleUnscheduledNoteForDate(
+        noteId: String,
+        addedDates: ArrayPOJO?,
+        cancelledDates: ArrayPOJO?,
+        patternDays: LinkedHashMap<Long, Schedule.Day>?,
+        epochDay: Long
+    ): Int
 }
