@@ -58,17 +58,13 @@ fun TagsScreen(
             gesturesEnabled = drawerState.isOpen,
             drawerContent = {
                 Column(Modifier.fillMaxSize().padding(16.dp)) {
-                    TextButton(
-                        onClick = { managingTags = !managingTags },
-                        modifier = Modifier.padding(top = 46.dp)
-                    ) {
-                        Text(
-                            stringResource(if (managingTags) R.string.back else R.string.manage_tags),
-                            color = MaterialTheme.colors.onSurface
-                        )
-                    }
-
                     if (managingTags) {
+                        TextButton(
+                            onClick = { managingTags = false },
+                            modifier = Modifier.padding(top = 46.dp)
+                        ) {
+                            Text(stringResource(R.string.back), color = MaterialTheme.colors.onSurface)
+                        }
                         LazyColumn {
                             items(tags.sortedBy { it.title }, key = { it.id }) { tag ->
                                 val cannotHide = !tag.hidden && tag.id == selectedTagId
@@ -125,6 +121,17 @@ fun TagsScreen(
                                     Text(
                                         text = "#${tag.title}",
                                         modifier = Modifier.padding(vertical = 8.dp),
+                                        color = MaterialTheme.colors.onSurface
+                                    )
+                                }
+                            }
+                            item(key = "manage_tags_footer") {
+                                TextButton(
+                                    onClick = { managingTags = true },
+                                    modifier = Modifier.padding(vertical = 8.dp)
+                                ) {
+                                    Text(
+                                        text = stringResource(R.string.manage_tags),
                                         color = MaterialTheme.colors.onSurface
                                     )
                                 }

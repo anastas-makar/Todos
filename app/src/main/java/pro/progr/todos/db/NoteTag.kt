@@ -29,5 +29,7 @@ data class NoteTag(
         return other is NoteTag
                 && this.id.equals(other.id)
                 && this.title.equals(other.title)
+                && this.deleted == other.deleted
+                && this.hidden == other.hidden
     }
 }
