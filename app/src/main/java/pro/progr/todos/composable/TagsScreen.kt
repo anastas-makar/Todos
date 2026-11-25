@@ -4,6 +4,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.DrawerValue
@@ -57,11 +59,17 @@ fun TagsScreen(
             drawerState = drawerState,
             gesturesEnabled = drawerState.isOpen,
             drawerContent = {
-                Column(Modifier.fillMaxSize().padding(16.dp)) {
+                Column(
+                    Modifier
+                        .fillMaxSize()
+                        .statusBarsPadding()
+                        .navigationBarsPadding()
+                        .padding(16.dp)
+                ) {
                     if (managingTags) {
                         TextButton(
                             onClick = { managingTags = false },
-                            modifier = Modifier.padding(top = 46.dp)
+                            modifier = Modifier.padding(top = 8.dp)
                         ) {
                             Text(stringResource(R.string.back), color = MaterialTheme.colors.onSurface)
                         }
