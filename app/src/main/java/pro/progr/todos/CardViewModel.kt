@@ -283,8 +283,18 @@ class CardViewModel private constructor(
     fun inserAndAddTag(tagName: String) {
         viewModelScope.launch (Dispatchers.Default) {
             cardContent.value.id?.let { id ->
-                val tagId = repository.insertTag(tagName)
-                addTag(NoteTag(tagId, tagName))
+                val tag = repository.insertTag(tagName) ?: return@let
+                if (_cardContent.value.tags.none { it.id == tag.id }) {
+                    repository.addTag(tagId = tag.id, noteId = id)
+                    val updated = _cardContent.value.copy(
+                        tags = _cardContent.value.tags.plus(CardTag(tag.id, tag.title))
+                    )
+                    val labeled = updated.copy(
+                        tagsLabel = updated.tags.fastJoinToString(separator = " #", prefix = "#")
+                    )
+                    _cardContent.value = labeled
+                    cardContent.value = labeled
+                }
             }
         }
     }

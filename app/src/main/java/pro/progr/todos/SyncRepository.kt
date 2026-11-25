@@ -29,7 +29,8 @@ import java.util.UUID
 class SyncRepository @Inject constructor(
     private val db: TodosDataBase,
     private val apiService: TodosApiService,
-    private val personalCrypto: PersonalCrypto
+    private val personalCrypto: PersonalCrypto,
+    private val tagsRepository: TagsRepository
 ) {
     private val notesDao: NotesDao = db.notesDao()
     private val noteListsDao: NoteListsDao = db.noteListsDao()
@@ -43,6 +44,9 @@ class SyncRepository @Inject constructor(
     private val gson : Gson = Gson()
 
     suspend fun sync() {
+        // Re-send any local merges left pending by an earlier interrupted sync.
+        tagsRepository.reconcileDuplicates()
+
         val syncMetaData = SyncMetaData(
             syncId = UUID.randomUUID().toString(),
             syncProtocolVersion = CURRENT_SYNC_PROTOCOL_VERSION
@@ -102,6 +106,10 @@ class SyncRepository @Inject constructor(
             if (serverData.noteToTags.isNotEmpty()) noteToTagXRefDao.setUpdates(
                 serverData.noteToTags.map { it.toEntity() })
         }
+
+        // The server stores encrypted tag titles and cannot identify equal names.
+        // Reconcile locally after decrypting all tag updates from this response.
+        tagsRepository.reconcileDuplicates()
 
         finishServerSync(syncMetaData)
 

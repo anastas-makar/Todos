@@ -21,7 +21,6 @@ import pro.progr.todos.db.NoteWithDataDao
 import pro.progr.todos.db.SublistChain
 import pro.progr.todos.db.applySchedule
 import pro.progr.todos.db.toSchedule
-import pro.progr.todos.db.TagsDao
 import pro.progr.todos.datefilters.FilterType
 import java.time.LocalDate
 import javax.inject.Inject
@@ -30,7 +29,7 @@ class CardRepository @Inject constructor(
     private val context: Context,
     private val noteAndDateEntryDao: NoteAndDateEntryDao,
     private val notesWithDataDao: NoteWithDataDao,
-    private val tagsDao: TagsDao
+    private val tagsRepository: TagsRepository
 ) : CardRepository {
 
     lateinit var note: NoteWithData
@@ -202,12 +201,7 @@ class CardRepository @Inject constructor(
         }
     }
 
-    fun insertTag(tagName: String) : String {
-        val nTag = NoteTag(title = tagName)
-        tagsDao.insert(nTag)
-
-        return nTag.id
-    }
+    suspend fun insertTag(tagName: String): NoteTag? = tagsRepository.findOrCreate(tagName)
 
     fun addTag(tagId: String, noteId: String) {
         notesWithDataDao.addNoteTag(tagId = tagId, noteId = noteId)

@@ -86,6 +86,11 @@
     <string name="edit_list_item">Редактировать список</string>
     <string name="diamond_path">Алмазный путь</string>
     <string name="add_tag">Добавить тег</string>
+    <string name="manage_tags">Управление тегами</string>
+    <string name="hide_tag">Скрыть</string>
+    <string name="show_tag">Показать</string>
+    <string name="tag_selected_on_card">Тег карточки</string>
+    <string name="tag_selected_as_filter">Активный фильтр</string>
     <string name="monday">Понедельник</string>
     <string name="tuesday">Вторник</string>
     <string name="wednesday">Среда</string>

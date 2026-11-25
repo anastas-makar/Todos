@@ -8,6 +8,7 @@ fun NoteTagDto.toEntity(personalCrypto: PersonalCrypto): NoteTag {
     return NoteTag(
         id = id,
         title = personalCrypto.decryptTodosValue(title),
-        deleted = deleted
+        deleted = deleted,
+        hidden = hidden
     )
 }

@@ -4,5 +4,6 @@ data class NoteTagDto (
     val id: String,
     val title: String,
     val deleted: Boolean,
+    val hidden: Boolean,
     val latestUpdate: Long?
 )

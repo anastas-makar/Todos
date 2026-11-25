@@ -18,11 +18,13 @@ class TagsViewModel @Inject constructor(private val tagsRepository: TagsReposito
 
     fun insert(tagName: String) {
         viewModelScope.launch (Dispatchers.Default) {
-            tagsRepository.insert(
-                NoteTag(
-                    title = tagName
-                )
-            )
+            tagsRepository.findOrCreate(tagName)
+        }
+    }
+
+    fun setHidden(tagId: String, hidden: Boolean, protectedTagIds: Set<String> = emptySet()) {
+        viewModelScope.launch(Dispatchers.IO) {
+            tagsRepository.setHidden(tagId, hidden, protectedTagIds)
         }
     }
 }

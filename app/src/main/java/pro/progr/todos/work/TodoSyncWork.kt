@@ -8,6 +8,7 @@ import pro.progr.todos.api.SyncApiException
 import pro.progr.authapi.AuthInterface
 import pro.progr.todos.BuildConfig
 import pro.progr.todos.SyncRepository
+import pro.progr.todos.TagsRepository
 import pro.progr.todos.api.TodosNetworkFactory
 import pro.progr.todos.db.TodosDataBase
 import pro.progr.personalcrypto.PersonalCrypto
@@ -22,7 +23,7 @@ suspend fun doTodoSyncWork(applicationContext: Context,
     )
 
     val db = TodosDataBase.getDatabase(applicationContext)
-    val syncRepository = SyncRepository(db, api, personalCrypto)
+    val syncRepository = SyncRepository(db, api, personalCrypto, TagsRepository(db))
 
     val sid = auth.getSessionId()
     if (sid.isNullOrBlank()) {

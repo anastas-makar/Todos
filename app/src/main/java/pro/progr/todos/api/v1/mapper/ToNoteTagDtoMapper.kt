@@ -9,6 +9,7 @@ fun NoteTag.toDto(personalCrypto: PersonalCrypto, latestUpdate: Long?): NoteTagD
         id = id,
         title = personalCrypto.encryptTodosValue(title),
         deleted = deleted,
+        hidden = hidden,
         latestUpdate = latestUpdate
     )
 }

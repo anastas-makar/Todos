@@ -14,7 +14,10 @@ data class NoteTag(
     val title: String,
 
     @ColumnInfo(defaultValue = "0")
-    var deleted : Boolean = false
+    var deleted : Boolean = false,
+
+    @ColumnInfo(defaultValue = "0")
+    var hidden: Boolean = false
 ) {
 
 

@@ -86,6 +86,11 @@
     <string name="edit_list_item">Edit list</string>
     <string name="diamond_path">Diamond path</string>
     <string name="add_tag">Add tag</string>
+    <string name="manage_tags">Manage tags</string>
+    <string name="hide_tag">Hide</string>
+    <string name="show_tag">Show</string>
+    <string name="tag_selected_on_card">On this card</string>
+    <string name="tag_selected_as_filter">Current filter</string>
     <string name="monday">Monday</string>
     <string name="tuesday">Tuesday</string>
     <string name="wednesday">Wednesday</string>
