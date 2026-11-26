@@ -16,6 +16,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import pro.progr.diagnostics.Diagnostics
+import pro.progr.diagnostics.NoOpDiagnostics
 import pro.progr.todos.brightcards.colors.ColorStyle
 import pro.progr.todos.brightcards.model.CardContent
 import pro.progr.todos.brightcards.model.CardTag
@@ -32,7 +34,8 @@ class CardViewModel private constructor(
     private val repository: CardRepository,
     private val _cardContent: MutableStateFlow<CardContent>,
     private val isNewCard: Boolean,
-    initialCardId: String? = null
+    initialCardId: String? = null,
+    private val diagnostics: Diagnostics = NoOpDiagnostics
 ) : ViewModel(), ColorUpdateInterface {
 
     internal val cardContent: MutableState<CardContent> = mutableStateOf(_cardContent.value.copy(id = initialCardId))
@@ -66,20 +69,30 @@ class CardViewModel private constructor(
         _cardActionClicked.value = null
     }
 
-    constructor(repository: CardRepository, style: ColorStyle) : this(
+    constructor(
+        repository: CardRepository,
+        style: ColorStyle,
+        diagnostics: Diagnostics = NoOpDiagnostics
+    ) : this(
         repository,
         MutableStateFlow(CardContent(style = style)),
         true,
-        null
+        null,
+        diagnostics
     ) {
         saveCard(_cardContent.value)
     }
 
-    constructor(repository: CardRepository, id: String) : this(
+    constructor(
+        repository: CardRepository,
+        id: String,
+        diagnostics: Diagnostics = NoOpDiagnostics
+    ) : this(
         repository,
         MutableStateFlow(CardContent()),
         false,
-        id
+        id,
+        diagnostics
     ) {
         // Load the note once. The editor keeps its own state and does not collect DB emissions.
         requestedCardId = id
@@ -101,6 +114,8 @@ class CardViewModel private constructor(
             } catch (e: CancellationException) {
                 throw e
             } catch (t: Exception) {
+                diagnostics.breadcrumb("todos_card_load: failed type=${t.javaClass.simpleName}")
+                diagnostics.reportNonFatal(t, issueKey = "todos_card_load_failure")
                 Log.e("TodosCardEditor", "Failed to load card id=$id", t)
                 _cardLoadState.value = CardLoadState.FAILED
             }

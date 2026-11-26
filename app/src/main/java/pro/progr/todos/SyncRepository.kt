@@ -25,12 +25,16 @@ import pro.progr.todos.db.TodosDataBase
 import javax.inject.Inject
 import pro.progr.personalcrypto.PersonalCrypto
 import java.util.UUID
+import kotlinx.coroutines.CancellationException
+import pro.progr.diagnostics.Diagnostics
+import pro.progr.diagnostics.NoOpDiagnostics
 
 class SyncRepository @Inject constructor(
     private val db: TodosDataBase,
     private val apiService: TodosApiService,
     private val personalCrypto: PersonalCrypto,
-    private val tagsRepository: TagsRepository
+    private val tagsRepository: TagsRepository,
+    private val diagnostics: Diagnostics = NoOpDiagnostics
 ) {
     private val notesDao: NotesDao = db.notesDao()
     private val noteListsDao: NoteListsDao = db.noteListsDao()
@@ -44,6 +48,20 @@ class SyncRepository @Inject constructor(
     private val gson : Gson = Gson()
 
     suspend fun sync() {
+        diagnostics.breadcrumb("todos_sync: started")
+        try {
+            syncInternal()
+            diagnostics.breadcrumb("todos_sync: completed")
+        } catch (e: CancellationException) {
+            diagnostics.breadcrumb("todos_sync: cancelled")
+            throw e
+        } catch (e: Exception) {
+            diagnostics.breadcrumb("todos_sync: failed type=${e.javaClass.simpleName}")
+            throw e
+        }
+    }
+
+    private suspend fun syncInternal() {
         // Re-send any local merges left pending by an earlier interrupted sync.
         tagsRepository.reconcileDuplicates()
 
@@ -124,16 +142,21 @@ class SyncRepository @Inject constructor(
     }
 
     private suspend fun startServerSync(payload: TodosSync): TodosSync {
+        diagnostics.breadcrumb("todos_sync: start_request")
         val response = apiService.syncStart(payload)
         if (!response.isSuccessful) {
+            diagnostics.breadcrumb("todos_sync: start_http_error status=${response.code()}")
             throw apiException(response.code(), response.errorBody()?.string())
         }
+        diagnostics.breadcrumb("todos_sync: start_response_received")
         return response.body() ?: error("Empty body")
     }
 
     private suspend fun finishServerSync(payload: SyncMetaData) {
+        diagnostics.breadcrumb("todos_sync: finish_request")
         val response = apiService.syncFinish(payload)
         if (!response.isSuccessful) {
+            diagnostics.breadcrumb("todos_sync: finish_http_error status=${response.code()}")
             throw apiException(response.code(), response.errorBody()?.string())
         }
         check(response.body() == true) { "Server did not confirm sync finish" }

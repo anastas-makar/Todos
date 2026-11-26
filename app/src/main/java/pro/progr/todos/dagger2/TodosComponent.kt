@@ -4,6 +4,7 @@ import android.app.Application
 import dagger.BindsInstance
 import dagger.Component
 import pro.progr.authapi.AuthInterface
+import pro.progr.diagnostics.Diagnostics
 import pro.progr.diamondapi.PurchaseInterface
 import pro.progr.personalcrypto.PersonalCrypto
 import pro.progr.todos.SyncRepository
@@ -45,6 +46,9 @@ interface TodosComponent {
 
         @BindsInstance
         fun personalCrypto(personalCrypto: PersonalCrypto): Builder
+
+        @BindsInstance
+        fun diagnostics(diagnostics: Diagnostics): Builder
 
         fun appModule(appModule: AppModule): Builder
 
