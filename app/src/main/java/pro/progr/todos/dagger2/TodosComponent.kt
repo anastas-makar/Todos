@@ -5,7 +5,8 @@ import dagger.BindsInstance
 import dagger.Component
 import pro.progr.authapi.AuthInterface
 import pro.progr.diagnostics.Diagnostics
-import pro.progr.diamondapi.PurchaseInterface
+import pro.progr.diamondapi.AccumulateInterface
+import pro.progr.diamondapi.ExchangeInterface
 import pro.progr.personalcrypto.PersonalCrypto
 import pro.progr.todos.SyncRepository
 import pro.progr.todos.api.TodosApiService
@@ -19,9 +20,11 @@ import javax.inject.Singleton
     SyncModule::class,
     AppModule::class,
     TodosNetworkModule::class,
-    PurchaseBindingModule::class])
+    ExchangeBindingModule::class])
 interface TodosComponent {
-    fun purchaseInterface(): PurchaseInterface
+    fun exchangeInterface(): ExchangeInterface
+
+    fun accumulateInterface(): AccumulateInterface
 
     fun syncRepository(): SyncRepository
 

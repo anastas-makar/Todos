@@ -9,6 +9,9 @@ interface DiamondsCountDao {
     @Query("SELECT IFNULL(SUM(count), 0) FROM diamonds_count")
     fun getTotal() : Flow<Int>
 
+    @Query("SELECT IFNULL(SUM(count), 0) FROM diamonds_count")
+    suspend fun getTotalOnce(): Int
+
     @Query("SELECT * FROM diamonds_count")
     fun getAll() : Flow<List<DiamondsCount>?>
 

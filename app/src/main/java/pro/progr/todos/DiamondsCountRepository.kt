@@ -1,48 +1,72 @@
 package pro.progr.todos
 
-import androidx.room.Transaction
+import androidx.room.withTransaction
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
-import pro.progr.diamondapi.PurchaseInterface
+import pro.progr.diamondapi.AccumulateInterface
+import pro.progr.diamondapi.ExchangeInterface
 import pro.progr.todos.db.DiamondsCount
 import pro.progr.todos.db.DiamondsCountDao
 import pro.progr.todos.db.DiamondsLog
 import pro.progr.todos.db.DiamondsLogDao
+import pro.progr.todos.db.TodosDataBase
 import java.time.LocalDate
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class DiamondsCountRepository
     @Inject constructor(
         val diamondsCountDao: DiamondsCountDao,
-        val diamondsLogDao: DiamondsLogDao) : PurchaseInterface {
+        val diamondsLogDao: DiamondsLogDao,
+        private val database: TodosDataBase
+    ) : ExchangeInterface, AccumulateInterface {
     override fun getDiamondsCount(): Flow<Int> {
         return diamondsCountDao.getTotal()
     }
 
-    @Transaction
-    override suspend fun spendDiamonds(diamonds: Int): Result<Boolean> {
-        val day =LocalDate.now().toEpochDay()
-        val count = -diamonds
+    override suspend fun add(diamonds: Int): Result<Boolean> = exchangeResult {
+        require(diamonds > 0) { "Количество начисляемых бриллиантов должно быть больше нуля" }
+        val day = LocalDate.now().toEpochDay()
+        database.withTransaction {
+            recordDeltaInTransaction(day, diamonds)
+        }
+        true
+    }
 
-        diamondsCountDao.updateCount(day, count)
-        diamondsLogDao.insert(DiamondsLog(
-            day = day,
-            count = count
-        ))
+    override suspend fun spendDiamonds(diamonds: Int): Result<Boolean> = exchangeResult {
+        require(diamonds > 0) { "Количество списываемых бриллиантов должно быть больше нуля" }
+        val day = LocalDate.now().toEpochDay()
+        database.withTransaction {
+            check(diamondsCountDao.getTotalOnce() >= diamonds) {
+                "Недостаточно бриллиантов"
+            }
+            recordDeltaInTransaction(day, -diamonds)
+        }
+        true
+    }
 
-        return Result.success(true)
+    private suspend fun exchangeResult(block: suspend () -> Boolean): Result<Boolean> = try {
+        Result.success(block())
+    } catch (cancellation: CancellationException) {
+        throw cancellation
+    } catch (error: Exception) {
+        Result.failure(error)
+    }
+
+    private suspend fun recordDeltaInTransaction(day: Long, delta: Int) {
+        diamondsCountDao.updateCount(day, delta)
+        diamondsLogDao.insert(DiamondsLog(day = day, count = delta))
     }
 
     fun getAll() : Flow<List<DiamondsCount>?> {
         return diamondsCountDao.getAll()
     }
 
-    @Transaction
     suspend fun addDiamondsForDate(date: LocalDate, count: Int) {
         val day = date.toEpochDay()
-        diamondsCountDao.updateCount(day, count)
-        diamondsLogDao.insert(DiamondsLog(
-            day = day,
-            count = count
-        ))
+        database.withTransaction {
+            recordDeltaInTransaction(day, count)
+        }
     }
 }
